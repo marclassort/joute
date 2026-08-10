@@ -1,15 +1,10 @@
-import {View, Text} from "react-native";
 import React from "react";
-import {Link, useLocalSearchParams} from "expo-router";
+import {useLocalSearchParams} from "expo-router";
+import MatchScreen from "@/features/joute/screens/MatchScreen";
 
-const JouteMatch = () => {
-    const { id } = useLocalSearchParams<{ id: string }>();
-    return (
-        <View>
-            <Text>Partie Joute : {id}</Text>
-            <Link href="/joute">Retour</Link>
-        </View>
-    )
-}
+const JouteMatchRoute = () => {
+    const {id} = useLocalSearchParams<{id: string}>();
+    return <MatchScreen matchId={id} />;
+};
 
-export default JouteMatch
+export default JouteMatchRoute;
