@@ -6,6 +6,7 @@ import {ClerkProvider, useAuth} from "@clerk/expo";
 import {tokenCache} from "@clerk/expo/token-cache";
 import {frFR} from "@clerk/localizations";
 import {SubscriptionsProvider} from "@/context/SubscriptionsContext";
+import {MatchesProvider} from "@/features/joute/context/MatchesContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -43,7 +44,9 @@ export default function RootLayout() {
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache} localization={frFR}>
       <SubscriptionsProvider>
-        <RootNavigator />
+        <MatchesProvider>
+          <RootNavigator />
+        </MatchesProvider>
       </SubscriptionsProvider>
     </ClerkProvider>
   );

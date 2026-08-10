@@ -49,6 +49,11 @@ function seededShuffle<T>(items: readonly T[], seed: string): T[] {
     return result;
 }
 
+/** Un flottant déterministe dans [0, 1) pour une graine donnée, réutilisable partout où il faut du hasard reproductible (ex. simulation du fantôme). */
+export function seededFloat(seed: string): number {
+    return mulberry32(hashSeed(seed))();
+}
+
 export function otherPlayerId(match: Match, playerId: string): string {
     const [playerOne, playerTwo] = match.players;
     return playerId === playerOne.id ? playerTwo.id : playerOne.id;
