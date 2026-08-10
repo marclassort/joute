@@ -4,6 +4,7 @@ import {useFonts} from "expo-font";
 import {useEffect} from "react";
 import {ClerkProvider} from "@clerk/expo";
 import {tokenCache} from "@clerk/expo/token-cache";
+import {frFR} from "@clerk/localizations";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -32,7 +33,7 @@ export default function RootLayout() {
   if (!fontsLoaded) return null;
 
   return (
-    <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+    <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache} localization={frFR}>
       <Stack screenOptions={{ headerShown: false }} />
     </ClerkProvider>
   );
