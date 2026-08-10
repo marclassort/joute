@@ -118,9 +118,9 @@ const SignIn = () => {
                                     placeholderTextColor={colors.mutedForeground}
                                     autoCapitalize="none"
                                     autoCorrect={false}
-                                    autoComplete="email"
+                                    autoComplete="username"
                                     keyboardType="email-address"
-                                    textContentType="emailAddress"
+                                    textContentType="username"
                                     editable={!isSubmitting}
                                 />
                                 {emailError && <Text className="auth-error">{emailError}</Text>}
@@ -139,7 +139,7 @@ const SignIn = () => {
                                     placeholderTextColor={colors.mutedForeground}
                                     secureTextEntry
                                     autoCapitalize="none"
-                                    autoComplete="password"
+                                    autoComplete="current-password"
                                     textContentType="password"
                                     editable={!isSubmitting}
                                 />
