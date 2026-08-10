@@ -472,4 +472,108 @@
     .category-chip-text-active {
         @apply text-accent;
     }
+
+    .joute-header {
+        @apply flex-row items-center gap-4;
+    }
+
+    .joute-avatar {
+        @apply size-16 shrink-0 rounded-full;
+    }
+
+    .joute-header-copy {
+        @apply min-w-0 flex-1;
+    }
+
+    .joute-header-name {
+        @apply text-2xl font-sans-bold text-primary;
+    }
+
+    .joute-stats-row {
+        @apply mt-1 flex-row items-center gap-3;
+    }
+
+    .joute-stats-text {
+        @apply text-sm font-sans-semibold text-muted-foreground;
+    }
+
+    .joute-stats-streak {
+        @apply text-sm font-sans-bold text-accent;
+    }
+
+    .joute-new-match-button {
+        @apply mt-5 items-center rounded-2xl bg-accent py-5;
+    }
+
+    .joute-new-match-text {
+        @apply text-lg font-sans-bold text-white;
+    }
+
+    .joute-card {
+        @apply rounded-2xl border border-border bg-card p-4;
+    }
+
+    .joute-card-row {
+        @apply flex-row items-center gap-3;
+    }
+
+    .joute-card-avatar {
+        @apply size-12 shrink-0 rounded-full bg-muted;
+    }
+
+    .joute-card-copy {
+        @apply min-w-0 flex-1;
+    }
+
+    .joute-card-name {
+        @apply text-base font-sans-bold text-primary;
+    }
+
+    .joute-card-meta {
+        @apply mt-1 text-sm font-sans-medium text-muted-foreground;
+    }
+
+    .joute-card-score {
+        @apply ml-3 shrink-0 text-lg font-sans-bold text-primary;
+    }
+
+    .joute-card-footer {
+        @apply mt-3 flex-row items-center justify-between;
+    }
+
+    .joute-card-time {
+        @apply text-sm font-sans-semibold text-muted-foreground;
+    }
+
+    .joute-card-time-alert {
+        @apply text-destructive;
+    }
+
+    .joute-card-result {
+        @apply text-sm font-sans-bold text-primary;
+    }
+
+    .joute-card-players-row {
+        @apply flex-row items-center gap-3;
+    }
+
+    .joute-card-vs {
+        @apply text-xs font-sans-semibold uppercase text-muted-foreground;
+    }
+
+    .joute-option {
+        @apply rounded-2xl border border-border bg-background p-4;
+    }
+
+    .joute-option-disabled {
+        @apply opacity-50;
+    }
+
+    .joute-option-title {
+        @apply text-base font-sans-bold text-primary;
+    }
+
+    .joute-option-subtitle {
+        @apply mt-1 text-sm font-sans-medium text-muted-foreground;
+    }
 }

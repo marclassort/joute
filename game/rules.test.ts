@@ -4,6 +4,8 @@ import {
     applyExpiration,
     availableCategories,
     computeExpiredOutcome,
+    computeMatchStats,
+    computeOutcomeForPlayer,
     computeScore,
     computeVerdict,
     drawCategoryOptions,
@@ -202,5 +204,92 @@ describe("otherPlayerId", () => {
         const match = buildMatch();
         expect(otherPlayerId(match, "p1")).toBe("p2");
         expect(otherPlayerId(match, "p2")).toBe("p1");
+    });
+});
+
+function withAnswer(overrides: Partial<Match> = {}, playerOneCorrect: boolean, playerTwoCorrect: boolean): Match {
+    return buildMatch({
+        status: "completed",
+        rounds: [
+            buildRound({
+                answers: [
+                    {questionId: "q1", playerId: "p1", selectedIndex: 0, isCorrect: playerOneCorrect, elapsedMs: 1, answeredAt: 1},
+                    {questionId: "q1", playerId: "p2", selectedIndex: 0, isCorrect: playerTwoCorrect, elapsedMs: 1, answeredAt: 2},
+                ],
+            }),
+        ],
+        ...overrides,
+    });
+}
+
+describe("computeOutcomeForPlayer", () => {
+    it("retourne win/loss pour une partie terminée avec un vainqueur", () => {
+        const match = withAnswer({}, true, false);
+        expect(computeOutcomeForPlayer(match, "p1")).toBe("win");
+        expect(computeOutcomeForPlayer(match, "p2")).toBe("loss");
+    });
+
+    it("retourne draw pour une partie terminée à égalité", () => {
+        const match = withAnswer({}, true, true);
+        expect(computeOutcomeForPlayer(match, "p1")).toBe("draw");
+        expect(computeOutcomeForPlayer(match, "p2")).toBe("draw");
+    });
+
+    it("retourne win/loss pour une partie expirée avec des réponses", () => {
+        const match = buildMatch({
+            status: "expired",
+            currentTurnPlayerId: "p2",
+            rounds: [buildRound({answers: [{questionId: "q1", playerId: "p1", selectedIndex: 0, isCorrect: true, elapsedMs: 1, answeredAt: 1}]})],
+        });
+        expect(computeOutcomeForPlayer(match, "p1")).toBe("win");
+        expect(computeOutcomeForPlayer(match, "p2")).toBe("loss");
+    });
+
+    it("retourne null pour une partie expirée annulée (personne n'a joué)", () => {
+        const match = buildMatch({status: "expired"});
+        expect(computeOutcomeForPlayer(match, "p1")).toBeNull();
+    });
+
+    it("retourne null pour une partie encore active", () => {
+        const match = buildMatch({status: "active"});
+        expect(computeOutcomeForPlayer(match, "p1")).toBeNull();
+    });
+});
+
+describe("computeMatchStats", () => {
+    it("compte victoires, défaites et nuls sur les parties terminées uniquement", () => {
+        const win = withAnswer({id: "m-win", updatedAt: 3}, true, false);
+        const loss = withAnswer({id: "m-loss", updatedAt: 2}, false, true);
+        const draw = withAnswer({id: "m-draw", updatedAt: 1}, true, true);
+        const stillActive = buildMatch({id: "m-active", status: "active", updatedAt: 4});
+
+        const stats = computeMatchStats([win, loss, draw, stillActive], "p1");
+        expect(stats.wins).toBe(1);
+        expect(stats.losses).toBe(1);
+        expect(stats.draws).toBe(1);
+    });
+
+    it("calcule la série en cours comme le nombre de victoires consécutives les plus récentes", () => {
+        const winA = withAnswer({id: "m-a", updatedAt: 3}, true, false);
+        const winB = withAnswer({id: "m-b", updatedAt: 2}, true, false);
+        const loss = withAnswer({id: "m-c", updatedAt: 1}, false, true);
+
+        expect(computeMatchStats([winA, winB, loss], "p1").currentStreak).toBe(2);
+    });
+
+    it("remet la série à zéro si la partie la plus récente n'est pas une victoire", () => {
+        const win = withAnswer({id: "m-a", updatedAt: 1}, true, false);
+        const draw = withAnswer({id: "m-b", updatedAt: 2}, true, true);
+
+        expect(computeMatchStats([win, draw], "p1").currentStreak).toBe(0);
+    });
+
+    it("ignore les parties expirées annulées, sans casser la série", () => {
+        const win = withAnswer({id: "m-a", updatedAt: 1}, true, false);
+        const cancelled = buildMatch({id: "m-b", status: "expired", updatedAt: 2});
+
+        const stats = computeMatchStats([win, cancelled], "p1");
+        expect(stats.currentStreak).toBe(1);
+        expect(stats.wins).toBe(1);
     });
 });
