@@ -1,9 +1,9 @@
 import "@/global.css"
-import {FlatList, Image, Text, View} from "react-native";
+import {FlatList, Image, Pressable, Text, View} from "react-native";
 import { styled } from "nativewind";
 import {SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 import {useUser} from "@clerk/expo";
-import {HOME_BALANCE, HOME_SUBSCRIPTIONS, UPCOMING_SUBSCRIPTIONS} from "@/constants/data";
+import {HOME_BALANCE, UPCOMING_SUBSCRIPTIONS} from "@/constants/data";
 import {icons} from "@/constants/icons";
 import {formatCurrency} from "@/lib/utils";
 import dayjs from "dayjs";
@@ -11,11 +11,15 @@ import ListHeading from "@/components/ListHeading";
 import UpcomingSubscriptionCard from "@/components/UpcomingSubscriptionCard";
 import {useState} from "react";
 import SubscriptionCard from "@/components/SubscriptionCard";
+import CreateSubscriptionModal from "@/components/CreateSubscriptionModal";
+import {useSubscriptions} from "@/context/SubscriptionsContext";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
 export default function App() {
+    const {subscriptions, addSubscription} = useSubscriptions();
     const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<string | null>(null);
+    const [isCreateModalVisible, setCreateModalVisible] = useState(false);
     const { user } = useUser();
 
     const displayName = user?.firstName || user?.primaryEmailAddress?.emailAddress || "";
@@ -36,7 +40,9 @@ export default function App() {
                                 <Text className="home-user-name" numberOfLines={1} ellipsizeMode="tail">
                                     {displayName}
                                 </Text>
-                                <Image source={icons.add} className="home-add-icon" />
+                                <Pressable onPress={() => setCreateModalVisible(true)}>
+                                    <Image source={icons.add} className="home-add-icon" />
+                                </Pressable>
                             </View>
                         </View>
                         <View className="home-balance-card">
@@ -64,13 +70,13 @@ export default function App() {
                                 keyExtractor={(item) => item.id}
                                 horizontal
                                 showsHorizontalScrollIndicator={false}
-                                ListEmptyComponent={<Text className="home-empty-state">Pas de nouvelles inscriptions</Text>}
+                                ListEmptyComponent={<Text className="home-empty-state">Pas de nouveaux abonnements</Text>}
                             />
                         </View>
-                        <ListHeading title="Toutes les inscriptions" />
+                        <ListHeading title="Tous les abonnements" />
                     </>
                 )}
-                data={HOME_SUBSCRIPTIONS}
+                data={subscriptions}
                 keyExtractor={(item) => item.id}
                 renderItem={({item}) => (
                     <SubscriptionCard
@@ -82,8 +88,13 @@ export default function App() {
                 )}
                 extraData={expandedSubscriptionId}
                 ItemSeparatorComponent={() => <View className="h-4" />}
-                ListEmptyComponent={<Text className="home-empty-state">Pas d&#39;inscriptions encore.</Text>}
+                ListEmptyComponent={<Text className="home-empty-state">Pas d&#39;abonnements encore.</Text>}
                 contentContainerClassName="pb-30"
+            />
+            <CreateSubscriptionModal
+                visible={isCreateModalVisible}
+                onClose={() => setCreateModalVisible(false)}
+                onCreate={addSubscription}
             />
         </SafeAreaView>
     );

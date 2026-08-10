@@ -5,6 +5,7 @@ import {useEffect} from "react";
 import {ClerkProvider, useAuth} from "@clerk/expo";
 import {tokenCache} from "@clerk/expo/token-cache";
 import {frFR} from "@clerk/localizations";
+import {SubscriptionsProvider} from "@/context/SubscriptionsContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -41,7 +42,9 @@ function RootNavigator() {
 export default function RootLayout() {
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache} localization={frFR}>
-      <RootNavigator />
+      <SubscriptionsProvider>
+        <RootNavigator />
+      </SubscriptionsProvider>
     </ClerkProvider>
   );
 }

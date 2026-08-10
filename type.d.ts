@@ -26,6 +26,13 @@ declare global {
         billing: string;
         renewalDate?: string;
         color?: string;
+        frequency?: string;
+    }
+
+    interface CreateSubscriptionModalProps {
+        visible: boolean;
+        onClose: () => void;
+        onCreate: (subscription: Subscription) => void;
     }
 
     interface SubscriptionCardProps extends Omit<Subscription, "id"> {
