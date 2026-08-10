@@ -143,7 +143,7 @@ const Joute = () => {
                                     match={match}
                                     viewerId={myId}
                                     variant="finished"
-                                    onPress={() => router.push(`/joute/${match.id}`)}
+                                    onPress={() => router.push(`/joute/${match.id}/result`)}
                                 />
                             ))}
                         </View>

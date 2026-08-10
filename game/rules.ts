@@ -186,3 +186,57 @@ export function computeMatchStats(matches: readonly Match[], playerId: string): 
 
     return {wins, losses, draws, currentStreak};
 }
+
+export interface PlayerMatchStats {
+    /** Thème où le joueur a le plus de bonnes réponses, ou null si aucune manche n'a encore été jouée. */
+    bestCategory: Category | null;
+    averageResponseMs: number;
+    /** Plus longue série de bonnes réponses consécutives, toutes manches confondues, dans l'ordre de jeu. */
+    longestCorrectStreak: number;
+    /** Nombre de manches où le joueur a eu plus de bonnes réponses que l'adversaire (manches jouées par les deux uniquement). */
+    roundsWon: number;
+}
+
+export function computePlayerMatchStats(match: Match, playerId: string): PlayerMatchStats {
+    const orderedRounds = match.rounds.slice().sort((a, b) => a.index - b.index);
+
+    let bestCategory: Category | null = null;
+    let bestCategoryCorrect = -1;
+    let roundsWon = 0;
+    const orderedAnswers = [];
+
+    for (const round of orderedRounds) {
+        const mine = round.answers.filter((answer) => answer.playerId === playerId);
+        const theirs = round.answers.filter((answer) => answer.playerId !== playerId);
+        const myCorrect = mine.filter((answer) => answer.isCorrect).length;
+        const theirCorrect = theirs.filter((answer) => answer.isCorrect).length;
+
+        if (myCorrect > bestCategoryCorrect) {
+            bestCategoryCorrect = myCorrect;
+            bestCategory = round.category;
+        }
+        if (mine.length > 0 && theirs.length > 0 && myCorrect > theirCorrect) {
+            roundsWon += 1;
+        }
+
+        orderedAnswers.push(...mine);
+    }
+
+    const averageResponseMs =
+        orderedAnswers.length === 0
+            ? 0
+            : orderedAnswers.reduce((sum, answer) => sum + answer.elapsedMs, 0) / orderedAnswers.length;
+
+    let longestCorrectStreak = 0;
+    let currentStreak = 0;
+    for (const answer of orderedAnswers) {
+        if (answer.isCorrect) {
+            currentStreak += 1;
+            longestCorrectStreak = Math.max(longestCorrectStreak, currentStreak);
+        } else {
+            currentStreak = 0;
+        }
+    }
+
+    return {bestCategory, averageResponseMs, longestCorrectStreak, roundsWon};
+}

@@ -6,6 +6,7 @@ import {
     computeExpiredOutcome,
     computeMatchStats,
     computeOutcomeForPlayer,
+    computePlayerMatchStats,
     computeScore,
     computeVerdict,
     drawCategoryOptions,
@@ -291,5 +292,107 @@ describe("computeMatchStats", () => {
         const stats = computeMatchStats([win, cancelled], "p1");
         expect(stats.currentStreak).toBe(1);
         expect(stats.wins).toBe(1);
+    });
+});
+
+function answer(overrides: Partial<Match["rounds"][number]["answers"][number]> = {}) {
+    return {
+        questionId: "q",
+        playerId: "p1",
+        selectedIndex: 0,
+        isCorrect: true,
+        elapsedMs: 4000,
+        answeredAt: 1,
+        ...overrides,
+    };
+}
+
+describe("computePlayerMatchStats", () => {
+    it("retourne des valeurs neutres quand aucune manche n'a été jouée", () => {
+        const match = buildMatch({rounds: []});
+        const stats = computePlayerMatchStats(match, "p1");
+        expect(stats).toEqual({bestCategory: null, averageResponseMs: 0, longestCorrectStreak: 0, roundsWon: 0});
+    });
+
+    it("désigne le thème avec le plus de bonnes réponses comme meilleur thème", () => {
+        const match = buildMatch({
+            rounds: [
+                buildRound({
+                    index: 0,
+                    category: "histoire",
+                    answers: [
+                        answer({questionId: "q1", isCorrect: true}),
+                        answer({questionId: "q2", isCorrect: false}),
+                    ],
+                }),
+                buildRound({
+                    index: 1,
+                    category: "sciences",
+                    answers: [
+                        answer({questionId: "q3", isCorrect: true}),
+                        answer({questionId: "q4", isCorrect: true}),
+                    ],
+                }),
+            ],
+        });
+        expect(computePlayerMatchStats(match, "p1").bestCategory).toBe("sciences");
+    });
+
+    it("calcule le temps de réponse moyen sur les réponses du joueur uniquement", () => {
+        const match = buildMatch({
+            rounds: [
+                buildRound({
+                    answers: [
+                        answer({questionId: "q1", playerId: "p1", elapsedMs: 2000}),
+                        answer({questionId: "q1", playerId: "p2", elapsedMs: 10000}),
+                        answer({questionId: "q2", playerId: "p1", elapsedMs: 6000}),
+                    ],
+                }),
+            ],
+        });
+        expect(computePlayerMatchStats(match, "p1").averageResponseMs).toBe(4000);
+    });
+
+    it("calcule la plus longue série de bonnes réponses consécutives, toutes manches confondues", () => {
+        const match = buildMatch({
+            rounds: [
+                buildRound({
+                    index: 0,
+                    answers: [
+                        answer({questionId: "q1", isCorrect: true}),
+                        answer({questionId: "q2", isCorrect: true}),
+                        answer({questionId: "q3", isCorrect: false}),
+                    ],
+                }),
+                buildRound({
+                    index: 1,
+                    answers: [
+                        answer({questionId: "q4", isCorrect: true}),
+                        answer({questionId: "q5", isCorrect: true}),
+                        answer({questionId: "q6", isCorrect: true}),
+                    ],
+                }),
+            ],
+        });
+        expect(computePlayerMatchStats(match, "p1").longestCorrectStreak).toBe(3);
+    });
+
+    it("compte une manche comme gagnée seulement si les deux joueurs l'ont jouée", () => {
+        const match = buildMatch({
+            rounds: [
+                buildRound({
+                    index: 0,
+                    answers: [
+                        answer({questionId: "q1", playerId: "p1", isCorrect: true}),
+                        answer({questionId: "q1", playerId: "p2", isCorrect: false}),
+                    ],
+                }),
+                buildRound({
+                    index: 1,
+                    answers: [answer({questionId: "q2", playerId: "p1", isCorrect: true})],
+                }),
+            ],
+        });
+        expect(computePlayerMatchStats(match, "p1").roundsWon).toBe(1);
     });
 });

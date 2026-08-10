@@ -1,12 +1,12 @@
 import {Text, View} from "react-native";
-import React from "react";
+import React, {useEffect} from "react";
 import {styled} from "nativewind";
 import {SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
 import {useUser} from "@clerk/expo";
 import {useRouter} from "expo-router";
 import {Category, ROUNDS_PER_MATCH, QUESTIONS_PER_ROUND} from "@/game/types";
 import {chooseCategory, resolveTurn, submitAnswer} from "@/game/engine";
-import {computeOutcomeForPlayer, computeScore, drawCategoryOptions, pickQuestions} from "@/game/rules";
+import {drawCategoryOptions, pickQuestions} from "@/game/rules";
 import {ALL_QUESTIONS} from "@/data/questions";
 import {formatTimeRemaining} from "@/lib/utils";
 import {useMatch} from "../hooks/useMatch";
@@ -27,6 +27,12 @@ const MatchScreen = ({matchId}: MatchScreenProps) => {
     const {match, isLoading, saveMatch} = useMatch(matchId);
     const myId = user?.id ?? "";
     const goBack = () => router.back();
+
+    useEffect(() => {
+        if (match && (match.status === "completed" || match.status === "expired")) {
+            router.replace(`/joute/${match.id}/result`);
+        }
+    }, [match, router]);
 
     if (isLoading) {
         return (
@@ -59,17 +65,10 @@ const MatchScreen = ({matchId}: MatchScreenProps) => {
     }
 
     if (match.status === "completed" || match.status === "expired") {
-        const outcome = computeOutcomeForPlayer(match, myId);
-        const verdictLabel = outcome === null ? "Partie annulée" : outcome === "draw" ? "Match nul" : outcome === "win" ? "Tu as gagné" : "Tu as perdu";
+        // Redirection vers l'écran de résultat déclenchée par le useEffect ci-dessus.
         return (
             <SafeAreaView className="flex-1 bg-background p-5">
-                <MatchHeader onBack={goBack} title="Partie terminée" />
-                <View className="joute-card">
-                    <Text className="joute-step-title">{verdictLabel}</Text>
-                    <Text className="joute-step-subtitle">
-                        {computeScore(match, myId)} - {computeScore(match, opponent.id)} contre {opponent.displayName}
-                    </Text>
-                </View>
+                <View className="joute-skeleton" />
             </SafeAreaView>
         );
     }
