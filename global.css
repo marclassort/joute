@@ -237,6 +237,22 @@
         @apply py-4 text-sm font-sans-medium text-black/60;
     }
 
+    .settings-title {
+        @apply mb-6 text-2xl font-sans-bold text-primary;
+    }
+
+    .settings-signout-button {
+        @apply items-center rounded-full bg-primary py-4;
+    }
+
+    .settings-signout-button-disabled {
+        @apply bg-primary/50;
+    }
+
+    .settings-signout-text {
+        @apply font-sans-bold text-background;
+    }
+
     .auth-safe-area {
         @apply flex-1 bg-background;
     }
