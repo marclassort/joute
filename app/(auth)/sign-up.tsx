@@ -157,6 +157,7 @@ const SignUp = () => {
                                     autoCapitalize="none"
                                     autoComplete="new-password"
                                     textContentType="newPassword"
+                                    passwordRules={`minlength: ${MIN_PASSWORD_LENGTH};`}
                                     editable={!isSubmitting}
                                 />
                                 {passwordError ? (
@@ -183,6 +184,7 @@ const SignUp = () => {
                                     autoCapitalize="none"
                                     autoComplete="new-password"
                                     textContentType="newPassword"
+                                    passwordRules={`minlength: ${MIN_PASSWORD_LENGTH};`}
                                     editable={!isSubmitting}
                                 />
                                 {confirmPasswordError && (

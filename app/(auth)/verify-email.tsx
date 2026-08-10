@@ -61,15 +61,32 @@ const VerifyEmail = () => {
                 code: code.trim(),
             });
             if (verifyError) {
+                console.error("verifyEmailCode error", verifyError);
                 setError(verifyError.longMessage ?? "Ce code est incorrect ou a expiré.");
+                return;
+            }
+
+            if (signUp.status !== "complete") {
+                console.error("sign-up not complete after verification", {
+                    status: signUp.status,
+                    missingFields: signUp.missingFields,
+                    unverifiedFields: signUp.unverifiedFields,
+                });
+                setError(
+                    signUp.missingFields?.length
+                        ? `Informations manquantes : ${signUp.missingFields.join(", ")}.`
+                        : "Impossible de finaliser l'inscription pour le moment.",
+                );
                 return;
             }
 
             const { error: finalizeError } = await signUp.finalize();
             if (finalizeError) {
+                console.error("finalize error", finalizeError);
                 setError(finalizeError.longMessage ?? "Une erreur est survenue. Réessayez.");
             }
-        } catch {
+        } catch (caughtError) {
+            console.error("verify-email unexpected error", caughtError);
             setError("Impossible de vérifier ce code pour le moment. Réessayez.");
         } finally {
             setIsSubmitting(false);
@@ -85,11 +102,16 @@ const VerifyEmail = () => {
         try {
             const { error: resendError } = await signUp.verifications.sendEmailCode();
             if (resendError) {
+                console.error("sendEmailCode (resend) error", resendError, {
+                    status: signUp.status,
+                    emailVerificationStatus: signUp.verifications.emailAddress?.status,
+                });
                 setError(resendError.longMessage ?? "Impossible de renvoyer le code.");
                 return;
             }
             setResent(true);
-        } catch {
+        } catch (caughtError) {
+            console.error("resend unexpected error", caughtError);
             setError("Impossible de renvoyer le code pour le moment.");
         } finally {
             setIsResending(false);
