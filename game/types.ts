@@ -87,3 +87,16 @@ export interface Question {
     perishable: boolean;
     validUntil?: string;
 }
+
+export type GhostLevel = "débutant" | "intermédiaire" | "expert";
+
+export interface GhostProfile {
+    id: string;
+    displayName: string;
+    avatarUrl: string | null;
+    level: GhostLevel;
+    /** Taux de réussite moyen, tous thèmes confondus (0,45 à 0,80). */
+    baseSuccessRate: number;
+    /** Ajouté à baseSuccessRate pour les thèmes où le fantôme est fort ou faible, clampé à [0, 1]. */
+    categoryModifiers: Partial<Record<Category, number>>;
+}

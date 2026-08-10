@@ -1,0 +1,86 @@
+import {GhostProfile} from "@/game/types";
+
+const ghosts: GhostProfile[] = [
+    {
+        id: "ghost-lucas",
+        displayName: "Lucas_Quiz",
+        avatarUrl: null,
+        level: "intermédiaire",
+        baseSuccessRate: 0.58,
+        categoryModifiers: {sport: 0.15, sciences: -0.1},
+    },
+    {
+        id: "ghost-mia",
+        displayName: "MiaTriviaQueen",
+        avatarUrl: null,
+        level: "expert",
+        baseSuccessRate: 0.75,
+        categoryModifiers: {arts: 0.1, musique: 0.1, sport: -0.15},
+    },
+    {
+        id: "ghost-noah",
+        displayName: "NoahLeSage",
+        avatarUrl: null,
+        level: "débutant",
+        baseSuccessRate: 0.47,
+        categoryModifiers: {logique: 0.1, histoire: -0.05},
+    },
+    {
+        id: "ghost-emma",
+        displayName: "Emma_Curieuse",
+        avatarUrl: null,
+        level: "intermédiaire",
+        baseSuccessRate: 0.63,
+        categoryModifiers: {nature: 0.15, geographie: 0.1, cinema: -0.1},
+    },
+    {
+        id: "ghost-leo",
+        displayName: "LeoBuzzer",
+        avatarUrl: null,
+        level: "expert",
+        baseSuccessRate: 0.79,
+        categoryModifiers: {"culture-pop": 0.12, cinema: 0.12, gastronomie: -0.1},
+    },
+    {
+        id: "ghost-chloe",
+        displayName: "ChloeSavante",
+        avatarUrl: null,
+        level: "intermédiaire",
+        baseSuccessRate: 0.55,
+        categoryModifiers: {sciences: 0.18, langue: 0.1, sport: -0.12},
+    },
+    {
+        id: "ghost-hugo",
+        displayName: "HugoRapide",
+        avatarUrl: null,
+        level: "débutant",
+        baseSuccessRate: 0.49,
+        categoryModifiers: {societe: 0.08, insolite: 0.08, sciences: -0.1},
+    },
+    {
+        id: "ghost-jade",
+        displayName: "JadeGourmande",
+        avatarUrl: null,
+        level: "intermédiaire",
+        baseSuccessRate: 0.6,
+        categoryModifiers: {gastronomie: 0.2, arts: 0.05, logique: -0.1},
+    },
+    {
+        id: "ghost-tom",
+        displayName: "TomLogique",
+        avatarUrl: null,
+        level: "expert",
+        baseSuccessRate: 0.72,
+        categoryModifiers: {logique: 0.2, sciences: 0.1, musique: -0.1},
+    },
+    {
+        id: "ghost-sara",
+        displayName: "SaraVoyageuse",
+        avatarUrl: null,
+        level: "intermédiaire",
+        baseSuccessRate: 0.61,
+        categoryModifiers: {geographie: 0.18, histoire: 0.08, gastronomie: -0.05},
+    },
+];
+
+export default ghosts;

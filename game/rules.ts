@@ -78,15 +78,24 @@ export function drawCategoryOptions(match: Match, count: number, seed: string): 
     return seededShuffle(availableCategories(match), seed).slice(0, count);
 }
 
+export function isQuestionUsable(question: Question, now: number = Date.now()): boolean {
+    if (!question.perishable) return true;
+    if (!question.validUntil) return false;
+    return new Date(question.validUntil).getTime() > now;
+}
+
 export function pickQuestions(
     pool: readonly Question[],
     category: Category,
     count: number,
     excludeIds: readonly string[],
     seed: string,
+    now: number = Date.now(),
 ): string[] {
     const excluded = new Set(excludeIds);
-    const candidates = pool.filter((question) => question.category === category && !excluded.has(question.id));
+    const candidates = pool.filter(
+        (question) => question.category === category && !excluded.has(question.id) && isQuestionUsable(question, now),
+    );
     return seededShuffle(candidates, seed)
         .slice(0, count)
         .map((question) => question.id);
