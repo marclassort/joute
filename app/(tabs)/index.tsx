@@ -43,7 +43,7 @@ export default function App() {
                             </View>
                         </View>
                         <View className="mb-5">
-                            <ListHeading title="Upcoming" />
+                            <ListHeading title="À venir" />
 
                             <FlatList
                                 ListHeaderComponent={<View className="h-4" /> }
@@ -57,7 +57,7 @@ export default function App() {
                                 ListEmptyComponent={<Text className="home-empty-state">Pas de nouvelles inscriptions</Text>}
                             />
                         </View>
-                        <ListHeading title="Tous les inscriptions" />
+                        <ListHeading title="Toutes les inscriptions" />
                     </>
                 )}
                 data={HOME_SUBSCRIPTIONS}
