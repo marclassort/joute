@@ -56,7 +56,13 @@
       ],
       "@clerk/expo",
       "expo-secure-store",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Joute a besoin d'accéder à vos photos pour définir votre photo de profil."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

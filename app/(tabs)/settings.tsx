@@ -6,6 +6,7 @@ import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 import clsx from "clsx";
 import { useAuth, useUser } from "@clerk/expo";
 import { formatSubscriptionDateTime } from "@/lib/utils";
+import EditProfileModal from "@/components/EditProfileModal";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -13,6 +14,7 @@ const Settings = () => {
     const { signOut } = useAuth();
     const { user } = useUser();
     const [isSigningOut, setIsSigningOut] = useState(false);
+    const [isEditProfileVisible, setEditProfileVisible] = useState(false);
 
     const avatarUri = user?.imageUrl;
     const name = user?.fullName || "Compte Joute";
@@ -38,7 +40,14 @@ const Settings = () => {
                 <Text className="settings-title">Paramètres</Text>
 
                 <View className="settings-card">
-                    <Text className="settings-card-label">Profil</Text>
+                    <View className="mb-4 flex-row items-center justify-between">
+                        <Text className="text-xs font-sans-semibold uppercase tracking-[1px] text-muted-foreground">
+                            Profil
+                        </Text>
+                        <Pressable className="list-action" onPress={() => setEditProfileVisible(true)}>
+                            <Text className="list-action-text">Modifier</Text>
+                        </Pressable>
+                    </View>
                     <View className="settings-profile-row">
                         {avatarUri ? (
                             <Image source={{ uri: avatarUri }} className="settings-avatar" />
@@ -91,6 +100,11 @@ const Settings = () => {
                     </Text>
                 </Pressable>
             </ScrollView>
+
+            <EditProfileModal
+                visible={isEditProfileVisible}
+                onClose={() => setEditProfileVisible(false)}
+            />
         </SafeAreaView>
     );
 };

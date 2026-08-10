@@ -35,6 +35,11 @@ declare global {
         onCreate: (subscription: Subscription) => void;
     }
 
+    interface EditProfileModalProps {
+        visible: boolean;
+        onClose: () => void;
+    }
+
     interface SubscriptionCardProps extends Omit<Subscription, "id"> {
         expanded: boolean;
         onPress: () => void;
