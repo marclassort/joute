@@ -134,7 +134,11 @@
     }
 
     .upcoming-icon {
-        @apply size-14;
+        @apply size-14 shrink-0;
+    }
+
+    .upcoming-copy {
+        @apply min-w-0 flex-1;
     }
 
     .upcoming-price {
