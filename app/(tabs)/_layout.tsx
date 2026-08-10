@@ -8,11 +8,6 @@ import { tabs } from "@/constants/data";
 
 const tabBar = components.tabBar;
 
-type TabIconProps = {
-        focused: boolean;
-        icon: ImageSourcePropType;
-};
-
 const TabIcon = ({ focused, icon }: TabIconProps) => (
     <View className="tabs-icon">
             <View className={clsx("tabs-pill", focused && "tabs-active")}>
