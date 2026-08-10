@@ -238,19 +238,47 @@
     }
 
     .settings-title {
-        @apply mb-6 text-2xl font-sans-bold text-primary;
+        @apply mb-8 text-2xl font-sans-bold text-primary;
+    }
+
+    .settings-card {
+        @apply rounded-3xl border border-border bg-card p-5;
+    }
+
+    .settings-card-label {
+        @apply mb-4 text-xs font-sans-semibold uppercase tracking-[1px] text-muted-foreground;
+    }
+
+    .settings-profile-row {
+        @apply flex-row items-center gap-4;
+    }
+
+    .settings-avatar {
+        @apply size-20 shrink-0 rounded-full;
+    }
+
+    .settings-profile-copy {
+        @apply min-w-0 flex-1;
+    }
+
+    .settings-profile-name {
+        @apply text-lg font-sans-bold text-primary;
+    }
+
+    .settings-profile-email {
+        @apply mt-1 text-sm font-sans-medium text-muted-foreground;
     }
 
     .settings-signout-button {
-        @apply items-center rounded-full bg-primary py-4;
+        @apply mt-4 items-center rounded-2xl bg-accent py-4;
     }
 
     .settings-signout-button-disabled {
-        @apply bg-primary/50;
+        @apply bg-accent/45;
     }
 
     .settings-signout-text {
-        @apply font-sans-bold text-background;
+        @apply text-base font-sans-bold text-primary;
     }
 
     .auth-safe-area {

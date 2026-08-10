@@ -1,16 +1,24 @@
-import { Pressable, Text } from "react-native";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { useState } from "react";
 import { styled } from "nativewind";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 // eslint-disable-next-line import/no-named-as-default
 import clsx from "clsx";
-import { useAuth } from "@clerk/expo";
+import { useAuth, useUser } from "@clerk/expo";
+import { formatSubscriptionDateTime } from "@/lib/utils";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
 const Settings = () => {
     const { signOut } = useAuth();
+    const { user } = useUser();
     const [isSigningOut, setIsSigningOut] = useState(false);
+
+    const avatarUri = user?.imageUrl;
+    const name = user?.fullName || "Compte Joute";
+    const email = user?.primaryEmailAddress?.emailAddress ?? "Non renseigné";
+    const accountId = user?.id ?? "Non renseigné";
+    const joinedAt = formatSubscriptionDateTime(user?.createdAt?.toISOString());
 
     const handleSignOut = async () => {
         setIsSigningOut(true);
@@ -23,20 +31,66 @@ const Settings = () => {
 
     return (
         <SafeAreaView className="flex-1 bg-background p-5">
-            <Text className="settings-title">Paramètres</Text>
-
-            <Pressable
-                className={clsx(
-                    "settings-signout-button",
-                    isSigningOut && "settings-signout-button-disabled",
-                )}
-                onPress={handleSignOut}
-                disabled={isSigningOut}
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerClassName="gap-6 pb-10"
             >
-                <Text className="settings-signout-text">
-                    {isSigningOut ? "Déconnexion…" : "Se déconnecter"}
-                </Text>
-            </Pressable>
+                <Text className="settings-title">Paramètres</Text>
+
+                <View className="settings-card">
+                    <Text className="settings-card-label">Profil</Text>
+                    <View className="settings-profile-row">
+                        {avatarUri ? (
+                            <Image source={{ uri: avatarUri }} className="settings-avatar" />
+                        ) : (
+                            <View className="settings-avatar bg-muted" />
+                        )}
+                        <View className="settings-profile-copy">
+                            <Text className="settings-profile-name" numberOfLines={1}>
+                                {name}
+                            </Text>
+                            <Text className="settings-profile-email" numberOfLines={1}>
+                                {email}
+                            </Text>
+                        </View>
+                    </View>
+                </View>
+
+                <View className="settings-card">
+                    <Text className="settings-card-label">Compte</Text>
+                    <View className="sub-details">
+                        <View className="sub-row">
+                            <View className="sub-row-copy">
+                                <Text className="sub-label">Identifiant :</Text>
+                                <Text className="sub-value" numberOfLines={1} ellipsizeMode="tail">
+                                    {accountId}
+                                </Text>
+                            </View>
+                        </View>
+                        <View className="sub-row">
+                            <View className="sub-row-copy">
+                                <Text className="sub-label">Membre depuis :</Text>
+                                <Text className="sub-value" numberOfLines={1} ellipsizeMode="tail">
+                                    {joinedAt}
+                                </Text>
+                            </View>
+                        </View>
+                    </View>
+                </View>
+
+                <Pressable
+                    className={clsx(
+                        "settings-signout-button",
+                        isSigningOut && "settings-signout-button-disabled",
+                    )}
+                    onPress={handleSignOut}
+                    disabled={isSigningOut}
+                >
+                    <Text className="settings-signout-text">
+                        {isSigningOut ? "Déconnexion…" : "Se déconnecter"}
+                    </Text>
+                </Pressable>
+            </ScrollView>
         </SafeAreaView>
     );
 };
