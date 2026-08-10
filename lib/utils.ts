@@ -26,3 +26,24 @@ export const formatStatusLabel = (value?: string): string => {
 
 export const isValidEmail = (value: string): boolean =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+
+export const generateId = (prefix: string): string =>
+  `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+
+export const formatTimeRemaining = (expiresAt: number, now: number = Date.now()): string => {
+  const diffMs = expiresAt - now;
+  if (diffMs <= 0) return "Expire d'un instant à l'autre";
+
+  const hours = Math.floor(diffMs / (60 * 60 * 1000));
+  if (hours < 1) {
+    const minutes = Math.max(1, Math.floor(diffMs / (60 * 1000)));
+    return `Expire dans ${minutes} min`;
+  }
+  if (hours < 24) return `Expire dans ${hours} h`;
+
+  const days = Math.floor(hours / 24);
+  return `Expire dans ${days} j`;
+};
+
+export const isExpiringSoon = (expiresAt: number, now: number = Date.now()): boolean =>
+  expiresAt - now <= 6 * 60 * 60 * 1000;

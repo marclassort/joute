@@ -472,4 +472,284 @@
     .category-chip-text-active {
         @apply text-accent;
     }
+
+    .joute-header {
+        @apply flex-row items-center gap-4;
+    }
+
+    .joute-avatar {
+        @apply size-16 shrink-0 rounded-full;
+    }
+
+    .joute-header-copy {
+        @apply min-w-0 flex-1;
+    }
+
+    .joute-header-name {
+        @apply text-2xl font-sans-bold text-primary;
+    }
+
+    .joute-stats-row {
+        @apply mt-1 flex-row items-center gap-3;
+    }
+
+    .joute-stats-text {
+        @apply text-sm font-sans-semibold text-muted-foreground;
+    }
+
+    .joute-stats-streak {
+        @apply text-sm font-sans-bold text-accent;
+    }
+
+    .joute-new-match-button {
+        @apply mt-5 items-center rounded-2xl bg-accent py-5;
+    }
+
+    .joute-new-match-text {
+        @apply text-lg font-sans-bold text-white;
+    }
+
+    .joute-card {
+        @apply rounded-2xl border border-border bg-card p-4;
+    }
+
+    .joute-card-row {
+        @apply flex-row items-center gap-3;
+    }
+
+    .joute-card-avatar {
+        @apply size-12 shrink-0 rounded-full bg-muted;
+    }
+
+    .joute-card-copy {
+        @apply min-w-0 flex-1;
+    }
+
+    .joute-card-name {
+        @apply text-base font-sans-bold text-primary;
+    }
+
+    .joute-card-meta {
+        @apply mt-1 text-sm font-sans-medium text-muted-foreground;
+    }
+
+    .joute-card-score {
+        @apply ml-3 shrink-0 text-lg font-sans-bold text-primary;
+    }
+
+    .joute-card-footer {
+        @apply mt-3 flex-row items-center justify-between;
+    }
+
+    .joute-card-time {
+        @apply text-sm font-sans-semibold text-muted-foreground;
+    }
+
+    .joute-card-time-alert {
+        @apply text-destructive;
+    }
+
+    .joute-card-result {
+        @apply text-sm font-sans-bold text-primary;
+    }
+
+    .joute-card-players-row {
+        @apply flex-row items-center gap-3;
+    }
+
+    .joute-card-vs {
+        @apply text-xs font-sans-semibold uppercase text-muted-foreground;
+    }
+
+    .joute-option {
+        @apply rounded-2xl border border-border bg-background p-4;
+    }
+
+    .joute-option-disabled {
+        @apply opacity-50;
+    }
+
+    .joute-option-title {
+        @apply text-base font-sans-bold text-primary;
+    }
+
+    .joute-option-subtitle {
+        @apply mt-1 text-sm font-sans-medium text-muted-foreground;
+    }
+
+    .joute-match-header {
+        @apply mb-5 flex-row items-center justify-between;
+    }
+
+    .joute-back-icon {
+        @apply size-8;
+    }
+
+    .joute-match-header-title {
+        @apply flex-1 text-center text-base font-sans-bold text-primary;
+    }
+
+    .joute-skeleton {
+        @apply h-24 rounded-2xl bg-muted;
+    }
+
+    .joute-step-title {
+        @apply text-xl font-sans-bold text-primary;
+    }
+
+    .joute-step-subtitle {
+        @apply mt-1 text-sm font-sans-medium text-muted-foreground;
+    }
+
+    .joute-theme-card {
+        @apply items-center gap-2 rounded-2xl border border-border p-5;
+    }
+
+    .joute-theme-icon {
+        @apply text-4xl;
+    }
+
+    .joute-theme-label {
+        @apply text-base font-sans-bold text-primary;
+    }
+
+    .joute-progress-track {
+        @apply h-2 overflow-hidden rounded-full bg-muted;
+    }
+
+    .joute-question-statement {
+        @apply text-xl font-sans-bold text-primary;
+    }
+
+    .joute-choice {
+        @apply min-h-11 justify-center rounded-2xl border border-border bg-background px-4 py-4;
+    }
+
+    .joute-choice-selected {
+        @apply border-accent bg-accent/10;
+    }
+
+    .joute-choice-text {
+        @apply text-base font-sans-medium text-primary;
+    }
+
+    .joute-choice-text-selected {
+        @apply font-sans-bold text-accent;
+    }
+
+    .joute-recap-card {
+        @apply gap-2 rounded-2xl border border-border bg-card p-4;
+    }
+
+    .joute-recap-statement {
+        @apply text-base font-sans-bold text-primary;
+    }
+
+    .joute-recap-answer {
+        @apply text-sm font-sans-semibold text-primary;
+    }
+
+    .joute-recap-explanation {
+        @apply text-sm font-sans-medium text-muted-foreground;
+    }
+
+    .joute-recap-footer {
+        @apply mt-1 flex-row items-center gap-4;
+    }
+
+    .joute-recap-result {
+        @apply text-sm font-sans-bold;
+    }
+
+    .joute-recap-correct {
+        @apply text-success;
+    }
+
+    .joute-recap-incorrect {
+        @apply text-destructive;
+    }
+
+    .joute-recap-correct-choice {
+        @apply border-success bg-success/10;
+    }
+
+    .joute-result-verdict {
+        @apply text-center text-3xl font-sans-extrabold text-primary;
+    }
+
+    .joute-players-row {
+        @apply flex-row items-center justify-between rounded-2xl border border-border bg-card p-4;
+    }
+
+    .joute-players-side {
+        @apply flex-1 items-center gap-2;
+    }
+
+    .joute-players-avatar {
+        @apply size-14 rounded-full;
+    }
+
+    .joute-players-name {
+        @apply max-w-full text-sm font-sans-bold text-primary;
+    }
+
+    .joute-players-score {
+        @apply px-3 text-2xl font-sans-extrabold text-primary;
+    }
+
+    .joute-round-row {
+        @apply gap-2 rounded-2xl border border-border bg-card p-4;
+    }
+
+    .joute-round-header {
+        @apply flex-row items-center justify-between;
+    }
+
+    .joute-round-theme {
+        @apply text-base font-sans-bold text-primary;
+    }
+
+    .joute-round-chooser {
+        @apply text-xs font-sans-medium text-muted-foreground;
+    }
+
+    .joute-pellets-row {
+        @apply flex-row items-center gap-2;
+    }
+
+    .joute-pellet-label {
+        @apply w-10 shrink-0 text-xs font-sans-semibold text-muted-foreground;
+    }
+
+    .joute-pellet {
+        @apply size-8 items-center justify-center rounded-full bg-muted;
+    }
+
+    .joute-pellet-correct {
+        @apply bg-success/20;
+    }
+
+    .joute-pellet-incorrect {
+        @apply bg-destructive/20;
+    }
+
+    .joute-pellet-pending {
+        @apply bg-muted;
+    }
+
+    .joute-pellet-text {
+        @apply text-sm font-sans-bold text-primary;
+    }
+
+    .joute-mini-avatar {
+        @apply size-6 shrink-0 rounded-full;
+    }
+
+    .joute-detail-choice-row {
+        @apply flex-row items-center gap-2;
+    }
+
+    .joute-modal-pager {
+        @apply flex-1;
+    }
 }

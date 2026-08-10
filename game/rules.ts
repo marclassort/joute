@@ -128,3 +128,115 @@ export function computeExpiredOutcome(match: Match): ExpiredOutcome {
 export function isLastRound(roundIndex: number): boolean {
     return roundIndex === ROUNDS_PER_MATCH - 1;
 }
+
+export type MatchOutcome = "win" | "loss" | "draw";
+
+/** Issue d'une partie terminée (completed ou expired) pour un joueur donné, ou null si la partie a été annulée (personne n'a joué). */
+export function computeOutcomeForPlayer(match: Match, playerId: string): MatchOutcome | null {
+    if (match.status === "completed") {
+        const verdict = computeVerdict(match);
+        if (verdict === "draw") return "draw";
+        const [playerOne] = match.players;
+        const playerOneWon = verdict === "playerOneWin";
+        const isPlayerOne = playerId === playerOne.id;
+        return isPlayerOne === playerOneWon ? "win" : "loss";
+    }
+    if (match.status === "expired") {
+        const outcome = computeExpiredOutcome(match);
+        if (outcome.kind === "cancelled") return null;
+        return outcome.winnerId === playerId ? "win" : "loss";
+    }
+    return null;
+}
+
+export interface MatchStats {
+    wins: number;
+    losses: number;
+    draws: number;
+    /** Nombre de victoires consécutives les plus récentes (0 si la dernière partie terminée n'est pas une victoire). */
+    currentStreak: number;
+}
+
+export function computeMatchStats(matches: readonly Match[], playerId: string): MatchStats {
+    const finished = matches
+        .filter((match) => match.status === "completed" || match.status === "expired")
+        .filter((match) => match.players.some((player) => player.id === playerId))
+        .slice()
+        .sort((a, b) => b.updatedAt - a.updatedAt);
+
+    let wins = 0;
+    let losses = 0;
+    let draws = 0;
+    let currentStreak = 0;
+    let streakBroken = false;
+
+    for (const match of finished) {
+        const outcome = computeOutcomeForPlayer(match, playerId);
+        if (outcome === null) continue;
+
+        if (outcome === "win") wins += 1;
+        else if (outcome === "loss") losses += 1;
+        else draws += 1;
+
+        if (!streakBroken) {
+            if (outcome === "win") currentStreak += 1;
+            else streakBroken = true;
+        }
+    }
+
+    return {wins, losses, draws, currentStreak};
+}
+
+export interface PlayerMatchStats {
+    /** Thème où le joueur a le plus de bonnes réponses, ou null si aucune manche n'a encore été jouée. */
+    bestCategory: Category | null;
+    averageResponseMs: number;
+    /** Plus longue série de bonnes réponses consécutives, toutes manches confondues, dans l'ordre de jeu. */
+    longestCorrectStreak: number;
+    /** Nombre de manches où le joueur a eu plus de bonnes réponses que l'adversaire (manches jouées par les deux uniquement). */
+    roundsWon: number;
+}
+
+export function computePlayerMatchStats(match: Match, playerId: string): PlayerMatchStats {
+    const orderedRounds = match.rounds.slice().sort((a, b) => a.index - b.index);
+
+    let bestCategory: Category | null = null;
+    let bestCategoryCorrect = -1;
+    let roundsWon = 0;
+    const orderedAnswers = [];
+
+    for (const round of orderedRounds) {
+        const mine = round.answers.filter((answer) => answer.playerId === playerId);
+        const theirs = round.answers.filter((answer) => answer.playerId !== playerId);
+        const myCorrect = mine.filter((answer) => answer.isCorrect).length;
+        const theirCorrect = theirs.filter((answer) => answer.isCorrect).length;
+
+        if (myCorrect > bestCategoryCorrect) {
+            bestCategoryCorrect = myCorrect;
+            bestCategory = round.category;
+        }
+        if (mine.length > 0 && theirs.length > 0 && myCorrect > theirCorrect) {
+            roundsWon += 1;
+        }
+
+        orderedAnswers.push(...mine);
+    }
+
+    const averageResponseMs =
+        orderedAnswers.length === 0
+            ? 0
+            : orderedAnswers.reduce((sum, answer) => sum + answer.elapsedMs, 0) / orderedAnswers.length;
+
+    let longestCorrectStreak = 0;
+    let currentStreak = 0;
+    for (const answer of orderedAnswers) {
+        if (answer.isCorrect) {
+            currentStreak += 1;
+            longestCorrectStreak = Math.max(longestCorrectStreak, currentStreak);
+        } else {
+            currentStreak = 0;
+        }
+    }
+
+    return {bestCategory, averageResponseMs, longestCorrectStreak, roundsWon};
+}
