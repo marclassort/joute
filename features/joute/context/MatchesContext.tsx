@@ -1,8 +1,10 @@
 import React, {createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useReducer} from "react";
+import {useUser} from "@clerk/expo";
 import {Match} from "@/game/types";
-import {applyExpiration} from "@/game/rules";
+import {applyExpiration, computeOutcomeForPlayer} from "@/game/rules";
 import {localMatchRepository} from "@/services/localMatchRepository";
 import {GhostOpponentDriver} from "@/services/opponentDriver";
+import {localNotificationService} from "@/services/localNotificationService";
 import {ALL_QUESTIONS} from "@/data/questions";
 import ghosts from "@/data/ghosts";
 
@@ -18,6 +20,41 @@ function reconcileMatch(match: Match, now: number): Match {
     if (now < nextTurnAt) return afterExpiration;
 
     return GhostOpponentDriver.playTurn(afterExpiration, afterExpiration.currentTurnPlayerId, ALL_QUESTIONS, now);
+}
+
+const RESULT_LABELS: Record<"win" | "loss" | "draw", string> = {
+    win: "Tu as gagné !",
+    loss: "Tu as perdu.",
+    draw: "Match nul !",
+};
+
+/** Déclenche les notifications locales "c'est ton tour" / "partie terminée" et gère le rappel à 6h en comparant l'état avant/après une mise à jour. */
+async function notifyOnTransition(previous: Match | undefined, next: Match, myId: string): Promise<void> {
+    if (!myId) return;
+
+    const wasFinished = previous ? previous.status === "completed" || previous.status === "expired" : false;
+    const isFinished = next.status === "completed" || next.status === "expired";
+    if (!wasFinished && isFinished) {
+        const outcome = computeOutcomeForPlayer(next, myId);
+        const resultLabel = outcome === null ? "Partie annulée." : RESULT_LABELS[outcome];
+        await localNotificationService.notifyMatchFinished({matchId: next.id, resultLabel});
+        await localNotificationService.cancelExpiringSoon(next.id);
+        return;
+    }
+
+    const wasMyTurn = previous ? previous.status === "active" && previous.currentTurnPlayerId === myId : false;
+    const isMyTurn = next.status === "active" && next.currentTurnPlayerId === myId;
+
+    if (isMyTurn && !wasMyTurn) {
+        const opponent = next.players.find((player) => player.id !== myId);
+        await localNotificationService.notifyYourTurn({matchId: next.id, opponentName: opponent?.displayName ?? "Ton adversaire"});
+    }
+
+    if (isMyTurn) {
+        await localNotificationService.scheduleExpiringSoon({matchId: next.id, expiresAt: next.expiresAt});
+    } else if (wasMyTurn) {
+        await localNotificationService.cancelExpiringSoon(next.id);
+    }
 }
 
 interface MatchesState {
@@ -54,6 +91,8 @@ interface MatchesContextValue {
 const MatchesContext = createContext<MatchesContextValue | undefined>(undefined);
 
 export const MatchesProvider = ({children}: {children: ReactNode}) => {
+    const {user} = useUser();
+    const myId = user?.id ?? "";
     const [state, dispatch] = useReducer(matchesReducer, {matches: {}, isLoading: true});
 
     const refresh = useCallback(async () => {
@@ -63,17 +102,25 @@ export const MatchesProvider = ({children}: {children: ReactNode}) => {
         const reconciled = await Promise.all(
             stored.map(async (match) => {
                 const next = reconcileMatch(match, now);
-                if (next !== match) await localMatchRepository.save(next);
+                if (next !== match) {
+                    await localMatchRepository.save(next);
+                    await notifyOnTransition(match, next, myId);
+                }
                 return next;
             }),
         );
         dispatch({type: "loaded", matches: reconciled});
-    }, []);
+    }, [myId]);
 
-    const saveMatch = useCallback(async (match: Match) => {
-        await localMatchRepository.save(match);
-        dispatch({type: "upsert", match});
-    }, []);
+    const saveMatch = useCallback(
+        async (match: Match) => {
+            const previous = state.matches[match.id];
+            await localMatchRepository.save(match);
+            await notifyOnTransition(previous, match, myId);
+            dispatch({type: "upsert", match});
+        },
+        [myId, state.matches],
+    );
 
     useEffect(() => {
         refresh();

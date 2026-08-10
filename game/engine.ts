@@ -1,17 +1,19 @@
-import {Answer, Category, Match, Player, Question, Round} from "./types";
+import {Answer, Category, Match, MatchStatus, Player, Question, Round} from "./types";
 import {EXPIRATION_WINDOW_MS, availableCategories, isLastRound, otherPlayerId} from "./rules";
 
 export interface CreateMatchInput {
     id: string;
     players: [Player, Player];
     invitationCode?: string | null;
+    /** "pending" pour une invitation envoyée dont le deuxième joueur n'a pas encore rejoint. */
+    status?: MatchStatus;
     now?: number;
 }
 
-export function createMatch({id, players, invitationCode = null, now = Date.now()}: CreateMatchInput): Match {
+export function createMatch({id, players, invitationCode = null, status = "active", now = Date.now()}: CreateMatchInput): Match {
     return {
         id,
-        status: "active",
+        status,
         players,
         rounds: [],
         currentRoundIndex: 0,
@@ -20,6 +22,30 @@ export function createMatch({id, players, invitationCode = null, now = Date.now(
         updatedAt: now,
         expiresAt: now + EXPIRATION_WINDOW_MS,
         invitationCode,
+    };
+}
+
+export interface JoinMatchInput {
+    match: Match;
+    player: Player;
+    now?: number;
+}
+
+/** L'invité rejoint une partie "pending" créée via un lien d'invitation : remplace le second joueur (placeholder) et active la partie. */
+export function joinMatch({match, player, now = Date.now()}: JoinMatchInput): Match {
+    if (match.status !== "pending") {
+        throw new Error("cette invitation n'est plus valide");
+    }
+    if (player.id === match.players[0].id) {
+        throw new Error("tu ne peux pas rejoindre ta propre invitation");
+    }
+
+    return {
+        ...match,
+        status: "active",
+        players: [match.players[0], player],
+        updatedAt: now,
+        expiresAt: now + EXPIRATION_WINDOW_MS,
     };
 }
 

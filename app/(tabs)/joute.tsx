@@ -1,4 +1,4 @@
-import {Image, Pressable, ScrollView, Text, View} from "react-native";
+import {Image, Pressable, ScrollView, Share, Text, View} from "react-native";
 import React, {useMemo, useState} from "react";
 import {styled} from "nativewind";
 import {SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
@@ -11,6 +11,9 @@ import {createMatch} from "@/game/engine";
 import {Player} from "@/game/types";
 import ghosts from "@/data/ghosts";
 import {generateId} from "@/lib/utils";
+import {buildInvitationLink, generateInvitationCode} from "@/services/invitations";
+import {localInvitationRepository} from "@/services/localInvitationRepository";
+import {localNotificationService} from "@/services/localNotificationService";
 import MatchCard from "@/features/joute/components/MatchCard";
 import NewMatchModal from "@/features/joute/components/NewMatchModal";
 
@@ -52,6 +55,13 @@ const Joute = () => {
         [matches],
     );
 
+    // Demande la permission de notifications au moment utile : juste après la création de la toute première partie, jamais au lancement.
+    const maybeRequestNotificationPermission = async () => {
+        if (matches.length === 0) {
+            await localNotificationService.requestPermission();
+        }
+    };
+
     const handleRandomOpponent = async () => {
         if (!myId) return;
 
@@ -61,8 +71,29 @@ const Joute = () => {
 
         const match = createMatch({id: generateId("match"), players: [me, opponent]});
         await saveMatch(match);
+        await maybeRequestNotificationPermission();
         setNewMatchModalVisible(false);
         router.push(`/joute/${match.id}`);
+    };
+
+    const handleInviteFriend = async () => {
+        if (!myId) return;
+
+        const code = generateInvitationCode();
+        const me: Player = {id: myId, displayName, avatarUrl: avatarUri ?? null, isGhost: false};
+        const placeholder: Player = {id: code, displayName: "En attente…", avatarUrl: null, isGhost: false};
+
+        const match = createMatch({id: generateId("match"), players: [me, placeholder], invitationCode: code, status: "pending"});
+        await localInvitationRepository.create({code, matchId: match.id, creatorId: myId, createdAt: Date.now(), usedByPlayerId: null});
+        await saveMatch(match);
+        await maybeRequestNotificationPermission();
+        setNewMatchModalVisible(false);
+
+        try {
+            await Share.share({message: `Rejoins mon défi Joute ! ${buildInvitationLink(code)}`});
+        } catch {
+            // Partage annulé ou indisponible : la partie reste visible dans « En attente » pour repartager plus tard.
+        }
     };
 
     return (
@@ -154,6 +185,7 @@ const Joute = () => {
             <NewMatchModal
                 visible={isNewMatchModalVisible}
                 onClose={() => setNewMatchModalVisible(false)}
+                onInviteFriend={handleInviteFriend}
                 onRandomOpponent={handleRandomOpponent}
             />
         </SafeAreaView>

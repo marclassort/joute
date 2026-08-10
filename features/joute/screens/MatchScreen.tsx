@@ -1,4 +1,4 @@
-import {Text, View} from "react-native";
+import {Pressable, Share, Text, View} from "react-native";
 import React, {useEffect} from "react";
 import {styled} from "nativewind";
 import {SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
@@ -9,6 +9,7 @@ import {chooseCategory, resolveTurn, submitAnswer} from "@/game/engine";
 import {drawCategoryOptions, pickQuestions} from "@/game/rules";
 import {ALL_QUESTIONS} from "@/data/questions";
 import {formatTimeRemaining} from "@/lib/utils";
+import {buildInvitationLink} from "@/services/invitations";
 import {useMatch} from "../hooks/useMatch";
 import CategoryChoiceStep from "../components/CategoryChoiceStep";
 import QuestionStep from "../components/QuestionStep";
@@ -56,10 +57,26 @@ const MatchScreen = ({matchId}: MatchScreenProps) => {
     const me = match.players.find((player) => player.id === myId) ?? match.players[0];
 
     if (match.status === "pending") {
+        const handleReshare = async () => {
+            if (!match.invitationCode) return;
+            try {
+                await Share.share({message: `Rejoins mon défi Joute ! ${buildInvitationLink(match.invitationCode)}`});
+            } catch {
+                // Partage annulé ou indisponible.
+            }
+        };
+
         return (
             <SafeAreaView className="flex-1 bg-background p-5">
                 <MatchHeader onBack={goBack} title="Invitation en attente" />
-                <Text className="home-empty-state">En attente que ton ami rejoigne la partie.</Text>
+                <Text className="home-empty-state">
+                    En attente que ton ami rejoigne la partie{match.invitationCode ? ` (code ${match.invitationCode})` : ""}.
+                </Text>
+                {match.invitationCode && (
+                    <Pressable className="joute-new-match-button mt-4" onPress={handleReshare} accessibilityRole="button">
+                        <Text className="joute-new-match-text">Repartager le lien</Text>
+                    </Pressable>
+                )}
             </SafeAreaView>
         );
     }

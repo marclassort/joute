@@ -1,6 +1,6 @@
 import {Category, Match, Player, Question} from "./types";
 import {availableCategories} from "./rules";
-import {chooseCategory, createMatch, resolveTurn, submitAnswer} from "./engine";
+import {chooseCategory, createMatch, joinMatch, resolveTurn, submitAnswer} from "./engine";
 
 const playerOne: Player = {id: "p1", displayName: "Alix", avatarUrl: null, isGhost: false};
 const playerTwo: Player = {id: "p2", displayName: "Bo", avatarUrl: null, isGhost: false};
@@ -31,6 +31,34 @@ describe("createMatch", () => {
         expect(match.currentTurnPlayerId).toBe(playerOne.id);
         expect(match.rounds).toEqual([]);
         expect(match.expiresAt).toBe(48 * 60 * 60 * 1000);
+    });
+
+    it("peut démarrer en pending pour une invitation dont le deuxième joueur n'a pas encore rejoint", () => {
+        const placeholder: Player = {id: "code-abc", displayName: "En attente…", avatarUrl: null, isGhost: false};
+        const match = createMatch({id: "match-1", players: [playerOne, placeholder], status: "pending", now: 0});
+        expect(match.status).toBe("pending");
+    });
+});
+
+describe("joinMatch", () => {
+    function pendingMatch(): Match {
+        const placeholder: Player = {id: "code-abc", displayName: "En attente…", avatarUrl: null, isGhost: false};
+        return createMatch({id: "match-1", players: [playerOne, placeholder], status: "pending", now: 0});
+    }
+
+    it("remplace le second joueur et active la partie", () => {
+        const joined = joinMatch({match: pendingMatch(), player: playerTwo, now: 1000});
+        expect(joined.status).toBe("active");
+        expect(joined.players[1]).toEqual(playerTwo);
+        expect(joined.players[0]).toEqual(playerOne);
+    });
+
+    it("refuse si la partie n'est pas pending", () => {
+        expect(() => joinMatch({match: newMatch(), player: playerTwo})).toThrow();
+    });
+
+    it("refuse que le créateur rejoigne sa propre invitation", () => {
+        expect(() => joinMatch({match: pendingMatch(), player: playerOne})).toThrow();
     });
 });
 

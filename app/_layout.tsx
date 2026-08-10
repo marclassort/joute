@@ -1,12 +1,14 @@
-import {SplashScreen, Stack} from "expo-router";
+import {SplashScreen, Stack, useRouter} from "expo-router";
 import "@/global.css"
 import {useFonts} from "expo-font";
 import {useEffect} from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {ClerkProvider, useAuth} from "@clerk/expo";
 import {tokenCache} from "@clerk/expo/token-cache";
 import {frFR} from "@clerk/localizations";
 import {SubscriptionsProvider} from "@/context/SubscriptionsContext";
 import {MatchesProvider} from "@/features/joute/context/MatchesContext";
+import {PENDING_INVITE_STORAGE_KEY} from "@/services/invitations";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -17,6 +19,7 @@ if (!publishableKey) {
 }
 
 function RootNavigator() {
+  const router = useRouter();
   const [fontsLoaded] = useFonts({
     'sans-regular': require("@/assets/fonts/PlusJakartaSans-Regular.ttf"),
     'sans-bold': require("@/assets/fonts/PlusJakartaSans-Bold.ttf"),
@@ -25,7 +28,7 @@ function RootNavigator() {
     'sans-extrabold': require("@/assets/fonts/PlusJakartaSans-ExtraBold.ttf"),
     'sans-light': require("@/assets/fonts/PlusJakartaSans-Light.ttf"),
   });
-  const { isLoaded: authLoaded } = useAuth();
+  const { isLoaded: authLoaded, isSignedIn } = useAuth();
 
   const ready = fontsLoaded && authLoaded;
 
@@ -34,6 +37,17 @@ function RootNavigator() {
       SplashScreen.hideAsync()
     }
   }, [ready])
+
+  // Reprend une invitation mémorisée avant le passage par la connexion (§4.2 : le code doit survivre à l'authentification).
+  useEffect(() => {
+    if (!ready || !isSignedIn) return;
+
+    AsyncStorage.getItem(PENDING_INVITE_STORAGE_KEY).then((code) => {
+      if (!code) return;
+      AsyncStorage.removeItem(PENDING_INVITE_STORAGE_KEY);
+      router.replace(`/match/${code}`);
+    });
+  }, [ready, isSignedIn, router])
 
   if (!ready) return null;
 

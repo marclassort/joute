@@ -565,10 +565,6 @@
         @apply rounded-2xl border border-border bg-background p-4;
     }
 
-    .joute-option-disabled {
-        @apply opacity-50;
-    }
-
     .joute-option-title {
         @apply text-base font-sans-bold text-primary;
     }
