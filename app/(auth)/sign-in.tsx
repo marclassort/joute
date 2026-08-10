@@ -1,15 +1,41 @@
-import {View, Text} from "react-native";
-import {Link} from "expo-router";
+import { useAuth } from "@clerk/expo";
+import { useHostedAuth } from "@clerk/expo/hosted-auth";
+import { ActivityIndicator, Button, StyleSheet, View } from "react-native";
 
-const signIn = () => {
+const SignIn = () => {
+    const { isLoaded } = useAuth();
+    const { startHostedAuth } = useHostedAuth();
+
+    const handleSignIn = async () => {
+        try {
+            await startHostedAuth({ mode: "sign-in" });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    if (!isLoaded) {
+        return (
+            <View style={styles.container}>
+                <ActivityIndicator size="large" />
+            </View>
+        );
+    }
+
     return (
-        <View>
-            <Text>Se connecter</Text>
-            <Link href="/(auth)/sign-in">
-                Me connecter
-            </Link>
+        <View style={styles.container}>
+            <Button title="Se connecter" onPress={handleSignIn} />
         </View>
-    )
-}
+    );
+};
 
-export default signIn
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        gap: 12,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+});
+
+export default SignIn;
