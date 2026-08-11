@@ -3,7 +3,7 @@ import { Redirect, Tabs } from "expo-router";
 import { Image, View, type ImageSourcePropType } from "react-native";
 import { useEffect, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { isGuestModeEnabled } from "@/services/guestIdentity";
+import { hasSeenOnboarding } from "@/services/guestIdentity";
 // eslint-disable-next-line import/no-named-as-default
 import clsx from "clsx";
 import {colors, components} from "@/constants/theme";
@@ -21,17 +21,18 @@ const TabIcon = ({ focused, icon }: TabIconProps) => (
 
 const TabLayout = () => {
         const insets = useSafeAreaInsets();
-        const { isLoaded, isSignedIn } = useAuth();
-        const [guestMode, setGuestMode] = useState<boolean | null>(null);
+        const { isLoaded } = useAuth();
+        const [onboardingSeen, setOnboardingSeen] = useState<boolean | null>(null);
 
         useEffect(() => {
-            isGuestModeEnabled().then(setGuestMode);
+            hasSeenOnboarding().then(setOnboardingSeen);
         }, []);
 
-        if (!isLoaded || guestMode === null) return null;
+        // Tous les onglets sont accessibles sans connexion — seul l'écran d'accueil doit avoir été vu une fois.
+        if (!isLoaded || onboardingSeen === null) return null;
 
-        if (!isSignedIn && !guestMode) {
-            return <Redirect href="/(auth)/sign-in" />;
+        if (!onboardingSeen) {
+            return <Redirect href="/onboarding" />;
         }
 
         return (
@@ -71,6 +72,7 @@ const TabLayout = () => {
                             }}
                         />
                     ))}
+                    <Tabs.Screen name="settings" options={{ href: null }} />
             </Tabs>
         );
 };

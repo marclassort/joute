@@ -4,24 +4,19 @@ import { styled } from "nativewind";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 // eslint-disable-next-line import/no-named-as-default
 import clsx from "clsx";
+import { useRouter } from "expo-router";
 import { useAuth, useUser } from "@clerk/expo";
 import { formatSubscriptionDateTime } from "@/lib/utils";
 import EditProfileModal from "@/components/EditProfileModal";
-import RequireAccount from "@/components/RequireAccount";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
 const Settings = () => {
     const { signOut } = useAuth();
     const { user } = useUser();
+    const router = useRouter();
     const [isSigningOut, setIsSigningOut] = useState(false);
     const [isEditProfileVisible, setEditProfileVisible] = useState(false);
-
-    const avatarUri = user?.imageUrl;
-    const name = user?.fullName || "Compte Joute";
-    const email = user?.primaryEmailAddress?.emailAddress ?? "Non renseigné";
-    const accountId = user?.id ?? "Non renseigné";
-    const joinedAt = formatSubscriptionDateTime(user?.createdAt?.toISOString());
 
     const handleSignOut = async () => {
         setIsSigningOut(true);
@@ -32,8 +27,32 @@ const Settings = () => {
         }
     };
 
+    if (!user) {
+        return (
+            <SafeAreaView className="flex-1 bg-background p-5">
+                <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="gap-6 pb-10">
+                    <Text className="settings-title">Paramètres</Text>
+                    <View className="settings-card gap-4">
+                        <Text className="settings-card-label">Profil</Text>
+                        <Text className="home-empty-state">
+                            Tu utilises Joute sans compte. Connecte-toi pour sauvegarder ta progression et gérer ton profil.
+                        </Text>
+                        <Pressable className="joute-new-match-button" onPress={() => router.push("/(auth)/sign-in")} accessibilityRole="button">
+                            <Text className="joute-new-match-text">Se connecter</Text>
+                        </Pressable>
+                    </View>
+                </ScrollView>
+            </SafeAreaView>
+        );
+    }
+
+    const avatarUri = user.imageUrl;
+    const name = user.fullName || "Compte Joute";
+    const email = user.primaryEmailAddress?.emailAddress ?? "Non renseigné";
+    const accountId = user.id;
+    const joinedAt = formatSubscriptionDateTime(user.createdAt?.toISOString());
+
     return (
-        <RequireAccount>
         <SafeAreaView className="flex-1 bg-background p-5">
             <ScrollView
                 showsVerticalScrollIndicator={false}
@@ -108,7 +127,6 @@ const Settings = () => {
                 onClose={() => setEditProfileVisible(false)}
             />
         </SafeAreaView>
-        </RequireAccount>
     );
 };
 

@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 import { styled } from "nativewind";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 // eslint-disable-next-line import/no-named-as-default
 import clsx from "clsx";
 import * as WebBrowser from "expo-web-browser";
@@ -19,6 +19,7 @@ import * as Linking from "expo-linking";
 import { useAuth, useSignIn, useSSO } from "@clerk/expo";
 import { colors } from "@/constants/theme";
 import { isValidEmail } from "@/lib/utils";
+import { markOnboardingSeen } from "@/services/guestIdentity";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -30,6 +31,7 @@ const SignIn = () => {
     const { isLoaded } = useAuth();
     const { signIn } = useSignIn();
     const { startSSOFlow } = useSSO();
+    const router = useRouter();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -219,6 +221,16 @@ const SignIn = () => {
                             <Text className="auth-link">Créer un compte</Text>
                         </Link>
                     </View>
+
+                    <Pressable
+                        className="mt-3 items-center"
+                        onPress={async () => {
+                            await markOnboardingSeen();
+                            router.replace("/(tabs)/joute");
+                        }}
+                    >
+                        <Text className="auth-link">Continuer sans compte</Text>
+                    </Pressable>
                 </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>

@@ -3,7 +3,7 @@ import React from "react";
 import {styled} from "nativewind";
 import {SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
 import {useRouter} from "expo-router";
-import {enableGuestMode, markOnboardingSeen} from "@/services/guestIdentity";
+import {markOnboardingSeen} from "@/services/guestIdentity";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -17,7 +17,6 @@ const Onboarding = () => {
 
     const handleGuest = async () => {
         await markOnboardingSeen();
-        await enableGuestMode();
         router.replace("/(tabs)/joute");
     };
 

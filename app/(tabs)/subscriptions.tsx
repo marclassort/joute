@@ -5,7 +5,6 @@ import {SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 import ListHeading from "@/components/ListHeading";
 import SubscriptionCard from "@/components/SubscriptionCard";
 import {useSubscriptions} from "@/context/SubscriptionsContext";
-import RequireAccount from "@/components/RequireAccount";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -14,7 +13,6 @@ const Subscriptions = () => {
     const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<string | null>(null);
 
     return (
-        <RequireAccount>
         <SafeAreaView className="flex-1 bg-background p-5">
             <FlatList
                 ListHeaderComponent={<ListHeading title="Tous les abonnements" />}
@@ -34,7 +32,6 @@ const Subscriptions = () => {
                 contentContainerClassName="pb-30"
             />
         </SafeAreaView>
-        </RequireAccount>
     )
 }
 

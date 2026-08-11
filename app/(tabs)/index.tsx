@@ -3,6 +3,7 @@ import {FlatList, Image, Pressable, Text, View} from "react-native";
 import { styled } from "nativewind";
 import {SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 import {useUser} from "@clerk/expo";
+import {useRouter} from "expo-router";
 import {HOME_BALANCE, UPCOMING_SUBSCRIPTIONS} from "@/constants/data";
 import {icons} from "@/constants/icons";
 import {formatCurrency} from "@/lib/utils";
@@ -13,7 +14,6 @@ import {useState} from "react";
 import SubscriptionCard from "@/components/SubscriptionCard";
 import CreateSubscriptionModal from "@/components/CreateSubscriptionModal";
 import {useSubscriptions} from "@/context/SubscriptionsContext";
-import RequireAccount from "@/components/RequireAccount";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -22,12 +22,12 @@ export default function App() {
     const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<string | null>(null);
     const [isCreateModalVisible, setCreateModalVisible] = useState(false);
     const { user } = useUser();
+    const router = useRouter();
 
     const displayName = user?.firstName || user?.primaryEmailAddress?.emailAddress || "";
     const avatarUri = user?.imageUrl;
 
     return (
-        <RequireAccount>
         <SafeAreaView className="flex-1 bg-background p-5">
             <FlatList
                 ListHeaderComponent={() => (
@@ -46,6 +46,9 @@ export default function App() {
                                     <Image source={icons.add} className="home-add-icon" />
                                 </Pressable>
                             </View>
+                            <Pressable onPress={() => router.push("/settings")} className="ml-3">
+                                <Image source={icons.menu} className="home-add-icon" />
+                            </Pressable>
                         </View>
                         <View className="home-balance-card">
                             <Text className="home-balance-label">
@@ -99,6 +102,5 @@ export default function App() {
                 onCreate={addSubscription}
             />
         </SafeAreaView>
-        </RequireAccount>
     );
 }
