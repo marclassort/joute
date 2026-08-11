@@ -2,10 +2,10 @@ import {Image, Pressable, ScrollView, Share, Text, View} from "react-native";
 import React, {useMemo, useState} from "react";
 import {styled} from "nativewind";
 import {SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
-import {useUser} from "@clerk/expo";
 import {useRouter} from "expo-router";
 import ListHeading from "@/components/ListHeading";
 import {useMatches} from "@/features/joute/hooks/useMatches";
+import {useCurrentPlayer} from "@/features/joute/hooks/useCurrentPlayer";
 import {computeMatchStats} from "@/game/rules";
 import {createMatch} from "@/game/engine";
 import {Player} from "@/game/types";
@@ -20,14 +20,10 @@ import NewMatchModal from "@/features/joute/components/NewMatchModal";
 const SafeAreaView = styled(RNSafeAreaView);
 
 const Joute = () => {
-    const {user} = useUser();
+    const {id: myId, displayName, avatarUrl: avatarUri} = useCurrentPlayer();
     const router = useRouter();
     const {matches, saveMatch} = useMatches();
     const [isNewMatchModalVisible, setNewMatchModalVisible] = useState(false);
-
-    const myId = user?.id ?? "";
-    const displayName = user?.firstName || user?.username || user?.primaryEmailAddress?.emailAddress || "Moi";
-    const avatarUri = user?.imageUrl;
 
     const stats = useMemo(() => computeMatchStats(matches, myId), [matches, myId]);
 

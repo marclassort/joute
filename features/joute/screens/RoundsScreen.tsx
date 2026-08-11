@@ -2,11 +2,11 @@ import {ScrollView, Text, View} from "react-native";
 import React, {useMemo, useState} from "react";
 import {styled} from "nativewind";
 import {SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
-import {useUser} from "@clerk/expo";
 import {useRouter} from "expo-router";
 import {ALL_QUESTIONS} from "@/data/questions";
 import {computeScore} from "@/game/rules";
 import {useMatch} from "../hooks/useMatch";
+import {useCurrentPlayer} from "../hooks/useCurrentPlayer";
 import {FlatQuestionEntry} from "../types";
 import MatchHeader from "../components/MatchHeader";
 import PlayersScoreRow from "../components/PlayersScoreRow";
@@ -20,10 +20,9 @@ export interface RoundsScreenProps {
 }
 
 const RoundsScreen = ({matchId}: RoundsScreenProps) => {
-    const {user} = useUser();
+    const {id: myId} = useCurrentPlayer();
     const router = useRouter();
     const {match, isLoading} = useMatch(matchId);
-    const myId = user?.id ?? "";
     const [openQuestionIndex, setOpenQuestionIndex] = useState<number | null>(null);
 
     const opponent = match?.players.find((player) => player.id !== myId) ?? match?.players[1];

@@ -1,5 +1,4 @@
 import React, {createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useReducer} from "react";
-import {useUser} from "@clerk/expo";
 import {Match} from "@/game/types";
 import {applyExpiration, computeOutcomeForPlayer} from "@/game/rules";
 import {localMatchRepository} from "@/services/localMatchRepository";
@@ -7,6 +6,7 @@ import {GhostOpponentDriver} from "@/services/opponentDriver";
 import {localNotificationService} from "@/services/localNotificationService";
 import {ALL_QUESTIONS} from "@/data/questions";
 import ghosts from "@/data/ghosts";
+import {useCurrentPlayer} from "../hooks/useCurrentPlayer";
 
 const GHOST_IDS = new Set(ghosts.map((ghost) => ghost.id));
 
@@ -91,8 +91,7 @@ interface MatchesContextValue {
 const MatchesContext = createContext<MatchesContextValue | undefined>(undefined);
 
 export const MatchesProvider = ({children}: {children: ReactNode}) => {
-    const {user} = useUser();
-    const myId = user?.id ?? "";
+    const {id: myId} = useCurrentPlayer();
     const [state, dispatch] = useReducer(matchesReducer, {matches: {}, isLoading: true});
 
     const refresh = useCallback(async () => {

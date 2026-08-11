@@ -14,15 +14,22 @@ import { styled } from "nativewind";
 import { Link } from "expo-router";
 // eslint-disable-next-line import/no-named-as-default
 import clsx from "clsx";
-import { useAuth, useSignIn } from "@clerk/expo";
+import * as WebBrowser from "expo-web-browser";
+import * as Linking from "expo-linking";
+import { useAuth, useSignIn, useSSO } from "@clerk/expo";
 import { colors } from "@/constants/theme";
 import { isValidEmail } from "@/lib/utils";
 
+WebBrowser.maybeCompleteAuthSession();
+
 const SafeAreaView = styled(RNSafeAreaView);
+
+type OAuthStrategy = "oauth_apple" | "oauth_google";
 
 const SignIn = () => {
     const { isLoaded } = useAuth();
     const { signIn } = useSignIn();
+    const { startSSOFlow } = useSSO();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -30,6 +37,8 @@ const SignIn = () => {
     const [passwordError, setPasswordError] = useState<string | null>(null);
     const [formError, setFormError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [oauthStrategy, setOauthStrategy] = useState<OAuthStrategy | null>(null);
+    const [oauthError, setOauthError] = useState<string | null>(null);
 
     if (!isLoaded) {
         return (
@@ -73,6 +82,22 @@ const SignIn = () => {
             setFormError("Impossible de vous connecter pour le moment. Réessayez.");
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    const handleOAuth = async (strategy: OAuthStrategy) => {
+        setOauthError(null);
+        setOauthStrategy(strategy);
+        try {
+            const redirectUrl = Linking.createURL("/(tabs)");
+            const { createdSessionId, setActive } = await startSSOFlow({ strategy, redirectUrl });
+            if (createdSessionId && setActive) {
+                await setActive({ session: createdSessionId });
+            }
+        } catch {
+            setOauthError("Impossible de se connecter pour le moment. Réessayez.");
+        } finally {
+            setOauthStrategy(null);
         }
     };
 
@@ -158,6 +183,34 @@ const SignIn = () => {
                                 </Text>
                             </Pressable>
                         </View>
+                    </View>
+
+                    <View className="auth-divider-row">
+                        <View className="auth-divider-line" />
+                        <Text className="auth-divider-text">ou</Text>
+                        <View className="auth-divider-line" />
+                    </View>
+
+                    <View className="gap-3">
+                        <Pressable
+                            className={clsx("auth-secondary-button", oauthStrategy !== null && "opacity-50")}
+                            onPress={() => handleOAuth("oauth_apple")}
+                            disabled={oauthStrategy !== null}
+                        >
+                            <Text className="auth-secondary-button-text">
+                                {oauthStrategy === "oauth_apple" ? "Connexion…" : "Continuer avec Apple"}
+                            </Text>
+                        </Pressable>
+                        <Pressable
+                            className={clsx("auth-secondary-button", oauthStrategy !== null && "opacity-50")}
+                            onPress={() => handleOAuth("oauth_google")}
+                            disabled={oauthStrategy !== null}
+                        >
+                            <Text className="auth-secondary-button-text">
+                                {oauthStrategy === "oauth_google" ? "Connexion…" : "Continuer avec Google"}
+                            </Text>
+                        </Pressable>
+                        {oauthError && <Text className="auth-error">{oauthError}</Text>}
                     </View>
 
                     <View className="auth-link-row">

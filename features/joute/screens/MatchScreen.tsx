@@ -2,7 +2,6 @@ import {Pressable, Share, Text, View} from "react-native";
 import React, {useEffect} from "react";
 import {styled} from "nativewind";
 import {SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
-import {useUser} from "@clerk/expo";
 import {useRouter} from "expo-router";
 import {Category, ROUNDS_PER_MATCH, QUESTIONS_PER_ROUND} from "@/game/types";
 import {chooseCategory, resolveTurn, submitAnswer} from "@/game/engine";
@@ -11,6 +10,7 @@ import {ALL_QUESTIONS} from "@/data/questions";
 import {formatTimeRemaining} from "@/lib/utils";
 import {buildInvitationLink} from "@/services/invitations";
 import {useMatch} from "../hooks/useMatch";
+import {useCurrentPlayer} from "../hooks/useCurrentPlayer";
 import CategoryChoiceStep from "../components/CategoryChoiceStep";
 import QuestionStep from "../components/QuestionStep";
 import RoundSummaryStep from "../components/RoundSummaryStep";
@@ -23,10 +23,9 @@ export interface MatchScreenProps {
 }
 
 const MatchScreen = ({matchId}: MatchScreenProps) => {
-    const {user} = useUser();
+    const {id: myId} = useCurrentPlayer();
     const router = useRouter();
     const {match, isLoading, saveMatch} = useMatch(matchId);
-    const myId = user?.id ?? "";
     const goBack = () => router.back();
 
     useEffect(() => {
