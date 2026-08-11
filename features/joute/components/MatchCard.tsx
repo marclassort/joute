@@ -56,6 +56,22 @@ const MatchCard = ({match, viewerId, variant, onPress}: MatchCardProps) => {
         );
     }
 
+    if (match.status === "pending") {
+        return (
+            <Pressable className="joute-card" onPress={onPress}>
+                <View className="joute-card-row">
+                    <View className="joute-card-avatar" />
+                    <View className="joute-card-copy">
+                        <Text className="joute-card-name" numberOfLines={1}>
+                            Invitation envoyée
+                        </Text>
+                        <Text className="joute-card-meta">Code {match.invitationCode} · en attente qu&#39;un ami rejoigne</Text>
+                    </View>
+                </View>
+            </Pressable>
+        );
+    }
+
     return (
         <Pressable className="joute-card" onPress={onPress}>
             <View className="joute-card-row">

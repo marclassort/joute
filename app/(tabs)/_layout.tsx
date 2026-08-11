@@ -1,7 +1,9 @@
 import { useAuth } from "@clerk/expo";
 import { Redirect, Tabs } from "expo-router";
 import { Image, View, type ImageSourcePropType } from "react-native";
+import { useEffect, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { isGuestModeEnabled } from "@/services/guestIdentity";
 // eslint-disable-next-line import/no-named-as-default
 import clsx from "clsx";
 import {colors, components} from "@/constants/theme";
@@ -20,10 +22,15 @@ const TabIcon = ({ focused, icon }: TabIconProps) => (
 const TabLayout = () => {
         const insets = useSafeAreaInsets();
         const { isLoaded, isSignedIn } = useAuth();
+        const [guestMode, setGuestMode] = useState<boolean | null>(null);
 
-        if (!isLoaded) return null;
+        useEffect(() => {
+            isGuestModeEnabled().then(setGuestMode);
+        }, []);
 
-        if (!isSignedIn) {
+        if (!isLoaded || guestMode === null) return null;
+
+        if (!isSignedIn && !guestMode) {
             return <Redirect href="/(auth)/sign-in" />;
         }
 

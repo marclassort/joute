@@ -7,6 +7,7 @@ import clsx from "clsx";
 import { useAuth, useUser } from "@clerk/expo";
 import { formatSubscriptionDateTime } from "@/lib/utils";
 import EditProfileModal from "@/components/EditProfileModal";
+import RequireAccount from "@/components/RequireAccount";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -32,6 +33,7 @@ const Settings = () => {
     };
 
     return (
+        <RequireAccount>
         <SafeAreaView className="flex-1 bg-background p-5">
             <ScrollView
                 showsVerticalScrollIndicator={false}
@@ -106,6 +108,7 @@ const Settings = () => {
                 onClose={() => setEditProfileVisible(false)}
             />
         </SafeAreaView>
+        </RequireAccount>
     );
 };
 

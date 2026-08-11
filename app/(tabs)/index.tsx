@@ -13,6 +13,7 @@ import {useState} from "react";
 import SubscriptionCard from "@/components/SubscriptionCard";
 import CreateSubscriptionModal from "@/components/CreateSubscriptionModal";
 import {useSubscriptions} from "@/context/SubscriptionsContext";
+import RequireAccount from "@/components/RequireAccount";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -26,6 +27,7 @@ export default function App() {
     const avatarUri = user?.imageUrl;
 
     return (
+        <RequireAccount>
         <SafeAreaView className="flex-1 bg-background p-5">
             <FlatList
                 ListHeaderComponent={() => (
@@ -97,5 +99,6 @@ export default function App() {
                 onCreate={addSubscription}
             />
         </SafeAreaView>
+        </RequireAccount>
     );
 }

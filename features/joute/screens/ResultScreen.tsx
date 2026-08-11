@@ -2,12 +2,12 @@ import {Pressable, ScrollView, Text, View} from "react-native";
 import React from "react";
 import {styled} from "nativewind";
 import {SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
-import {useUser} from "@clerk/expo";
 import {useRouter} from "expo-router";
 import {createMatch} from "@/game/engine";
 import {computeOutcomeForPlayer, computePlayerMatchStats, computeScore} from "@/game/rules";
 import {generateId} from "@/lib/utils";
 import {useMatch} from "../hooks/useMatch";
+import {useCurrentPlayer} from "../hooks/useCurrentPlayer";
 import {CATEGORY_LABELS} from "../constants";
 import MatchHeader from "../components/MatchHeader";
 import PlayersScoreRow from "../components/PlayersScoreRow";
@@ -27,10 +27,9 @@ const VERDICT_LABELS: Record<"win" | "loss" | "draw", string> = {
 const formatSeconds = (ms: number): string => `${(ms / 1000).toFixed(1)} s`;
 
 const ResultScreen = ({matchId}: ResultScreenProps) => {
-    const {user} = useUser();
+    const {id: myId} = useCurrentPlayer();
     const router = useRouter();
     const {match, isLoading, saveMatch} = useMatch(matchId);
-    const myId = user?.id ?? "";
 
     if (isLoading) {
         return (
