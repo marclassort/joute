@@ -207,11 +207,13 @@ const Joute = () => {
                     </HardShadowCard>
 
                     <HardShadowCard borderRadius={20} offsetY={4} className="hub-mode-card hub-mode-card-half bg-plateau-violet" style={{width: "47%"}}>
-                        <Text className="hub-mode-icon">🎯</Text>
-                        <View>
-                            <Text className="hub-mode-title text-plateau-cream">Solo</Text>
-                            <Text className="hub-mode-subtitle text-plateau-cream/70">Bientôt disponible</Text>
-                        </View>
+                        <Pressable className="w-full" onPress={() => router.push("/solo")} accessibilityRole="button" accessibilityLabel="Partie solo">
+                            <Text className="hub-mode-icon">🎯</Text>
+                            <View>
+                                <Text className="hub-mode-title text-plateau-cream">Solo</Text>
+                                <Text className="hub-mode-subtitle text-plateau-cream/70">Choisis un thème, 10 questions</Text>
+                            </View>
+                        </Pressable>
                     </HardShadowCard>
 
                     <HardShadowCard borderRadius={20} offsetY={4} className="hub-mode-card hub-mode-card-half bg-plateau-cyan" style={{width: "47%"}}>

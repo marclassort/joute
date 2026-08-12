@@ -1,0 +1,1 @@
+export const SOLO_QUESTIONS_PER_SESSION = 10;
