@@ -89,6 +89,34 @@ export interface Question {
     validUntil?: string;
 }
 
+/** Nombre de bonnes réponses à atteindre pour remporter une partie Plateau (course collective, 4 à 6 joueurs). */
+export const PLATEAU_WINNING_SCORE = 24;
+export const PLATEAU_MIN_PLAYERS = 4;
+export const PLATEAU_MAX_PLAYERS = 6;
+
+export interface PlateauRound {
+    index: number;
+    playerId: string;
+    category: Category;
+    questionIds: [string, string, string];
+    answers: Answer[];
+}
+
+/**
+ * Partie à 4-6 joueurs sur une piste commune : contrairement au duel, les joueurs ne jouent pas chacun
+ * leur tour dans un ordre imposé — chacun ouvre et joue sa manche à son propre rythme, dès qu'il n'en a
+ * pas déjà une en cours. Les thèmes sont piochés dans un pool commun à toute la partie (le plateau).
+ */
+export interface PlateauMatch {
+    id: string;
+    status: MatchStatus;
+    players: Player[];
+    rounds: PlateauRound[];
+    createdAt: number;
+    updatedAt: number;
+    expiresAt: number;
+}
+
 export type GhostLevel = "débutant" | "intermédiaire" | "expert";
 
 export interface GhostProfile {
