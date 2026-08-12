@@ -2,6 +2,7 @@ import {PLATEAU_WINNING_SCORE, Player, PlateauMatch, PlateauRound, Question} fro
 import {
     availablePlateauCategories,
     canPlayerOpenRound,
+    computePlateauActivity,
     computePlateauScore,
     computePlateauStandings,
     createPlateauMatch,
@@ -186,5 +187,42 @@ describe("availablePlateauCategories", () => {
         }));
         const match: PlateauMatch = {...newMatch(), rounds};
         expect(availablePlateauCategories(match)).toEqual(DRAWABLE_CATEGORIES);
+    });
+});
+
+describe("computePlateauActivity", () => {
+    it("signale un joueur qui n'a encore jamais joué", () => {
+        const match = newMatch();
+        const activity = computePlateauActivity(match);
+        expect(activity.every((entry) => entry.kind === "not-played-yet")).toBe(true);
+        expect(activity.map((entry) => entry.playerId).sort()).toEqual(players.map((p) => p.id).sort());
+    });
+
+    it("signale une manche ouverte non terminée", () => {
+        const match = openPlateauRound({match: newMatch(), playerId: "p1", category: "sciences", questionIds: ["q1", "q2", "q3"], now: 10});
+        const activity = computePlateauActivity(match);
+        const entry = activity.find((e) => e.playerId === "p1");
+        expect(entry).toEqual({kind: "round-opened", playerId: "p1", category: "sciences", at: 10});
+    });
+
+    it("signale une manche terminée avec le score obtenu", () => {
+        let match = openPlateauRound({match: newMatch(), playerId: "p1", category: "sciences", questionIds: ["q1", "q2", "q3"], now: 10});
+        match = submitPlateauAnswer({match, playerId: "p1", question: buildQuestion({id: "q1", correctIndex: 0}), selectedIndex: 0, elapsedMs: 1, now: 11});
+        match = submitPlateauAnswer({match, playerId: "p1", question: buildQuestion({id: "q2", correctIndex: 0}), selectedIndex: 1, elapsedMs: 1, now: 12});
+        match = submitPlateauAnswer({match, playerId: "p1", question: buildQuestion({id: "q3", correctIndex: 0}), selectedIndex: 0, elapsedMs: 1, now: 13});
+
+        const activity = computePlateauActivity(match);
+        const entry = activity.find((e) => e.playerId === "p1");
+        expect(entry).toEqual({kind: "round-completed", playerId: "p1", category: "sciences", correctCount: 2, at: 13});
+    });
+
+    it("trie du plus récent au plus ancien", () => {
+        let match = openPlateauRound({match: newMatch(), playerId: "p1", category: "sciences", questionIds: ["q1", "q2", "q3"], now: 100});
+        match = openPlateauRound({match, playerId: "p2", category: "histoire", questionIds: ["q4", "q5", "q6"], now: 200});
+
+        const activity = computePlateauActivity(match);
+        const p1Index = activity.findIndex((e) => e.playerId === "p1" && e.kind === "round-opened");
+        const p2Index = activity.findIndex((e) => e.playerId === "p2" && e.kind === "round-opened");
+        expect(p2Index).toBeLessThan(p1Index);
     });
 });

@@ -8,6 +8,7 @@ import {tokenCache} from "@clerk/expo/token-cache";
 import {frFR} from "@clerk/localizations";
 import {SubscriptionsProvider} from "@/context/SubscriptionsContext";
 import {MatchesProvider} from "@/features/joute/context/MatchesContext";
+import {PlateauMatchesProvider} from "@/features/plateau/context/PlateauMatchesContext";
 import {PENDING_INVITE_STORAGE_KEY} from "@/services/invitations";
 
 SplashScreen.preventAutoHideAsync();
@@ -60,7 +61,9 @@ export default function RootLayout() {
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache} localization={frFR}>
       <SubscriptionsProvider>
         <MatchesProvider>
-          <RootNavigator />
+          <PlateauMatchesProvider>
+            <RootNavigator />
+          </PlateauMatchesProvider>
         </MatchesProvider>
       </SubscriptionsProvider>
     </ClerkProvider>

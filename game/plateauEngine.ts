@@ -14,6 +14,35 @@ export function computePlateauStandings(match: PlateauMatch): {player: Player; s
         .sort((a, b) => b.score - a.score);
 }
 
+export type PlateauActivityEntry =
+    | {kind: "round-completed"; playerId: string; category: Category; correctCount: number; at: number}
+    | {kind: "round-opened"; playerId: string; category: Category; at: number}
+    | {kind: "not-played-yet"; playerId: string; at: number};
+
+/** Fil d'activité du plateau, dérivé des manches (pas de journal séparé à maintenir) : le plus récent d'abord. */
+export function computePlateauActivity(match: PlateauMatch): PlateauActivityEntry[] {
+    const entries: PlateauActivityEntry[] = [];
+
+    for (const round of match.rounds) {
+        if (round.answers.length >= round.questionIds.length) {
+            const correctCount = round.answers.filter((answer) => answer.isCorrect).length;
+            const at = round.answers[round.answers.length - 1]?.answeredAt ?? round.openedAt;
+            entries.push({kind: "round-completed", playerId: round.playerId, category: round.category, correctCount, at});
+        } else {
+            entries.push({kind: "round-opened", playerId: round.playerId, category: round.category, at: round.openedAt});
+        }
+    }
+
+    for (const player of match.players) {
+        const hasPlayed = match.rounds.some((round) => round.playerId === player.id);
+        if (!hasPlayed) {
+            entries.push({kind: "not-played-yet", playerId: player.id, at: match.createdAt});
+        }
+    }
+
+    return entries.sort((a, b) => b.at - a.at);
+}
+
 /** Thèmes encore piochables sur le plateau commun : tous les joueurs partagent le même pool, un thème joué par n'importe qui devient indisponible aux autres — jusqu'à épuisement, où il redevient piochable. */
 export function availablePlateauCategories(match: PlateauMatch) {
     const used = new Set(match.rounds.map((round) => round.category));

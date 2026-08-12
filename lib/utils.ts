@@ -47,3 +47,16 @@ export const formatTimeRemaining = (expiresAt: number, now: number = Date.now())
 
 export const isExpiringSoon = (expiresAt: number, now: number = Date.now()): boolean =>
   expiresAt - now <= 6 * 60 * 60 * 1000;
+
+export const formatRelativeTime = (pastAt: number, now: number = Date.now()): string => {
+  const diffMs = Math.max(0, now - pastAt);
+  const minutes = Math.floor(diffMs / (60 * 1000));
+  if (minutes < 1) return "à l'instant";
+  if (minutes < 60) return `${minutes} min`;
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} h`;
+
+  const days = Math.floor(hours / 24);
+  return `${days} j`;
+};

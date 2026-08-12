@@ -1297,4 +1297,88 @@
     .duel-recap-incorrect {
         @apply text-plateau-pink;
     }
+
+    .plateau-header-title {
+        @apply font-display text-lg text-plateau-cream;
+    }
+
+    .plateau-header-subtitle {
+        @apply mt-[3px] text-[11.5px] font-sans-semibold text-plateau-cream/50;
+    }
+
+    .plateau-turn-pill {
+        @apply self-start rounded-full bg-plateau-orange px-3 py-[7px];
+    }
+
+    .plateau-turn-pill-text {
+        @apply font-display text-[11px] text-plateau-ink;
+    }
+
+    .plateau-track-card {
+        @apply mt-5 rounded-[24px] bg-plateau-ink-surface p-4;
+    }
+
+    .plateau-track-label {
+        @apply mb-4 font-display text-[10px] uppercase tracking-[2px] text-plateau-cream/45;
+    }
+
+    .plateau-track-row {
+        @apply flex-row items-center gap-[10px];
+    }
+
+    .plateau-track-avatar {
+        @apply size-[30px] rounded-full border-2;
+    }
+
+    .plateau-track-bar-track {
+        @apply relative h-3 flex-1 overflow-visible rounded-full bg-plateau-cream/10;
+    }
+
+    .plateau-track-bar-fill {
+        @apply h-full rounded-full;
+    }
+
+    .plateau-track-bar-knob {
+        @apply absolute -top-[5px] size-[22px] rounded-full border-2 border-plateau-ink-surface;
+    }
+
+    .plateau-track-score {
+        @apply w-[34px] text-right font-display text-sm text-plateau-cream;
+    }
+
+    .plateau-activity-label {
+        @apply mb-3 mt-6 font-display text-[11px] uppercase tracking-[2px] text-plateau-cream/45;
+    }
+
+    .plateau-activity-row {
+        @apply flex-row items-center gap-[11px] rounded-2xl bg-plateau-cream/[0.06] p-3;
+    }
+
+    .plateau-activity-avatar {
+        @apply size-7 rounded-full;
+    }
+
+    .plateau-activity-text {
+        @apply flex-1 text-[12.5px] font-sans-medium leading-[1.35] text-plateau-cream/85;
+    }
+
+    .plateau-activity-name {
+        @apply font-sans-bold text-plateau-cream;
+    }
+
+    .plateau-activity-time {
+        @apply text-[11px] font-sans-bold text-plateau-cream/40;
+    }
+
+    .plateau-activity-time-alert {
+        @apply text-plateau-orange;
+    }
+
+    .plateau-cta-button {
+        @apply items-center border-2 border-plateau-ink bg-plateau-lime p-[18px];
+    }
+
+    .plateau-cta-text {
+        @apply font-display text-base text-plateau-ink;
+    }
 }
