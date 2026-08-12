@@ -486,34 +486,6 @@
         @apply text-accent;
     }
 
-    .joute-header {
-        @apply flex-row items-center gap-4;
-    }
-
-    .joute-avatar {
-        @apply size-16 shrink-0 rounded-full;
-    }
-
-    .joute-header-copy {
-        @apply min-w-0 flex-1;
-    }
-
-    .joute-header-name {
-        @apply text-2xl font-sans-bold text-primary;
-    }
-
-    .joute-stats-row {
-        @apply mt-1 flex-row items-center gap-3;
-    }
-
-    .joute-stats-text {
-        @apply text-sm font-sans-semibold text-muted-foreground;
-    }
-
-    .joute-stats-streak {
-        @apply text-sm font-sans-bold text-accent;
-    }
-
     .joute-new-match-button {
         @apply mt-5 items-center rounded-2xl bg-accent py-5;
     }
@@ -760,5 +732,153 @@
 
     .joute-modal-pager {
         @apply flex-1;
+    }
+
+    .hub-header {
+        @apply flex-row items-center gap-3;
+    }
+
+    .hub-avatar {
+        @apply size-[52px] items-center justify-center rounded-full bg-plateau-violet;
+    }
+
+    .hub-avatar-text {
+        @apply font-display text-xl text-plateau-cream;
+    }
+
+    .hub-greeting {
+        @apply font-display text-xl text-primary;
+    }
+
+    .hub-pills-row {
+        @apply mt-1 flex-row items-center gap-2;
+    }
+
+    .hub-pill {
+        @apply self-start rounded-full border-[1.5px] border-primary px-2 py-1;
+    }
+
+    .hub-pill-text {
+        @apply font-sans-bold text-[11px] text-primary;
+    }
+
+    .hub-gear-button {
+        @apply size-10 items-center justify-center rounded-xl border-2 border-primary bg-background;
+    }
+
+    .hub-gear-icon {
+        @apply text-lg;
+    }
+
+    .hub-hero-card {
+        @apply relative overflow-hidden rounded-[22px] bg-plateau-ink px-5 py-[18px];
+    }
+
+    .hub-hero-decoration {
+        @apply absolute -right-[30px] -top-[30px] size-[130px] rounded-full bg-plateau-violet opacity-50;
+    }
+
+    .hub-hero-label {
+        @apply font-display text-[10px] uppercase tracking-[2px] text-plateau-lime;
+    }
+
+    .hub-hero-row {
+        @apply mt-3 flex-row items-center gap-3;
+    }
+
+    .hub-hero-avatar {
+        @apply size-11 items-center justify-center rounded-full border-2 border-plateau-cream bg-plateau-pink;
+    }
+
+    .hub-hero-avatar-text {
+        @apply font-display text-sm text-plateau-cream;
+    }
+
+    .hub-hero-copy {
+        @apply min-w-0 flex-1;
+    }
+
+    .hub-hero-name {
+        @apply font-display text-[17px] text-plateau-cream;
+    }
+
+    .hub-hero-meta {
+        @apply mt-[3px] text-[12.5px] font-sans-medium text-plateau-cream/60;
+    }
+
+    .hub-hero-score {
+        @apply font-display text-2xl text-plateau-lime;
+    }
+
+    .hub-hero-progress-row {
+        @apply mt-[14px] flex-row gap-1;
+    }
+
+    .hub-hero-progress-seg {
+        @apply h-[6px] flex-1 rounded-full;
+    }
+
+    .hub-hero-cta {
+        @apply mt-[14px] items-center rounded-2xl bg-plateau-orange p-3;
+    }
+
+    .hub-hero-cta-text {
+        @apply font-display text-sm text-plateau-ink;
+    }
+
+    .hub-hero-empty-title {
+        @apply font-display text-[15px] text-plateau-cream;
+    }
+
+    .hub-hero-empty-subtitle {
+        @apply mt-1 text-[12.5px] font-sans-medium text-plateau-cream/60;
+    }
+
+    .hub-modes-label {
+        @apply mb-3 mt-5 font-display text-[11px] uppercase tracking-[2px] text-primary/50;
+    }
+
+    .hub-modes-grid {
+        @apply flex-row flex-wrap gap-3;
+    }
+
+    .hub-mode-card {
+        @apply border-2 border-primary p-4;
+    }
+
+    .hub-mode-card-wide {
+        @apply w-full flex-row items-center gap-3;
+    }
+
+    .hub-mode-card-half {
+        @apply min-h-[104px] flex-1 basis-[47%] justify-between;
+    }
+
+    .hub-mode-icon {
+        @apply text-[26px] leading-none;
+    }
+
+    .hub-mode-icon-lg {
+        @apply text-[30px] leading-none;
+    }
+
+    .hub-mode-title {
+        @apply font-display text-base;
+    }
+
+    .hub-mode-title-lg {
+        @apply font-display text-lg;
+    }
+
+    .hub-mode-subtitle {
+        @apply mt-[2px] text-[12px] font-sans-medium;
+    }
+
+    .hub-mode-arrow {
+        @apply font-display text-xl text-plateau-ink;
+    }
+
+    .hub-mode-dashed {
+        @apply w-full flex-row items-center gap-3 rounded-[20px] border-2 border-dashed border-primary/35 bg-background p-4;
     }
 }
