@@ -570,22 +570,6 @@
         @apply mt-1 text-sm font-sans-medium text-muted-foreground;
     }
 
-    .joute-theme-card {
-        @apply items-center gap-2 rounded-2xl border border-border p-5;
-    }
-
-    .joute-theme-icon {
-        @apply text-4xl;
-    }
-
-    .joute-theme-label {
-        @apply text-base font-sans-bold text-primary;
-    }
-
-    .joute-progress-track {
-        @apply h-2 overflow-hidden rounded-full bg-muted;
-    }
-
     .joute-question-statement {
         @apply text-xl font-sans-bold text-primary;
     }
@@ -594,48 +578,20 @@
         @apply min-h-11 justify-center rounded-2xl border border-border bg-background px-4 py-4;
     }
 
-    .joute-choice-selected {
-        @apply border-accent bg-accent/10;
-    }
-
     .joute-choice-text {
         @apply text-base font-sans-medium text-primary;
-    }
-
-    .joute-choice-text-selected {
-        @apply font-sans-bold text-accent;
     }
 
     .joute-recap-card {
         @apply gap-2 rounded-2xl border border-border bg-card p-4;
     }
 
-    .joute-recap-statement {
-        @apply text-base font-sans-bold text-primary;
-    }
-
-    .joute-recap-answer {
-        @apply text-sm font-sans-semibold text-primary;
-    }
-
     .joute-recap-explanation {
         @apply text-sm font-sans-medium text-muted-foreground;
     }
 
-    .joute-recap-footer {
-        @apply mt-1 flex-row items-center gap-4;
-    }
-
-    .joute-recap-result {
-        @apply text-sm font-sans-bold;
-    }
-
     .joute-recap-correct {
         @apply text-success;
-    }
-
-    .joute-recap-incorrect {
-        @apply text-destructive;
     }
 
     .joute-recap-correct-choice {
@@ -1176,5 +1132,165 @@
 
     .duel-lobby-secondary-text {
         @apply text-sm font-sans-bold text-plateau-cream/80;
+    }
+
+    .duel-header {
+        @apply flex-row items-center justify-between;
+    }
+
+    .duel-close-button {
+        @apply size-9 items-center justify-center rounded-xl bg-plateau-cream/10;
+    }
+
+    .duel-close-icon {
+        @apply font-display text-sm text-plateau-cream;
+    }
+
+    .duel-header-title {
+        @apply font-display text-[13px] text-plateau-cream;
+    }
+
+    .duel-header-subtitle {
+        @apply mt-[2px] text-[11px] font-sans-semibold text-plateau-cream/50;
+    }
+
+    .duel-score-row {
+        @apply mt-[18px] flex-row items-center justify-between;
+    }
+
+    .duel-score-side {
+        @apply flex-row items-center gap-[9px];
+    }
+
+    .duel-score-side-right {
+        @apply flex-row-reverse;
+    }
+
+    .duel-avatar {
+        @apply size-[34px] rounded-full;
+    }
+
+    .duel-player-name {
+        @apply font-display text-xs text-plateau-cream;
+    }
+
+    .duel-player-score {
+        @apply font-display text-lg leading-tight;
+    }
+
+    .duel-timer-track {
+        @apply mt-[18px] h-2 overflow-hidden rounded-full bg-plateau-cream/10;
+    }
+
+    .duel-timer-fill {
+        @apply h-full rounded-full;
+    }
+
+    .duel-question-card {
+        @apply mt-[18px] rounded-[24px] bg-plateau-ink-surface p-5;
+    }
+
+    .duel-question-label {
+        @apply font-display text-[10px] uppercase tracking-[2.5px] text-plateau-gold;
+    }
+
+    .duel-question-statement {
+        @apply mt-3 font-display text-[23px] leading-[1.25] tracking-[-0.3px] text-plateau-cream;
+    }
+
+    .duel-choices {
+        @apply mt-[18px] gap-[11px];
+    }
+
+    .duel-choice {
+        @apply flex-row items-center gap-3 rounded-[18px] border-[1.5px] border-plateau-cream/15 bg-plateau-cream/[0.07] p-4;
+    }
+
+    .duel-choice-selected {
+        @apply border-plateau-orange bg-plateau-orange;
+    }
+
+    .duel-choice-badge {
+        @apply size-7 items-center justify-center rounded-[9px] bg-plateau-cream/10;
+    }
+
+    .duel-choice-badge-selected {
+        @apply bg-plateau-ink/20;
+    }
+
+    .duel-choice-badge-text {
+        @apply font-display text-[13px] text-plateau-cream;
+    }
+
+    .duel-choice-badge-text-selected {
+        @apply text-plateau-ink;
+    }
+
+    .duel-choice-text {
+        @apply flex-1 font-sans-semibold text-[15px] text-plateau-cream;
+    }
+
+    .duel-choice-text-selected {
+        @apply text-plateau-ink;
+    }
+
+    .duel-step-heading {
+        @apply font-display text-[13px] text-plateau-cream;
+    }
+
+    .duel-step-subheading {
+        @apply mt-1 font-display text-xl text-plateau-cream;
+    }
+
+    .duel-category-card {
+        @apply flex-row items-center gap-3 rounded-[18px] border-2 border-plateau-cream/40 p-4;
+    }
+
+    .duel-category-icon {
+        @apply text-xl;
+    }
+
+    .duel-category-label {
+        @apply font-display text-[15px] text-plateau-ink;
+    }
+
+    .duel-recap-heading {
+        @apply font-display text-[13px] text-plateau-cream;
+    }
+
+    .duel-recap-subheading {
+        @apply mt-1 text-[13px] font-sans-medium text-plateau-cream/60;
+    }
+
+    .duel-recap-card {
+        @apply gap-2 rounded-2xl bg-plateau-ink-surface p-4;
+    }
+
+    .duel-recap-statement {
+        @apply font-sans-semibold text-sm text-plateau-cream;
+    }
+
+    .duel-recap-answer {
+        @apply text-[13px] font-sans-medium text-plateau-lime;
+    }
+
+    .duel-recap-explanation {
+        @apply text-xs font-sans-medium text-plateau-cream/60;
+    }
+
+    .duel-recap-footer {
+        @apply mt-1 flex-row gap-3;
+    }
+
+    .duel-recap-result {
+        @apply text-xs font-sans-bold;
+    }
+
+    .duel-recap-correct {
+        @apply text-plateau-lime;
+    }
+
+    .duel-recap-incorrect {
+        @apply text-plateau-pink;
     }
 }

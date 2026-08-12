@@ -5,7 +5,7 @@ import {SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
 import {useRouter} from "expo-router";
 import {Category, QUESTIONS_PER_ROUND} from "@/game/types";
 import {chooseCategory, resolveTurn, submitAnswer} from "@/game/engine";
-import {drawCategoryOptions, pickQuestions} from "@/game/rules";
+import {computeScore, drawCategoryOptions, pickQuestions} from "@/game/rules";
 import {ALL_QUESTIONS} from "@/data/questions";
 import {formatTimeRemaining} from "@/lib/utils";
 import {buildInvitationLink} from "@/services/invitations";
@@ -113,9 +113,13 @@ const MatchScreen = ({matchId}: MatchScreenProps) => {
     if (!round) {
         const options = drawCategoryOptions(match, 3, `${match.id}:${match.currentRoundIndex}:choices`);
         return (
-            <SafeAreaView className="flex-1 bg-background p-5">
-                <MatchHeader onBack={goBack} title={`Manche ${match.currentRoundIndex + 1}`} />
-                <CategoryChoiceStep options={options} roundNumber={match.currentRoundIndex + 1} onChoose={handleChooseCategory} />
+            <SafeAreaView className="flex-1 bg-plateau-ink p-5">
+                <Pressable className="duel-close-button" onPress={goBack} accessibilityRole="button" accessibilityLabel="Retour">
+                    <Text className="duel-close-icon">←</Text>
+                </Pressable>
+                <View className="mt-5">
+                    <CategoryChoiceStep options={options} roundNumber={match.currentRoundIndex + 1} onChoose={handleChooseCategory} />
+                </View>
             </SafeAreaView>
         );
     }
@@ -140,12 +144,16 @@ const MatchScreen = ({matchId}: MatchScreenProps) => {
         };
 
         return (
-            <SafeAreaView className="flex-1 bg-background p-5">
-                <MatchHeader onBack={goBack} title={`${me.displayName} vs ${opponent.displayName}`} />
+            <SafeAreaView className="flex-1 bg-plateau-ink p-5">
                 <QuestionStep
                     question={question}
                     questionNumber={myAnsweredIds.size + 1}
                     roundNumber={match.currentRoundIndex + 1}
+                    me={me}
+                    opponent={opponent}
+                    myScore={computeScore(match, myId)}
+                    opponentScore={computeScore(match, opponent.id)}
+                    onClose={goBack}
                     onAnswer={handleAnswer}
                 />
             </SafeAreaView>
@@ -162,9 +170,13 @@ const MatchScreen = ({matchId}: MatchScreenProps) => {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-background p-5">
-            <MatchHeader onBack={goBack} title="Fin de manche" />
-            <RoundSummaryStep round={round} questions={roundQuestions} viewerId={myId} opponentId={opponent.id} onContinue={handleContinue} />
+        <SafeAreaView className="flex-1 bg-plateau-ink p-5">
+            <Pressable className="duel-close-button" onPress={goBack} accessibilityRole="button" accessibilityLabel="Retour">
+                <Text className="duel-close-icon">←</Text>
+            </Pressable>
+            <View className="mt-5">
+                <RoundSummaryStep round={round} questions={roundQuestions} viewerId={myId} opponentId={opponent.id} onContinue={handleContinue} />
+            </View>
         </SafeAreaView>
     );
 };

@@ -1,21 +1,28 @@
-import {Pressable, Text, View} from "react-native";
+import {Image, Pressable, Text, View} from "react-native";
 import React, {useEffect, useRef, useState} from "react";
 // eslint-disable-next-line import/no-named-as-default
 import clsx from "clsx";
 import * as Haptics from "expo-haptics";
 import Animated, {Easing, useAnimatedStyle, useReducedMotion, useSharedValue, withTiming} from "react-native-reanimated";
-import {Question} from "@/game/types";
-import {colors} from "@/constants/theme";
+import {Player, Question} from "@/game/types";
+import {plateauColors} from "@/constants/theme";
 import {QUESTION_ALERT_THRESHOLD_MS, QUESTION_DURATION_MS, QUESTION_TRANSITION_MS} from "../constants";
 
 export interface QuestionStepProps {
     question: Question;
     questionNumber: number;
     roundNumber: number;
+    me: Player;
+    opponent: Player;
+    myScore: number;
+    opponentScore: number;
+    onClose: () => void;
     onAnswer: (selectedIndex: number | null, elapsedMs: number) => void;
 }
 
-const QuestionStep = ({question, questionNumber, roundNumber, onAnswer}: QuestionStepProps) => {
+const LETTERS = ["A", "B", "C", "D"];
+
+const QuestionStep = ({question, questionNumber, roundNumber, me, opponent, myScore, opponentScore, onClose, onAnswer}: QuestionStepProps) => {
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
     const [isAnswered, setIsAnswered] = useState(false);
     const [isUrgent, setIsUrgent] = useState(false);
@@ -70,38 +77,82 @@ const QuestionStep = ({question, questionNumber, roundNumber, onAnswer}: Questio
     }));
 
     return (
-        <View className="gap-5">
-            <Text className="joute-step-title">
-                Manche {roundNumber} · Question {questionNumber} / 3
-            </Text>
+        <View className="gap-0">
+            <View className="duel-header">
+                <Pressable className="duel-close-button" onPress={onClose} accessibilityRole="button" accessibilityLabel="Quitter la partie">
+                    <Text className="duel-close-icon">✕</Text>
+                </Pressable>
+                <View className="items-center">
+                    <Text className="duel-header-title">
+                        Manche {roundNumber} · {opponent.displayName}
+                    </Text>
+                    <Text className="duel-header-subtitle">Question {questionNumber} / 3</Text>
+                </View>
+                <View className="size-9" />
+            </View>
 
-            <View className="joute-progress-track" accessibilityElementsHidden importantForAccessibility="no">
+            <View className="duel-score-row">
+                <View className="duel-score-side">
+                    {me.avatarUrl ? (
+                        <Image source={{uri: me.avatarUrl}} className="duel-avatar" />
+                    ) : (
+                        <View className="duel-avatar" style={{backgroundColor: plateauColors.violet}} />
+                    )}
+                    <View>
+                        <Text className="duel-player-name">Toi</Text>
+                        <Text className="duel-player-score" style={{color: plateauColors.lime}}>
+                            {myScore}
+                        </Text>
+                    </View>
+                </View>
+                <View className="duel-score-side duel-score-side-right">
+                    {opponent.avatarUrl ? (
+                        <Image source={{uri: opponent.avatarUrl}} className="duel-avatar" />
+                    ) : (
+                        <View className="duel-avatar" style={{backgroundColor: plateauColors.pink}} />
+                    )}
+                    <View className="items-end">
+                        <Text className="duel-player-name" numberOfLines={1}>
+                            {opponent.displayName}
+                        </Text>
+                        <Text className="duel-player-score text-plateau-cream">{opponentScore}</Text>
+                    </View>
+                </View>
+            </View>
+
+            <View className="duel-timer-track" accessibilityElementsHidden importantForAccessibility="no">
                 <Animated.View
-                    style={[
-                        {height: "100%", borderRadius: 999, backgroundColor: isUrgent ? colors.destructive : colors.accent},
-                        animatedFillStyle,
-                    ]}
+                    className="duel-timer-fill"
+                    style={[{backgroundColor: isUrgent ? plateauColors.pink : plateauColors.orange}, animatedFillStyle]}
                 />
             </View>
 
-            <Text className="joute-question-statement">{question.statement}</Text>
+            <View className="duel-question-card">
+                <Text className="duel-question-label">
+                    {question.category} · difficulté {question.difficulty}
+                </Text>
+                <Text className="duel-question-statement">{question.statement}</Text>
+            </View>
 
-            <View className="gap-3">
+            <View className="duel-choices">
                 {question.choices.map((choice, index) => {
                     const isSelected = selectedIndex === index;
                     return (
                         <Pressable
                             key={choice}
-                            className={clsx("joute-choice", isSelected && "joute-choice-selected")}
+                            className={clsx("duel-choice", isSelected && "duel-choice-selected")}
                             onPress={() => handleAnswer(index)}
                             disabled={isAnswered}
                             accessibilityRole="button"
-                            accessibilityLabel={`Proposition ${index + 1} : ${choice}`}
+                            accessibilityLabel={`Proposition ${LETTERS[index]} : ${choice}`}
                             accessibilityState={{selected: isSelected, disabled: isAnswered}}
                         >
-                            <Text className={clsx("joute-choice-text", isSelected && "joute-choice-text-selected")}>
-                                {choice}
-                            </Text>
+                            <View className={clsx("duel-choice-badge", isSelected && "duel-choice-badge-selected")}>
+                                <Text className={clsx("duel-choice-badge-text", isSelected && "duel-choice-badge-text-selected")}>
+                                    {LETTERS[index]}
+                                </Text>
+                            </View>
+                            <Text className={clsx("duel-choice-text", isSelected && "duel-choice-text-selected")}>{choice}</Text>
                         </Pressable>
                     );
                 })}

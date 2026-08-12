@@ -4,6 +4,7 @@ import React, {useEffect} from "react";
 import clsx from "clsx";
 import * as Haptics from "expo-haptics";
 import {Question, Round} from "@/game/types";
+import HardShadowCard from "./HardShadowCard";
 import {CATEGORY_LABELS} from "../constants";
 
 export interface RoundSummaryStepProps {
@@ -36,8 +37,8 @@ const RoundSummaryStep = ({round, questions, viewerId, opponentId, onContinue}: 
     return (
         <View className="gap-5">
             <View>
-                <Text className="joute-step-title">{CATEGORY_LABELS[round.category]}</Text>
-                <Text className="joute-step-subtitle">
+                <Text className="duel-recap-heading">{CATEGORY_LABELS[round.category]}</Text>
+                <Text className="duel-recap-subheading">
                     Ton score sur cette manche : {myScore} / 3
                     {opponentHasPlayed ? ` · Adversaire : ${opponentScore} / 3` : ""}
                 </Text>
@@ -49,22 +50,22 @@ const RoundSummaryStep = ({round, questions, viewerId, opponentId, onContinue}: 
                     const opponentAnswer = opponentAnswers.find((answer) => answer.questionId === question.id);
 
                     return (
-                        <View key={question.id} className="joute-recap-card">
-                            <Text className="joute-recap-statement">{question.statement}</Text>
-                            <Text className="joute-recap-answer">
+                        <View key={question.id} className="duel-recap-card">
+                            <Text className="duel-recap-statement">{question.statement}</Text>
+                            <Text className="duel-recap-answer">
                                 Bonne réponse : {question.choices[question.correctIndex]}
                             </Text>
-                            <Text className="joute-recap-explanation">{question.explanation}</Text>
+                            <Text className="duel-recap-explanation">{question.explanation}</Text>
 
-                            <View className="joute-recap-footer">
-                                <Text className={clsx("joute-recap-result", myAnswer?.isCorrect ? "joute-recap-correct" : "joute-recap-incorrect")}>
+                            <View className="duel-recap-footer">
+                                <Text className={clsx("duel-recap-result", myAnswer?.isCorrect ? "duel-recap-correct" : "duel-recap-incorrect")}>
                                     {myAnswer?.isCorrect ? "✓ Toi" : "✕ Toi"}
                                 </Text>
                                 {opponentAnswer && (
                                     <Text
                                         className={clsx(
-                                            "joute-recap-result",
-                                            opponentAnswer.isCorrect ? "joute-recap-correct" : "joute-recap-incorrect",
+                                            "duel-recap-result",
+                                            opponentAnswer.isCorrect ? "duel-recap-correct" : "duel-recap-incorrect",
                                         )}
                                     >
                                         {opponentAnswer.isCorrect ? "✓ Adversaire" : "✕ Adversaire"}
@@ -76,9 +77,11 @@ const RoundSummaryStep = ({round, questions, viewerId, opponentId, onContinue}: 
                 })}
             </View>
 
-            <Pressable className="joute-new-match-button" onPress={onContinue} accessibilityRole="button">
-                <Text className="joute-new-match-text">Continuer</Text>
-            </Pressable>
+            <HardShadowCard borderRadius={20} offsetY={5} className="solo-cta-button">
+                <Pressable onPress={onContinue} accessibilityRole="button">
+                    <Text className="solo-cta-text">Continuer</Text>
+                </Pressable>
+            </HardShadowCard>
         </View>
     );
 };

@@ -13,22 +13,22 @@ const CategoryChoiceStep = ({options, roundNumber, onChoose}: CategoryChoiceStep
     return (
         <View className="gap-5">
             <View>
-                <Text className="joute-step-title">Manche {roundNumber}</Text>
-                <Text className="joute-step-subtitle">Choisis un thème</Text>
+                <Text className="duel-step-heading">Manche {roundNumber}</Text>
+                <Text className="duel-step-subheading">Choisis un thème</Text>
             </View>
 
             <View className="gap-3">
                 {options.map((category) => (
                     <Pressable
                         key={category}
-                        className="joute-theme-card"
+                        className="duel-category-card"
                         style={{backgroundColor: CATEGORY_COLORS[category]}}
                         onPress={() => onChoose(category)}
                         accessibilityRole="button"
                         accessibilityLabel={`Choisir le thème ${CATEGORY_LABELS[category]}`}
                     >
-                        <Text className="joute-theme-icon">{CATEGORY_ICONS[category]}</Text>
-                        <Text className="joute-theme-label">{CATEGORY_LABELS[category]}</Text>
+                        <Text className="duel-category-icon">{CATEGORY_ICONS[category]}</Text>
+                        <Text className="duel-category-label">{CATEGORY_LABELS[category]}</Text>
                     </Pressable>
                 ))}
             </View>
