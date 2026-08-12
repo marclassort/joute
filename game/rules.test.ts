@@ -132,6 +132,13 @@ describe("availableCategories / drawCategoryOptions", () => {
         const match = buildMatch();
         expect(drawCategoryOptions(match, 3, "même-graine")).toEqual(drawCategoryOptions(match, 3, "même-graine"));
     });
+
+    it("redevient disponible une fois tous les thèmes épuisés, plutôt que de renvoyer une liste vide", () => {
+        const usedRounds = DRAWABLE_CATEGORIES.map((category, index) => buildRound({index, category}));
+        const match = buildMatch({rounds: usedRounds});
+
+        expect(availableCategories(match)).toEqual(DRAWABLE_CATEGORIES);
+    });
 });
 
 describe("pickQuestions", () => {

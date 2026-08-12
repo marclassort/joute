@@ -3,7 +3,7 @@ import React, {useEffect} from "react";
 import {styled} from "nativewind";
 import {SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
 import {useRouter} from "expo-router";
-import {Category, ROUNDS_PER_MATCH, QUESTIONS_PER_ROUND} from "@/game/types";
+import {Category, QUESTIONS_PER_ROUND} from "@/game/types";
 import {chooseCategory, resolveTurn, submitAnswer} from "@/game/engine";
 import {drawCategoryOptions, pickQuestions} from "@/game/rules";
 import {ALL_QUESTIONS} from "@/data/questions";
@@ -114,7 +114,7 @@ const MatchScreen = ({matchId}: MatchScreenProps) => {
         const options = drawCategoryOptions(match, 3, `${match.id}:${match.currentRoundIndex}:choices`);
         return (
             <SafeAreaView className="flex-1 bg-background p-5">
-                <MatchHeader onBack={goBack} title={`Manche ${match.currentRoundIndex + 1} sur ${ROUNDS_PER_MATCH}`} />
+                <MatchHeader onBack={goBack} title={`Manche ${match.currentRoundIndex + 1}`} />
                 <CategoryChoiceStep options={options} roundNumber={match.currentRoundIndex + 1} onChoose={handleChooseCategory} />
             </SafeAreaView>
         );

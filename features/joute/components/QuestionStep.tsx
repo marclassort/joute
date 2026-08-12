@@ -72,7 +72,7 @@ const QuestionStep = ({question, questionNumber, roundNumber, onAnswer}: Questio
     return (
         <View className="gap-5">
             <Text className="joute-step-title">
-                Manche {roundNumber} sur 8 · Question {questionNumber} / 3
+                Manche {roundNumber} · Question {questionNumber} / 3
             </Text>
 
             <View className="joute-progress-track" accessibilityElementsHidden importantForAccessibility="no">

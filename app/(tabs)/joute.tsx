@@ -8,7 +8,7 @@ import {useMatches} from "@/features/joute/hooks/useMatches";
 import {useCurrentPlayer} from "@/features/joute/hooks/useCurrentPlayer";
 import {computeMatchStats, computeScore} from "@/game/rules";
 import {createMatch} from "@/game/engine";
-import {Player, QUESTIONS_PER_ROUND, ROUNDS_PER_MATCH} from "@/game/types";
+import {Player, WINNING_SCORE} from "@/game/types";
 import ghosts from "@/data/ghosts";
 import {generateId, formatTimeRemaining} from "@/lib/utils";
 import {plateauColors} from "@/constants/theme";
@@ -55,9 +55,7 @@ const Joute = () => {
 
     const heroMatch = toPlay[0] ?? null;
     const heroOpponent = heroMatch?.players.find((player) => player.id !== myId) ?? null;
-    const heroCompletedRounds = heroMatch
-        ? heroMatch.rounds.filter((round) => round.answers.length >= QUESTIONS_PER_ROUND * 2).length
-        : 0;
+    const heroMyScore = heroMatch ? computeScore(heroMatch, myId) : 0;
 
     const avatarInitial = displayName.trim().charAt(0).toUpperCase() || "?";
 
@@ -156,26 +154,19 @@ const Joute = () => {
                                         Duel contre {heroOpponent.displayName}
                                     </Text>
                                     <Text className="hub-hero-meta">
-                                        Manche {Math.min(heroMatch.currentRoundIndex + 1, ROUNDS_PER_MATCH)} sur {ROUNDS_PER_MATCH} · {formatTimeRemaining(heroMatch.expiresAt)}
+                                        Manche {heroMatch.currentRoundIndex + 1} · {formatTimeRemaining(heroMatch.expiresAt)}
                                     </Text>
                                 </View>
                                 <Text className="hub-hero-score">
-                                    {computeScore(heroMatch, myId)}–{computeScore(heroMatch, heroOpponent.id)}
+                                    {heroMyScore}–{computeScore(heroMatch, heroOpponent.id)}
                                 </Text>
                             </View>
                             <View className="hub-hero-progress-row">
-                                {Array.from({length: ROUNDS_PER_MATCH}).map((_, index) => (
+                                {Array.from({length: WINNING_SCORE}).map((_, index) => (
                                     <View
                                         key={index}
                                         className="hub-hero-progress-seg"
-                                        style={{
-                                            backgroundColor:
-                                                index < heroCompletedRounds
-                                                    ? plateauColors.lime
-                                                    : index === heroMatch.currentRoundIndex
-                                                      ? plateauColors.orange
-                                                      : "rgba(255,246,226,0.2)",
-                                        }}
+                                        style={{backgroundColor: index < heroMyScore ? plateauColors.lime : "rgba(255,246,226,0.2)"}}
                                     />
                                 ))}
                             </View>
@@ -200,7 +191,7 @@ const Joute = () => {
                             <Text className="hub-mode-icon-lg">⚡</Text>
                             <View className="min-w-0 flex-1">
                                 <Text className="hub-mode-title-lg text-primary">Face-à-face</Text>
-                                <Text className="hub-mode-subtitle text-primary/70">Duel · un ami ou un profil de démonstration</Text>
+                                <Text className="hub-mode-subtitle text-primary/70">Duel · premier à 9 points gagne</Text>
                             </View>
                             <Text className="hub-mode-arrow">→</Text>
                         </Pressable>

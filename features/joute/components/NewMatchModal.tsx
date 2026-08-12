@@ -15,7 +15,7 @@ const NewMatchModal = ({visible, onClose, onInviteFriend, onRandomOpponent}: New
                 <View className="mt-auto">
                     <View className="modal-container">
                         <View className="modal-header">
-                            <Text className="modal-title">Nouvelle partie</Text>
+                            <Text className="modal-title">Face-à-face</Text>
                             <Pressable className="modal-close" onPress={onClose}>
                                 <Text className="modal-close-text">×</Text>
                             </Pressable>

@@ -13,7 +13,7 @@ const CategoryChoiceStep = ({options, roundNumber, onChoose}: CategoryChoiceStep
     return (
         <View className="gap-5">
             <View>
-                <Text className="joute-step-title">Manche {roundNumber} sur 8</Text>
+                <Text className="joute-step-title">Manche {roundNumber}</Text>
                 <Text className="joute-step-subtitle">Choisis un thème</Text>
             </View>
 

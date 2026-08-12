@@ -1,5 +1,5 @@
-import {Answer, Category, Match, MatchStatus, Player, Question, Round} from "./types";
-import {EXPIRATION_WINDOW_MS, availableCategories, isLastRound, otherPlayerId} from "./rules";
+import {Answer, Category, Match, MatchStatus, Player, Question, Round, WINNING_SCORE} from "./types";
+import {EXPIRATION_WINDOW_MS, availableCategories, computeScore, otherPlayerId} from "./rules";
 
 export interface CreateMatchInput {
     id: string;
@@ -126,7 +126,14 @@ export function submitAnswer({match, playerId, question, selectedIndex, elapsedM
     const rounds = [...match.rounds];
     rounds[match.currentRoundIndex] = {...round, answers: [...round.answers, answer]};
 
-    return {...match, rounds, updatedAt: now};
+    const updated = {...match, rounds, updatedAt: now};
+
+    // Course à WINNING_SCORE : la joute s'arrête dès qu'un joueur l'atteint, même en cours de manche.
+    if (answer.isCorrect && computeScore(updated, playerId) >= WINNING_SCORE) {
+        return {...updated, status: "completed"};
+    }
+
+    return updated;
 }
 
 export function resolveTurn(match: Match, now: number = Date.now()): Match {
@@ -141,9 +148,6 @@ export function resolveTurn(match: Match, now: number = Date.now()): Match {
     const roundFullyAnswered = round.answers.length >= round.questionIds.length * 2;
 
     if (roundFullyAnswered) {
-        if (isLastRound(match.currentRoundIndex)) {
-            return {...match, status: "completed", updatedAt: now};
-        }
         return {...match, currentRoundIndex: match.currentRoundIndex + 1, updatedAt: now};
     }
 

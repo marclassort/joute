@@ -75,6 +75,7 @@ function answerOpenRound(match: Match, profile: GhostProfile, pool: readonly Que
 
     let next = match;
     for (const questionId of round.questionIds) {
+        if (next.status !== "active") break;
         if (alreadyAnswered.has(questionId)) continue;
         const question = findQuestion(pool, questionId);
         const {selectedIndex, elapsedMs} = decideAnswer(next, profile, question);

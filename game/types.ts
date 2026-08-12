@@ -35,7 +35,8 @@ export const ALL_CATEGORIES: readonly Category[] = [
 
 export type MatchStatus = "pending" | "active" | "completed" | "expired";
 
-export const ROUNDS_PER_MATCH = 8;
+/** Nombre de bonnes réponses à atteindre pour remporter une joute Face-à-face (course à 9 points, sans nombre de manches fixe). */
+export const WINNING_SCORE = 9;
 export const QUESTIONS_PER_ROUND = 3;
 
 export interface Player {

@@ -4,7 +4,6 @@ import {
     Match,
     MatchStatus,
     Question,
-    ROUNDS_PER_MATCH,
 } from "./types";
 
 export const EXPIRATION_WINDOW_MS = 48 * 60 * 60 * 1000;
@@ -74,9 +73,11 @@ export function computeVerdict(match: Match): MatchVerdict {
     return scoreOne > scoreTwo ? "playerOneWin" : "playerTwoWin";
 }
 
+/** Thèmes tirables pour la prochaine manche : ceux pas encore joués, ou tous à nouveau si la joute a duré assez longtemps pour tous les épuiser. */
 export function availableCategories(match: Match): Category[] {
     const used = new Set(match.rounds.map((round) => round.category));
-    return DRAWABLE_CATEGORIES.filter((category) => !used.has(category));
+    const remaining = DRAWABLE_CATEGORIES.filter((category) => !used.has(category));
+    return remaining.length > 0 ? remaining : [...DRAWABLE_CATEGORIES];
 }
 
 export function drawCategoryOptions(match: Match, count: number, seed: string): Category[] {
@@ -123,10 +124,6 @@ export function computeExpiredOutcome(match: Match): ExpiredOutcome {
 
     const loserId = match.currentTurnPlayerId;
     return {kind: "forfeited", loserId, winnerId: otherPlayerId(match, loserId)};
-}
-
-export function isLastRound(roundIndex: number): boolean {
-    return roundIndex === ROUNDS_PER_MATCH - 1;
 }
 
 export type MatchOutcome = "win" | "loss" | "draw";

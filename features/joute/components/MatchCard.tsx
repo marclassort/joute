@@ -2,7 +2,7 @@ import {Image, Pressable, Text, View} from "react-native";
 import React from "react";
 // eslint-disable-next-line import/no-named-as-default
 import clsx from "clsx";
-import {Match, ROUNDS_PER_MATCH} from "@/game/types";
+import {Match} from "@/game/types";
 import {computeOutcomeForPlayer, computeScore} from "@/game/rules";
 import {formatTimeRemaining, isExpiringSoon} from "@/lib/utils";
 
@@ -26,7 +26,7 @@ function resultLabel(match: Match, viewerId: string): string {
 const MatchCard = ({match, viewerId, variant, onPress}: MatchCardProps) => {
     const opponent = match.players.find((player) => player.id !== viewerId) ?? match.players[1];
     const me = match.players.find((player) => player.id === viewerId) ?? match.players[0];
-    const roundLabel = `Manche ${Math.min(match.currentRoundIndex + 1, ROUNDS_PER_MATCH)} sur ${ROUNDS_PER_MATCH}`;
+    const roundLabel = `Manche ${match.currentRoundIndex + 1}`;
     const score = `${computeScore(match, viewerId)} - ${computeScore(match, opponent.id)}`;
 
     if (variant === "finished") {

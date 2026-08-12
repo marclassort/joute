@@ -1,5 +1,5 @@
-import {Category, Match, Player, Question} from "./types";
-import {availableCategories} from "./rules";
+import {Category, Match, Player, Question, Round, WINNING_SCORE} from "./types";
+import {availableCategories, computeScore} from "./rules";
 import {chooseCategory, createMatch, joinMatch, resolveTurn, submitAnswer} from "./engine";
 
 const playerOne: Player = {id: "p1", displayName: "Alix", avatarUrl: null, isGhost: false};
@@ -236,66 +236,94 @@ describe("resolveTurn", () => {
     });
 });
 
+// Soumet les réponses une à une et s'arrête dès que la partie n'est plus active :
+// sous la règle de course à WINNING_SCORE, une victoire peut survenir au milieu d'une manche.
+function submitCorrectAnswers(match: Match, playerId: string, questionIds: readonly string[], category: Category): Match {
+    let next = match;
+    for (const questionId of questionIds) {
+        if (next.status !== "active") break;
+        next = submitAnswer({match: next, playerId, question: buildQuestion({id: questionId, category}), selectedIndex: 0, elapsedMs: 5000});
+    }
+    return next;
+}
+
 function playRound(match: Match, chooserId: string, category: Category): Match {
     const roundIndex = match.currentRoundIndex;
     const questionIds: [string, string, string] = [`q-${roundIndex}-1`, `q-${roundIndex}-2`, `q-${roundIndex}-3`];
 
     let next = chooseCategory({match, playerId: chooserId, category, questionIds});
-    for (const questionId of questionIds) {
-        next = submitAnswer({
-            match: next,
-            playerId: chooserId,
-            question: buildQuestion({id: questionId, category}),
-            selectedIndex: 0,
-            elapsedMs: 5000,
-        });
-    }
-    return resolveTurn(next);
+    next = submitCorrectAnswers(next, chooserId, questionIds, category);
+    return next.status === "active" ? resolveTurn(next) : next;
 }
 
 function catchUpRound(match: Match, playerId: string): Match {
     const round = match.rounds[match.currentRoundIndex];
-    let next = match;
-    for (const questionId of round.questionIds) {
-        next = submitAnswer({
-            match: next,
-            playerId,
-            question: buildQuestion({id: questionId, category: round.category}),
-            selectedIndex: 0,
-            elapsedMs: 5000,
-        });
-    }
-    return resolveTurn(next);
+    const next = submitCorrectAnswers(match, playerId, round.questionIds, round.category);
+    return next.status === "active" ? resolveTurn(next) : next;
 }
 
-describe("partie complète (9 tours)", () => {
-    it("alterne les tours comme prévu, sans rejouer un thème, jusqu'à complétion", () => {
+describe("partie complète (course à WINNING_SCORE)", () => {
+    it("alterne les tours jusqu'à ce qu'un joueur atteigne WINNING_SCORE, sans jouer de manches inutiles", () => {
         let match = newMatch();
-        const usedCategories = new Set<Category>();
-        let tourCount = 0;
+        let iterations = 0;
 
-        while (match.status === "active") {
-            tourCount += 1;
-            const expectedPlayer = tourCount % 2 === 1 ? playerOne.id : playerTwo.id;
-            expect(match.currentTurnPlayerId).toBe(expectedPlayer);
+        while (match.status === "active" && iterations < 50) {
+            iterations += 1;
+            const player = match.currentTurnPlayerId;
 
             if (match.rounds[match.currentRoundIndex]) {
-                match = catchUpRound(match, match.currentTurnPlayerId);
+                match = catchUpRound(match, player);
             }
 
             if (match.status === "active" && match.rounds.length === match.currentRoundIndex) {
                 const category = availableCategories(match)[0];
-                expect(usedCategories.has(category)).toBe(false);
-                usedCategories.add(category);
                 match = playRound(match, match.currentTurnPlayerId, category);
             }
         }
 
-        expect(tourCount).toBe(9);
         expect(match.status).toBe("completed");
-        expect(match.rounds.length).toBe(8);
-        for (const round of match.rounds) {
-            expect(round.answers.length).toBe(6);
+        const scoreOne = computeScore(match, playerOne.id);
+        const scoreTwo = computeScore(match, playerTwo.id);
+        expect(Math.max(scoreOne, scoreTwo)).toBe(WINNING_SCORE);
+        expect(Math.min(scoreOne, scoreTwo)).toBeLessThan(WINNING_SCORE);
+    });
+});
+
+describe("submitAnswer — victoire immédiate à WINNING_SCORE", () => {
+    it("termine la partie dès la réponse qui fait atteindre WINNING_SCORE, sans attendre la fin de la manche ni resolveTurn", () => {
+        function correctAnswer(questionId: string, at: number) {
+            return {questionId, playerId: playerOne.id, selectedIndex: 0, isCorrect: true, elapsedMs: 1, answeredAt: at};
         }
+
+        const priorRounds: Round[] = [
+            {index: 0, category: "sciences", chosenBy: playerOne.id, questionIds: ["q1", "q2", "q3"], answers: [
+                correctAnswer("q1", 1), correctAnswer("q2", 2), correctAnswer("q3", 3),
+            ]},
+            {index: 1, category: "histoire", chosenBy: playerOne.id, questionIds: ["q4", "q5", "q6"], answers: [
+                correctAnswer("q4", 4), correctAnswer("q5", 5), correctAnswer("q6", 6),
+            ]},
+            {index: 2, category: "geographie", chosenBy: playerOne.id, questionIds: ["q7", "q8", "q9"], answers: [
+                correctAnswer("q7", 7), correctAnswer("q8", 8),
+            ]},
+        ];
+        const match: Match = {...newMatch(), rounds: priorRounds, currentRoundIndex: 2, currentTurnPlayerId: playerOne.id};
+        expect(computeScore(match, playerOne.id)).toBe(WINNING_SCORE - 1);
+
+        const updated = submitAnswer({
+            match,
+            playerId: playerOne.id,
+            question: buildQuestion({id: "q9", category: "geographie"}),
+            selectedIndex: 0,
+            elapsedMs: 1,
+        });
+
+        expect(computeScore(updated, playerOne.id)).toBe(WINNING_SCORE);
+        expect(updated.status).toBe("completed");
+    });
+
+    it("ne termine pas la partie tant que WINNING_SCORE n'est pas atteint", () => {
+        const match = chooseCategory({match: newMatch(), playerId: playerOne.id, category: "sciences", questionIds: ["q1", "q2", "q3"]});
+        const updated = submitAnswer({match, playerId: playerOne.id, question: buildQuestion({id: "q1"}), selectedIndex: 0, elapsedMs: 1});
+        expect(updated.status).toBe("active");
     });
 });
