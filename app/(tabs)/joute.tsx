@@ -1,5 +1,5 @@
-import {Image, Pressable, ScrollView, Share, Text, View} from "react-native";
-import React, {useMemo, useState} from "react";
+import {Image, Pressable, ScrollView, Text, View} from "react-native";
+import React, {useMemo} from "react";
 import {styled} from "nativewind";
 import {SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
 import {useRouter} from "expo-router";
@@ -7,16 +7,10 @@ import ListHeading from "@/components/ListHeading";
 import {useMatches} from "@/features/joute/hooks/useMatches";
 import {useCurrentPlayer} from "@/features/joute/hooks/useCurrentPlayer";
 import {computeMatchStats, computeScore} from "@/game/rules";
-import {createMatch} from "@/game/engine";
-import {Player, WINNING_SCORE} from "@/game/types";
-import ghosts from "@/data/ghosts";
-import {generateId, formatTimeRemaining} from "@/lib/utils";
+import {WINNING_SCORE} from "@/game/types";
+import {formatTimeRemaining} from "@/lib/utils";
 import {plateauColors} from "@/constants/theme";
-import {buildInvitationLink, generateInvitationCode} from "@/services/invitations";
-import {localInvitationRepository} from "@/services/localInvitationRepository";
-import {localNotificationService} from "@/services/localNotificationService";
 import MatchCard from "@/features/joute/components/MatchCard";
-import NewMatchModal from "@/features/joute/components/NewMatchModal";
 import HardShadowCard from "@/features/joute/components/HardShadowCard";
 
 const SafeAreaView = styled(RNSafeAreaView);
@@ -24,8 +18,7 @@ const SafeAreaView = styled(RNSafeAreaView);
 const Joute = () => {
     const {id: myId, displayName, avatarUrl: avatarUri} = useCurrentPlayer();
     const router = useRouter();
-    const {matches, saveMatch} = useMatches();
-    const [isNewMatchModalVisible, setNewMatchModalVisible] = useState(false);
+    const {matches} = useMatches();
 
     const stats = useMemo(() => computeMatchStats(matches, myId), [matches, myId]);
 
@@ -58,52 +51,6 @@ const Joute = () => {
     const heroMyScore = heroMatch ? computeScore(heroMatch, myId) : 0;
 
     const avatarInitial = displayName.trim().charAt(0).toUpperCase() || "?";
-
-    // Demande la permission de notifications au moment utile : juste après la création de la toute première partie, jamais au lancement.
-    // Ne doit jamais bloquer la suite (fermeture de la modale, navigation) si la permission échoue ou si le module est indisponible (ex. Expo Go).
-    const maybeRequestNotificationPermission = async () => {
-        if (matches.length === 0) {
-            try {
-                await localNotificationService.requestPermission();
-            } catch {
-                // Ignoré volontairement — voir le commentaire ci-dessus.
-            }
-        }
-    };
-
-    const handleRandomOpponent = async () => {
-        if (!myId) return;
-
-        const ghost = ghosts[Math.floor(Math.random() * ghosts.length)];
-        const me: Player = {id: myId, displayName, avatarUrl: avatarUri ?? null, isGhost: false};
-        const opponent: Player = {id: ghost.id, displayName: ghost.displayName, avatarUrl: ghost.avatarUrl, isGhost: true};
-
-        const match = createMatch({id: generateId("match"), players: [me, opponent]});
-        await saveMatch(match);
-        await maybeRequestNotificationPermission();
-        setNewMatchModalVisible(false);
-        router.push(`/joute/${match.id}`);
-    };
-
-    const handleInviteFriend = async () => {
-        if (!myId) return;
-
-        const code = generateInvitationCode();
-        const me: Player = {id: myId, displayName, avatarUrl: avatarUri ?? null, isGhost: false};
-        const placeholder: Player = {id: code, displayName: "En attente…", avatarUrl: null, isGhost: false};
-
-        const match = createMatch({id: generateId("match"), players: [me, placeholder], invitationCode: code, status: "pending"});
-        await localInvitationRepository.create({code, matchId: match.id, creatorId: myId, createdAt: Date.now(), usedByPlayerId: null});
-        await saveMatch(match);
-        await maybeRequestNotificationPermission();
-        setNewMatchModalVisible(false);
-
-        try {
-            await Share.share({message: `Rejoins mon défi Joute ! ${buildInvitationLink(code)}`});
-        } catch {
-            // Partage annulé ou indisponible : la partie reste visible dans « En attente » pour repartager plus tard.
-        }
-    };
 
     return (
         <SafeAreaView className="flex-1 bg-background p-5">
@@ -187,7 +134,7 @@ const Joute = () => {
                 <Text className="hub-modes-label">Modes de jeu</Text>
                 <View className="hub-modes-grid">
                     <HardShadowCard borderRadius={20} offsetY={4} className="hub-mode-card hub-mode-card-wide bg-plateau-orange" style={{width: "100%"}}>
-                        <Pressable className="w-full flex-row items-center gap-3" onPress={() => setNewMatchModalVisible(true)} accessibilityRole="button">
+                        <Pressable className="w-full flex-row items-center gap-3" onPress={() => router.push("/duel/lobby")} accessibilityRole="button">
                             <Text className="hub-mode-icon-lg">⚡</Text>
                             <View className="min-w-0 flex-1">
                                 <Text className="hub-mode-title-lg text-primary">Face-à-face</Text>
@@ -281,13 +228,6 @@ const Joute = () => {
                     )}
                 </View>
             </ScrollView>
-
-            <NewMatchModal
-                visible={isNewMatchModalVisible}
-                onClose={() => setNewMatchModalVisible(false)}
-                onInviteFriend={handleInviteFriend}
-                onRandomOpponent={handleRandomOpponent}
-            />
         </SafeAreaView>
     );
 };

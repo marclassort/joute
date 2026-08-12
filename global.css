@@ -546,18 +546,6 @@
         @apply text-xs font-sans-semibold uppercase text-muted-foreground;
     }
 
-    .joute-option {
-        @apply rounded-2xl border border-border bg-background p-4;
-    }
-
-    .joute-option-title {
-        @apply text-base font-sans-bold text-primary;
-    }
-
-    .joute-option-subtitle {
-        @apply mt-1 text-sm font-sans-medium text-muted-foreground;
-    }
-
     .joute-match-header {
         @apply mb-5 flex-row items-center justify-between;
     }
@@ -1124,5 +1112,69 @@
 
     .solo-result-secondary-text {
         @apply text-sm font-sans-bold text-plateau-ink/75;
+    }
+
+    .duel-lobby-header {
+        @apply flex-row items-center gap-3;
+    }
+
+    .duel-lobby-back-button {
+        @apply size-[38px] items-center justify-center rounded-xl border-2 border-plateau-cream;
+    }
+
+    .duel-lobby-back-icon {
+        @apply font-display text-base text-plateau-cream;
+    }
+
+    .duel-lobby-header-title {
+        @apply font-display text-[17px] text-plateau-cream;
+    }
+
+    .duel-lobby-stats-card {
+        @apply mt-5 flex-row justify-around rounded-2xl bg-plateau-cream/10 p-4;
+    }
+
+    .duel-lobby-stat {
+        @apply items-center;
+    }
+
+    .duel-lobby-stat-label {
+        @apply mt-1 text-[10px] font-sans-semibold uppercase tracking-wide text-plateau-cream/55;
+    }
+
+    .duel-lobby-rule-heading {
+        @apply mt-6 font-display text-[11px] uppercase tracking-[2.5px] text-plateau-cream/50;
+    }
+
+    .duel-lobby-rule-card {
+        @apply flex-row items-center gap-3 border-2 border-plateau-ink bg-plateau-cream p-[14px];
+    }
+
+    .duel-lobby-rule-badge {
+        @apply size-[34px] items-center justify-center rounded-[11px] bg-plateau-gold;
+    }
+
+    .duel-lobby-rule-badge-text {
+        @apply font-display text-sm text-plateau-ink;
+    }
+
+    .duel-lobby-rule-title {
+        @apply font-display text-sm text-plateau-ink;
+    }
+
+    .duel-lobby-rule-subtitle {
+        @apply mt-[2px] text-[11.5px] font-sans-medium text-plateau-ink/60;
+    }
+
+    .duel-lobby-actions {
+        @apply gap-3 pt-4;
+    }
+
+    .duel-lobby-secondary-button {
+        @apply items-center rounded-[20px] border-2 border-plateau-cream/30 p-[14px];
+    }
+
+    .duel-lobby-secondary-text {
+        @apply text-sm font-sans-bold text-plateau-cream/80;
     }
 }
