@@ -45,3 +45,7 @@ app-example
 # generated native folders
 /ios
 /android
+
+# Claude Design handoff bundle (reference artifact, not app source)
+/project
+/README-claude.md

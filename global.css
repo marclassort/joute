@@ -17,12 +17,25 @@
     --color-destructive: #dc2626;
     --color-subscription: #8fd1bd;
 
+    /* Charte "plateau" (nouveaux écrans multi-modes) — coexiste avec la palette crème/encre/corail
+       ci-dessus, qui reste inchangée pour Abonnements/Réglages/le duel non encore restylé. */
+    --color-plateau-ink: #0B1026;
+    --color-plateau-ink-surface: #141B3D;
+    --color-plateau-cream: #FFF6E2;
+    --color-plateau-orange: #FF6A3D;
+    --color-plateau-violet: #6C4DF6;
+    --color-plateau-lime: #C9F24D;
+    --color-plateau-cyan: #35D6E7;
+    --color-plateau-gold: #FFC93C;
+    --color-plateau-pink: #FF4D8D;
+
     --font-sans: sans-regular;
     --font-sans-light: sans-light;
     --font-sans-medium: sans-medium;
     --font-sans-semibold: sans-semibold;
     --font-sans-extrabold: sans-extrabold;
     --font-sans-bold: sans-bold;
+    --font-display: archivo-extrabold;
 
     --spacing-0: 0px;
     --spacing-1: 4px;

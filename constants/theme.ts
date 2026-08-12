@@ -12,6 +12,19 @@ export const colors = {
     subscription: "#8fd1bd",
 } as const;
 
+/** Charte "plateau" (hub des modes et nouveaux écrans) — voir global.css pour les classes NativeWind correspondantes. */
+export const plateauColors = {
+    ink: "#0B1026",
+    inkSurface: "#141B3D",
+    cream: "#FFF6E2",
+    orange: "#FF6A3D",
+    violet: "#6C4DF6",
+    lime: "#C9F24D",
+    cyan: "#35D6E7",
+    gold: "#FFC93C",
+    pink: "#FF4D8D",
+} as const;
+
 export const spacing = {
     0: 0,
     1: 4,
@@ -46,6 +59,7 @@ export const components = {
 
 export const theme = {
     colors,
+    plateauColors,
     spacing,
     components,
 } as const;

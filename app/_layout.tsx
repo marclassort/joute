@@ -27,6 +27,7 @@ function RootNavigator() {
     'sans-semibold': require("@/assets/fonts/PlusJakartaSans-SemiBold.ttf"),
     'sans-extrabold': require("@/assets/fonts/PlusJakartaSans-ExtraBold.ttf"),
     'sans-light': require("@/assets/fonts/PlusJakartaSans-Light.ttf"),
+    'archivo-extrabold': require("@/assets/fonts/Archivo-ExtraBold.ttf"),
   });
   const { isLoaded: authLoaded, isSignedIn } = useAuth();
 
