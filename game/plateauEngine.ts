@@ -72,7 +72,7 @@ export function openPlateauRound({match, playerId, category, questionIds, now = 
         throw new Error("ce thème n'est plus disponible");
     }
 
-    const round: PlateauRound = {index: match.rounds.length, playerId, category, questionIds, answers: []};
+    const round: PlateauRound = {index: match.rounds.length, playerId, category, questionIds, answers: [], openedAt: now};
     return {...match, rounds: [...match.rounds, round], updatedAt: now};
 }
 

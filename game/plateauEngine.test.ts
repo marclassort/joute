@@ -58,8 +58,10 @@ describe("createPlateauMatch", () => {
 
 describe("openPlateauRound", () => {
     it("crée une manche pour le joueur demandé", () => {
-        const match = openPlateauRound({match: newMatch(), playerId: "p1", category: "sciences", questionIds: ["q1", "q2", "q3"]});
-        expect(match.rounds).toEqual([{index: 0, playerId: "p1", category: "sciences", questionIds: ["q1", "q2", "q3"], answers: []}]);
+        const match = openPlateauRound({match: newMatch(), playerId: "p1", category: "sciences", questionIds: ["q1", "q2", "q3"], now: 42});
+        expect(match.rounds).toEqual([
+            {index: 0, playerId: "p1", category: "sciences", questionIds: ["q1", "q2", "q3"], answers: [], openedAt: 42},
+        ]);
     });
 
     it("refuse un thème déjà utilisé par n'importe quel joueur du plateau", () => {
@@ -122,6 +124,7 @@ describe("submitPlateauAnswer", () => {
                 playerId: "p1",
                 category: DRAWABLE_CATEGORIES[i],
                 questionIds: [`r${i}-1`, `r${i}-2`, `r${i}-3`],
+                openedAt: i * 3,
                 answers: [`r${i}-1`, `r${i}-2`, `r${i}-3`].map((questionId, at) => ({
                     questionId,
                     playerId: "p1",
@@ -137,6 +140,7 @@ describe("submitPlateauAnswer", () => {
             playerId: "p1",
             category: DRAWABLE_CATEGORIES[7],
             questionIds: ["r7-1", "r7-2", "r7-3"],
+            openedAt: 100,
             answers: [
                 {questionId: "r7-1", playerId: "p1", selectedIndex: 0, isCorrect: true, elapsedMs: 1, answeredAt: 100},
                 {questionId: "r7-2", playerId: "p1", selectedIndex: 0, isCorrect: true, elapsedMs: 1, answeredAt: 101},
@@ -178,6 +182,7 @@ describe("availablePlateauCategories", () => {
             category,
             questionIds: [`q${index}-1`, `q${index}-2`, `q${index}-3`],
             answers: [],
+            openedAt: index,
         }));
         const match: PlateauMatch = {...newMatch(), rounds};
         expect(availablePlateauCategories(match)).toEqual(DRAWABLE_CATEGORIES);

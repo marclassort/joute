@@ -87,6 +87,7 @@ describe("playAvailableGhostTurns", () => {
             playerId: ghostIds[0],
             category: "histoire" as const,
             questionIds: [`r${roundIndex}-1`, `r${roundIndex}-2`, `r${roundIndex}-3`] as [string, string, string],
+            openedAt: roundIndex * 3,
             answers: [`r${roundIndex}-1`, `r${roundIndex}-2`, `r${roundIndex}-3`].map((id, i) =>
                 correctAnswer(id, roundIndex * 3 + i, ghostIds[0]),
             ),
@@ -96,6 +97,7 @@ describe("playAvailableGhostTurns", () => {
             playerId: ghostIds[0],
             category: "geographie" as const,
             questionIds: ["geo-001", "geo-002", "geo-003"] as [string, string, string],
+            openedAt: 100,
             answers: [correctAnswer("geo-001", 100, ghostIds[0]), correctAnswer("geo-002", 101, ghostIds[0])],
         };
 

@@ -719,7 +719,11 @@
     }
 
     .hub-hero-decoration {
-        @apply absolute -right-[30px] -top-[30px] size-[130px] rounded-full bg-plateau-violet opacity-50;
+        @apply absolute -right-[40px] -top-[40px] z-0 size-[110px] rounded-full bg-plateau-violet opacity-40;
+    }
+
+    .hub-hero-content {
+        @apply relative z-10;
     }
 
     .hub-hero-label {

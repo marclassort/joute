@@ -87,47 +87,51 @@ const Joute = () => {
                     <Pressable onPress={() => router.push(`/joute/${heroMatch.id}`)}>
                         <View className="hub-hero-card">
                             <View className="hub-hero-decoration" />
-                            <Text className="hub-hero-label">À toi de jouer</Text>
-                            <View className="hub-hero-row">
-                                {heroOpponent.avatarUrl ? (
-                                    <Image source={{uri: heroOpponent.avatarUrl}} className="hub-hero-avatar" />
-                                ) : (
-                                    <View className="hub-hero-avatar">
-                                        <Text className="hub-hero-avatar-text">{heroOpponent.displayName.charAt(0).toUpperCase()}</Text>
+                            <View className="hub-hero-content">
+                                <Text className="hub-hero-label">À toi de jouer</Text>
+                                <View className="hub-hero-row">
+                                    {heroOpponent.avatarUrl ? (
+                                        <Image source={{uri: heroOpponent.avatarUrl}} className="hub-hero-avatar" />
+                                    ) : (
+                                        <View className="hub-hero-avatar">
+                                            <Text className="hub-hero-avatar-text">{heroOpponent.displayName.charAt(0).toUpperCase()}</Text>
+                                        </View>
+                                    )}
+                                    <View className="hub-hero-copy">
+                                        <Text className="hub-hero-name" numberOfLines={1}>
+                                            Duel contre {heroOpponent.displayName}
+                                        </Text>
+                                        <Text className="hub-hero-meta">
+                                            Manche {heroMatch.currentRoundIndex + 1} · {formatTimeRemaining(heroMatch.expiresAt)}
+                                        </Text>
                                     </View>
-                                )}
-                                <View className="hub-hero-copy">
-                                    <Text className="hub-hero-name" numberOfLines={1}>
-                                        Duel contre {heroOpponent.displayName}
-                                    </Text>
-                                    <Text className="hub-hero-meta">
-                                        Manche {heroMatch.currentRoundIndex + 1} · {formatTimeRemaining(heroMatch.expiresAt)}
+                                    <Text className="hub-hero-score">
+                                        {heroMyScore}–{computeScore(heroMatch, heroOpponent.id)}
                                     </Text>
                                 </View>
-                                <Text className="hub-hero-score">
-                                    {heroMyScore}–{computeScore(heroMatch, heroOpponent.id)}
-                                </Text>
+                                <View className="hub-hero-progress-row">
+                                    {Array.from({length: WINNING_SCORE}).map((_, index) => (
+                                        <View
+                                            key={index}
+                                            className="hub-hero-progress-seg"
+                                            style={{backgroundColor: index < heroMyScore ? plateauColors.lime : "rgba(255,246,226,0.2)"}}
+                                        />
+                                    ))}
+                                </View>
+                                <Pressable className="hub-hero-cta" onPress={() => router.push(`/joute/${heroMatch.id}`)}>
+                                    <Text className="hub-hero-cta-text">Reprendre la manche</Text>
+                                </Pressable>
                             </View>
-                            <View className="hub-hero-progress-row">
-                                {Array.from({length: WINNING_SCORE}).map((_, index) => (
-                                    <View
-                                        key={index}
-                                        className="hub-hero-progress-seg"
-                                        style={{backgroundColor: index < heroMyScore ? plateauColors.lime : "rgba(255,246,226,0.2)"}}
-                                    />
-                                ))}
-                            </View>
-                            <Pressable className="hub-hero-cta" onPress={() => router.push(`/joute/${heroMatch.id}`)}>
-                                <Text className="hub-hero-cta-text">Reprendre la manche</Text>
-                            </Pressable>
                         </View>
                     </Pressable>
                 ) : (
                     <View className="hub-hero-card">
                         <View className="hub-hero-decoration" />
-                        <Text className="hub-hero-label">À toi de jouer</Text>
-                        <Text className="hub-hero-empty-title">Aucune partie en cours</Text>
-                        <Text className="hub-hero-empty-subtitle">Lance un défi pour commencer.</Text>
+                        <View className="hub-hero-content">
+                            <Text className="hub-hero-label">À toi de jouer</Text>
+                            <Text className="hub-hero-empty-title">Aucune partie en cours</Text>
+                            <Text className="hub-hero-empty-subtitle">Lance un défi pour commencer.</Text>
+                        </View>
                     </View>
                 )}
 

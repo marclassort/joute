@@ -100,6 +100,7 @@ export interface PlateauRound {
     category: Category;
     questionIds: [string, string, string];
     answers: Answer[];
+    openedAt: number;
 }
 
 /**
