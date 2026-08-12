@@ -1,9 +1,9 @@
 import { icons } from "./icons";
 
 export const tabs: AppTab[] = [
-    { name: "index", title: "Home", icon: icons.home },
-    { name: "subscriptions", title: "Subscriptions", icon: icons.wallet },
-    { name: "joute", title: "Joute", icon: icons.activity },
+    { name: "index", title: "Accueil", icon: "🏠" },
+    { name: "joute", title: "Joute", icon: "⚔️" },
+    { name: "profile", title: "Profil", icon: "👤" },
 ];
 
 export const HOME_BALANCE = {

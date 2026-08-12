@@ -48,18 +48,18 @@ const RoundsScreen = ({matchId}: RoundsScreenProps) => {
 
     if (isLoading) {
         return (
-            <SafeAreaView className="flex-1 bg-background p-5">
-                <View className="joute-skeleton" />
-                <View className="joute-skeleton mt-4 h-40" />
+            <SafeAreaView className="flex-1 bg-plateau-ink p-5">
+                <View className="duel-skeleton" />
+                <View className="duel-skeleton mt-4 h-40" />
             </SafeAreaView>
         );
     }
 
     if (!match || !opponent || !me) {
         return (
-            <SafeAreaView className="flex-1 bg-background p-5">
+            <SafeAreaView className="flex-1 bg-plateau-ink p-5">
                 <MatchHeader onBack={() => router.back()} title="Détail des manches" />
-                <Text className="home-empty-state">Cette partie n&#39;existe plus ou a été supprimée.</Text>
+                <Text className="duel-empty-state">Cette partie n&#39;existe plus ou a été supprimée.</Text>
             </SafeAreaView>
         );
     }
@@ -67,7 +67,7 @@ const RoundsScreen = ({matchId}: RoundsScreenProps) => {
     let cursor = 0;
 
     return (
-        <SafeAreaView className="flex-1 bg-background p-5">
+        <SafeAreaView className="flex-1 bg-plateau-ink p-5">
             <MatchHeader onBack={() => router.back()} title="Détail des manches" />
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="gap-6 pb-10">

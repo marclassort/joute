@@ -79,7 +79,7 @@
     }
 
     .tabs-glyph {
-        @apply size-6;
+        @apply text-xl leading-none;
     }
 
     .home-header {
@@ -446,6 +446,26 @@
         @apply gap-5 p-5;
     }
 
+    .modal-container-dark {
+        @apply bg-plateau-ink;
+    }
+
+    .modal-title-dark {
+        @apply text-plateau-cream;
+    }
+
+    .modal-close-dark {
+        @apply bg-plateau-cream/10;
+    }
+
+    .modal-close-text-dark {
+        @apply text-plateau-cream;
+    }
+
+    .modal-header-dark {
+        @apply border-plateau-cream/10;
+    }
+
     .picker-row {
         @apply flex-row gap-3;
     }
@@ -518,6 +538,10 @@
         @apply mt-1 text-sm font-sans-medium text-muted-foreground;
     }
 
+    .joute-card-meta-dark {
+        @apply text-plateau-cream/60;
+    }
+
     .joute-card-score {
         @apply ml-3 shrink-0 text-lg font-sans-bold text-primary;
     }
@@ -546,18 +570,6 @@
         @apply text-xs font-sans-semibold uppercase text-muted-foreground;
     }
 
-    .joute-match-header {
-        @apply mb-5 flex-row items-center justify-between;
-    }
-
-    .joute-back-icon {
-        @apply size-8;
-    }
-
-    .joute-match-header-title {
-        @apply flex-1 text-center text-base font-sans-bold text-primary;
-    }
-
     .joute-skeleton {
         @apply h-24 rounded-2xl bg-muted;
     }
@@ -566,64 +578,8 @@
         @apply text-xl font-sans-bold text-primary;
     }
 
-    .joute-step-subtitle {
-        @apply mt-1 text-sm font-sans-medium text-muted-foreground;
-    }
-
-    .joute-question-statement {
-        @apply text-xl font-sans-bold text-primary;
-    }
-
-    .joute-choice {
-        @apply min-h-11 justify-center rounded-2xl border border-border bg-background px-4 py-4;
-    }
-
-    .joute-choice-text {
-        @apply text-base font-sans-medium text-primary;
-    }
-
-    .joute-recap-card {
-        @apply gap-2 rounded-2xl border border-border bg-card p-4;
-    }
-
-    .joute-recap-explanation {
-        @apply text-sm font-sans-medium text-muted-foreground;
-    }
-
-    .joute-recap-correct {
-        @apply text-success;
-    }
-
-    .joute-recap-correct-choice {
-        @apply border-success bg-success/10;
-    }
-
-    .joute-result-verdict {
-        @apply text-center text-3xl font-sans-extrabold text-primary;
-    }
-
-    .joute-players-row {
-        @apply flex-row items-center justify-between rounded-2xl border border-border bg-card p-4;
-    }
-
-    .joute-players-side {
-        @apply flex-1 items-center gap-2;
-    }
-
-    .joute-players-avatar {
-        @apply size-14 rounded-full;
-    }
-
-    .joute-players-name {
-        @apply max-w-full text-sm font-sans-bold text-primary;
-    }
-
-    .joute-players-score {
-        @apply px-3 text-2xl font-sans-extrabold text-primary;
-    }
-
     .joute-round-row {
-        @apply gap-2 rounded-2xl border border-border bg-card p-4;
+        @apply gap-2 rounded-2xl bg-plateau-ink-surface p-4;
     }
 
     .joute-round-header {
@@ -631,11 +587,11 @@
     }
 
     .joute-round-theme {
-        @apply text-base font-sans-bold text-primary;
+        @apply text-base font-sans-bold text-plateau-cream;
     }
 
     .joute-round-chooser {
-        @apply text-xs font-sans-medium text-muted-foreground;
+        @apply text-xs font-sans-medium text-plateau-cream/50;
     }
 
     .joute-pellets-row {
@@ -643,27 +599,31 @@
     }
 
     .joute-pellet-label {
-        @apply w-10 shrink-0 text-xs font-sans-semibold text-muted-foreground;
+        @apply w-10 shrink-0 text-xs font-sans-semibold text-plateau-cream/50;
     }
 
     .joute-pellet {
-        @apply size-8 items-center justify-center rounded-full bg-muted;
+        @apply size-8 items-center justify-center rounded-full bg-plateau-cream/10;
     }
 
     .joute-pellet-correct {
-        @apply bg-success/20;
+        @apply bg-plateau-lime;
     }
 
     .joute-pellet-incorrect {
-        @apply bg-destructive/20;
+        @apply bg-plateau-pink;
     }
 
     .joute-pellet-pending {
-        @apply bg-muted;
+        @apply bg-plateau-cream/10;
     }
 
     .joute-pellet-text {
-        @apply text-sm font-sans-bold text-primary;
+        @apply text-sm font-sans-bold text-plateau-cream;
+    }
+
+    .joute-pellet-text-dark {
+        @apply text-plateau-ink;
     }
 
     .joute-mini-avatar {
@@ -824,10 +784,6 @@
 
     .hub-mode-arrow {
         @apply font-display text-xl text-plateau-ink;
-    }
-
-    .hub-mode-dashed {
-        @apply w-full flex-row items-center gap-3 rounded-[20px] border-2 border-dashed border-primary/35 bg-background p-4;
     }
 
     .solo-header {
@@ -1302,6 +1258,34 @@
         @apply text-plateau-pink;
     }
 
+    .duel-empty-state {
+        @apply py-4 text-sm font-sans-medium text-plateau-cream/60;
+    }
+
+    .duel-skeleton {
+        @apply h-24 rounded-2xl bg-plateau-cream/10;
+    }
+
+    .duel-players-row {
+        @apply flex-row items-center justify-between rounded-2xl bg-plateau-ink-surface p-4;
+    }
+
+    .duel-players-side {
+        @apply flex-1 items-center gap-2;
+    }
+
+    .duel-players-avatar {
+        @apply size-14 rounded-full bg-plateau-cream/10;
+    }
+
+    .duel-players-name {
+        @apply font-sans-bold text-sm text-plateau-cream;
+    }
+
+    .duel-players-score {
+        @apply px-3 font-display text-2xl text-plateau-cream;
+    }
+
     .plateau-header-title {
         @apply font-display text-lg text-plateau-cream;
     }
@@ -1548,5 +1532,109 @@
 
     .streak-result-secondary-text {
         @apply text-sm font-sans-bold text-plateau-cream/80;
+    }
+
+    .profile-header-card {
+        @apply relative overflow-hidden rounded-[26px] bg-plateau-ink p-5;
+    }
+
+    .profile-header-decoration {
+        @apply absolute -bottom-10 -right-10 z-0 size-[150px] rounded-full bg-plateau-orange opacity-30;
+    }
+
+    .profile-header-content {
+        @apply relative z-10;
+    }
+
+    .profile-header-row {
+        @apply flex-row items-center gap-[14px];
+    }
+
+    .profile-avatar {
+        @apply size-16 items-center justify-center rounded-full border-[3px] border-plateau-lime bg-plateau-violet;
+    }
+
+    .profile-avatar-text {
+        @apply font-display text-xl text-plateau-cream;
+    }
+
+    .profile-name {
+        @apply font-display text-xl text-plateau-cream;
+    }
+
+    .profile-level-label {
+        @apply mt-1 text-xs font-sans-semibold text-plateau-cream/60;
+    }
+
+    .profile-stats-row {
+        @apply mt-[18px] flex-row gap-[9px];
+    }
+
+    .profile-stat-chip {
+        @apply flex-1 items-center rounded-[14px] bg-plateau-cream/[0.08] p-[11px];
+    }
+
+    .profile-stat-value {
+        @apply font-display text-[17px] text-plateau-cream;
+    }
+
+    .profile-stat-label {
+        @apply mt-[3px] text-[10px] font-sans-semibold text-plateau-cream/55;
+    }
+
+    .profile-mastery-row {
+        @apply flex-row items-center gap-[10px];
+    }
+
+    .profile-mastery-label {
+        @apply w-20 text-xs font-sans-bold text-primary;
+    }
+
+    .profile-mastery-track {
+        @apply h-[10px] flex-1 overflow-hidden rounded-full bg-primary/[0.12];
+    }
+
+    .profile-mastery-fill {
+        @apply h-full rounded-full;
+    }
+
+    .profile-mastery-percent {
+        @apply w-[34px] text-right font-display text-xs text-primary;
+    }
+
+    .profile-leaderboard-card {
+        @apply items-center rounded-2xl bg-primary/[0.06] p-4;
+    }
+
+    .profile-leaderboard-text {
+        @apply text-center text-sm font-sans-medium text-primary/60;
+    }
+
+    .duel-result-verdict {
+        @apply text-center font-display text-3xl text-plateau-cream;
+    }
+
+    .duel-result-pills-row {
+        @apply flex-row justify-center gap-2;
+    }
+
+    .duel-result-stats-card {
+        @apply gap-[14px] rounded-2xl bg-plateau-cream/[0.08] p-4;
+    }
+
+    .duel-result-stats-label {
+        @apply font-display text-[11px] uppercase tracking-[2px] text-plateau-cream/45;
+    }
+
+    .duel-result-stat-row {
+        @apply flex-row items-center justify-between;
+    }
+
+    .duel-result-stat-label {
+        @apply text-[13px] font-sans-semibold text-plateau-cream/70;
+    }
+
+    .duel-result-stat-value {
+        @apply font-display text-sm text-plateau-cream;
     }
 }

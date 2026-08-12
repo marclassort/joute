@@ -1,6 +1,6 @@
 import { useAuth } from "@clerk/expo";
 import { Redirect, Tabs } from "expo-router";
-import { Image, View, type ImageSourcePropType } from "react-native";
+import { Text, View } from "react-native";
 import { useEffect, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { hasSeenOnboarding } from "@/services/guestIdentity";
@@ -14,7 +14,7 @@ const tabBar = components.tabBar;
 const TabIcon = ({ focused, icon }: TabIconProps) => (
     <View className="tabs-icon">
             <View className={clsx("tabs-pill", focused && "tabs-active")}>
-                    <Image source={icon} resizeMode="contain" className="tabs-glyph" />
+                    <Text className="tabs-glyph">{icon}</Text>
             </View>
     </View>
 );
@@ -73,6 +73,7 @@ const TabLayout = () => {
                         />
                     ))}
                     <Tabs.Screen name="settings" options={{ href: null }} />
+                    <Tabs.Screen name="subscriptions" options={{ href: null }} />
             </Tabs>
         );
 };

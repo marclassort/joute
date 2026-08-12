@@ -10,25 +10,25 @@ export interface PlayersScoreRowProps {
 }
 
 const PlayersScoreRow = ({me, opponent, myScore, opponentScore}: PlayersScoreRowProps) => (
-    <View className="joute-players-row">
-        <View className="joute-players-side">
-            {me.avatarUrl ? <Image source={{uri: me.avatarUrl}} className="joute-players-avatar" /> : <View className="joute-players-avatar bg-muted" />}
-            <Text className="joute-players-name" numberOfLines={1}>
+    <View className="duel-players-row">
+        <View className="duel-players-side">
+            {me.avatarUrl ? <Image source={{uri: me.avatarUrl}} className="duel-players-avatar" /> : <View className="duel-players-avatar" />}
+            <Text className="duel-players-name" numberOfLines={1}>
                 {me.displayName}
             </Text>
         </View>
 
-        <Text className="joute-players-score">
+        <Text className="duel-players-score">
             {myScore} - {opponentScore}
         </Text>
 
-        <View className="joute-players-side">
+        <View className="duel-players-side">
             {opponent.avatarUrl ? (
-                <Image source={{uri: opponent.avatarUrl}} className="joute-players-avatar" />
+                <Image source={{uri: opponent.avatarUrl}} className="duel-players-avatar" />
             ) : (
-                <View className="joute-players-avatar bg-muted" />
+                <View className="duel-players-avatar" />
             )}
-            <Text className="joute-players-name" numberOfLines={1}>
+            <Text className="duel-players-name" numberOfLines={1}>
                 {opponent.displayName}
             </Text>
         </View>

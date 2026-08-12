@@ -1,6 +1,5 @@
-import {Image, Pressable, Text, View} from "react-native";
+import {Pressable, Text, View} from "react-native";
 import React from "react";
-import {icons} from "@/constants/icons";
 
 export interface MatchHeaderProps {
     title: string;
@@ -8,12 +7,12 @@ export interface MatchHeaderProps {
 }
 
 const MatchHeader = ({title, onBack}: MatchHeaderProps) => (
-    <View className="joute-match-header">
-        <Pressable onPress={onBack} accessibilityRole="button" accessibilityLabel="Retour">
-            <Image source={icons.back} className="joute-back-icon" />
+    <View className="duel-header">
+        <Pressable className="duel-close-button" onPress={onBack} accessibilityRole="button" accessibilityLabel="Retour">
+            <Text className="duel-close-icon">←</Text>
         </Pressable>
-        <Text className="joute-match-header-title">{title}</Text>
-        <View className="joute-back-icon" />
+        <Text className="duel-header-title">{title}</Text>
+        <View className="size-9" />
     </View>
 );
 

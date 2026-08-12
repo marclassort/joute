@@ -28,7 +28,7 @@ const Pellet = ({answer, onPress}: {answer?: Answer; onPress: () => void}) => {
             accessibilityRole="button"
             accessibilityLabel={state === "correct" ? "Bonne réponse" : state === "incorrect" ? "Mauvaise réponse" : "Pas encore répondu"}
         >
-            <Text className="joute-pellet-text">{symbol}</Text>
+            <Text className={clsx("joute-pellet-text", state !== "pending" && "joute-pellet-text-dark")}>{symbol}</Text>
         </Pressable>
     );
 };

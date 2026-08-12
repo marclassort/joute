@@ -33,8 +33,8 @@ const QuestionDetailPage = ({entry, me, opponent, width}: PageProps) => {
 
     return (
         <View style={{width}} className="gap-4 p-5">
-            <Text className="joute-step-subtitle">{CATEGORY_LABELS[round.category]}</Text>
-            <Text className="joute-question-statement">{question.statement}</Text>
+            <Text className="duel-recap-heading">{CATEGORY_LABELS[round.category]}</Text>
+            <Text className="duel-question-statement">{question.statement}</Text>
 
             <View className="gap-3">
                 {question.choices.map((choice, index) => {
@@ -43,21 +43,21 @@ const QuestionDetailPage = ({entry, me, opponent, width}: PageProps) => {
                     const opponentHere = opponentAnswer?.selectedIndex === index;
 
                     return (
-                        <View key={choice} className={clsx("joute-choice", isCorrectChoice && "joute-recap-correct-choice")}>
+                        <View key={choice} className={clsx("duel-choice", isCorrectChoice && "duel-choice-selected")}>
                             <View className="joute-detail-choice-row">
                                 {mineHere &&
                                     (me.avatarUrl ? (
                                         <Image source={{uri: me.avatarUrl}} className="joute-mini-avatar" />
                                     ) : (
-                                        <View className="joute-mini-avatar bg-muted" />
+                                        <View className="joute-mini-avatar bg-plateau-cream/20" />
                                     ))}
                                 {opponentHere &&
                                     (opponent.avatarUrl ? (
                                         <Image source={{uri: opponent.avatarUrl}} className="joute-mini-avatar" />
                                     ) : (
-                                        <View className="joute-mini-avatar bg-muted" />
+                                        <View className="joute-mini-avatar bg-plateau-cream/20" />
                                     ))}
-                                <Text className="joute-choice-text">{choice}</Text>
+                                <Text className={clsx("duel-choice-text", isCorrectChoice && "duel-choice-text-selected")}>{choice}</Text>
                             </View>
                         </View>
                     );
@@ -65,14 +65,14 @@ const QuestionDetailPage = ({entry, me, opponent, width}: PageProps) => {
             </View>
 
             <View className="gap-1">
-                <Text className="joute-card-meta">Toi : {formatResponseTime(myAnswer)}</Text>
-                <Text className="joute-card-meta">
+                <Text className="joute-card-meta joute-card-meta-dark">Toi : {formatResponseTime(myAnswer)}</Text>
+                <Text className="joute-card-meta joute-card-meta-dark">
                     {opponent.displayName} : {formatResponseTime(opponentAnswer)}
                 </Text>
             </View>
 
-            <View className="joute-recap-card">
-                <Text className="joute-recap-explanation">{question.explanation}</Text>
+            <View className="duel-recap-card">
+                <Text className="duel-recap-explanation">{question.explanation}</Text>
             </View>
         </View>
     );
@@ -85,11 +85,11 @@ const QuestionDetailModal = ({visible, onClose, entries, initialIndex, me, oppon
         <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
             <View className="modal-overlay">
                 <View className="mt-auto">
-                    <View className="modal-container">
-                        <View className="modal-header">
-                            <Text className="modal-title">Question</Text>
-                            <Pressable className="modal-close" onPress={onClose} accessibilityRole="button" accessibilityLabel="Fermer">
-                                <Text className="modal-close-text">×</Text>
+                    <View className="modal-container modal-container-dark">
+                        <View className="modal-header modal-header-dark">
+                            <Text className="modal-title modal-title-dark">Question</Text>
+                            <Pressable className="modal-close modal-close-dark" onPress={onClose} accessibilityRole="button" accessibilityLabel="Fermer">
+                                <Text className="modal-close-text modal-close-text-dark">×</Text>
                             </Pressable>
                         </View>
 

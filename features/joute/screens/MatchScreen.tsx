@@ -15,6 +15,7 @@ import CategoryChoiceStep from "../components/CategoryChoiceStep";
 import QuestionStep from "../components/QuestionStep";
 import RoundSummaryStep from "../components/RoundSummaryStep";
 import MatchHeader from "../components/MatchHeader";
+import HardShadowCard from "../components/HardShadowCard";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -36,18 +37,18 @@ const MatchScreen = ({matchId}: MatchScreenProps) => {
 
     if (isLoading) {
         return (
-            <SafeAreaView className="flex-1 bg-background p-5">
-                <View className="joute-skeleton" />
-                <View className="joute-skeleton mt-4 h-40" />
+            <SafeAreaView className="flex-1 bg-plateau-ink p-5">
+                <View className="duel-skeleton" />
+                <View className="duel-skeleton mt-4 h-40" />
             </SafeAreaView>
         );
     }
 
     if (!match) {
         return (
-            <SafeAreaView className="flex-1 bg-background p-5">
+            <SafeAreaView className="flex-1 bg-plateau-ink p-5">
                 <MatchHeader onBack={goBack} title="Partie introuvable" />
-                <Text className="home-empty-state">Cette partie n&#39;existe plus ou a été supprimée.</Text>
+                <Text className="duel-empty-state">Cette partie n&#39;existe plus ou a été supprimée.</Text>
             </SafeAreaView>
         );
     }
@@ -66,15 +67,17 @@ const MatchScreen = ({matchId}: MatchScreenProps) => {
         };
 
         return (
-            <SafeAreaView className="flex-1 bg-background p-5">
+            <SafeAreaView className="flex-1 bg-plateau-ink p-5">
                 <MatchHeader onBack={goBack} title="Invitation en attente" />
-                <Text className="home-empty-state">
+                <Text className="duel-empty-state">
                     En attente que ton ami rejoigne la partie{match.invitationCode ? ` (code ${match.invitationCode})` : ""}.
                 </Text>
                 {match.invitationCode && (
-                    <Pressable className="joute-new-match-button mt-4" onPress={handleReshare} accessibilityRole="button">
-                        <Text className="joute-new-match-text">Repartager le lien</Text>
-                    </Pressable>
+                    <HardShadowCard borderRadius={20} offsetY={5} className="solo-cta-button mt-4">
+                        <Pressable onPress={handleReshare} accessibilityRole="button">
+                            <Text className="solo-cta-text">Repartager le lien</Text>
+                        </Pressable>
+                    </HardShadowCard>
                 )}
             </SafeAreaView>
         );
@@ -83,8 +86,8 @@ const MatchScreen = ({matchId}: MatchScreenProps) => {
     if (match.status === "completed" || match.status === "expired") {
         // Redirection vers l'écran de résultat déclenchée par le useEffect ci-dessus.
         return (
-            <SafeAreaView className="flex-1 bg-background p-5">
-                <View className="joute-skeleton" />
+            <SafeAreaView className="flex-1 bg-plateau-ink p-5">
+                <View className="duel-skeleton" />
             </SafeAreaView>
         );
     }
@@ -92,9 +95,9 @@ const MatchScreen = ({matchId}: MatchScreenProps) => {
     // match.status === "active"
     if (match.currentTurnPlayerId !== myId) {
         return (
-            <SafeAreaView className="flex-1 bg-background p-5">
+            <SafeAreaView className="flex-1 bg-plateau-ink p-5">
                 <MatchHeader onBack={goBack} title="En attente de l'adversaire" />
-                <Text className="home-empty-state">
+                <Text className="duel-empty-state">
                     C&#39;est au tour de {opponent.displayName}. {formatTimeRemaining(match.expiresAt)}.
                 </Text>
             </SafeAreaView>
@@ -131,9 +134,9 @@ const MatchScreen = ({matchId}: MatchScreenProps) => {
         const question = ALL_QUESTIONS.find((candidate) => candidate.id === nextQuestionId);
         if (!question) {
             return (
-                <SafeAreaView className="flex-1 bg-background p-5">
+                <SafeAreaView className="flex-1 bg-plateau-ink p-5">
                     <MatchHeader onBack={goBack} title="Erreur" />
-                    <Text className="home-empty-state">Impossible de charger cette question.</Text>
+                    <Text className="duel-empty-state">Impossible de charger cette question.</Text>
                 </SafeAreaView>
             );
         }
