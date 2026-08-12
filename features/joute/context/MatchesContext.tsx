@@ -32,28 +32,34 @@ const RESULT_LABELS: Record<"win" | "loss" | "draw", string> = {
 async function notifyOnTransition(previous: Match | undefined, next: Match, myId: string): Promise<void> {
     if (!myId) return;
 
-    const wasFinished = previous ? previous.status === "completed" || previous.status === "expired" : false;
-    const isFinished = next.status === "completed" || next.status === "expired";
-    if (!wasFinished && isFinished) {
-        const outcome = computeOutcomeForPlayer(next, myId);
-        const resultLabel = outcome === null ? "Partie annulée." : RESULT_LABELS[outcome];
-        await localNotificationService.notifyMatchFinished({matchId: next.id, resultLabel});
-        await localNotificationService.cancelExpiringSoon(next.id);
-        return;
-    }
+    // Les notifications sont un confort, jamais un chemin critique : une erreur ici (permission refusée,
+    // module natif indisponible dans Expo Go, etc.) ne doit jamais empêcher de charger/sauvegarder une partie.
+    try {
+        const wasFinished = previous ? previous.status === "completed" || previous.status === "expired" : false;
+        const isFinished = next.status === "completed" || next.status === "expired";
+        if (!wasFinished && isFinished) {
+            const outcome = computeOutcomeForPlayer(next, myId);
+            const resultLabel = outcome === null ? "Partie annulée." : RESULT_LABELS[outcome];
+            await localNotificationService.notifyMatchFinished({matchId: next.id, resultLabel});
+            await localNotificationService.cancelExpiringSoon(next.id);
+            return;
+        }
 
-    const wasMyTurn = previous ? previous.status === "active" && previous.currentTurnPlayerId === myId : false;
-    const isMyTurn = next.status === "active" && next.currentTurnPlayerId === myId;
+        const wasMyTurn = previous ? previous.status === "active" && previous.currentTurnPlayerId === myId : false;
+        const isMyTurn = next.status === "active" && next.currentTurnPlayerId === myId;
 
-    if (isMyTurn && !wasMyTurn) {
-        const opponent = next.players.find((player) => player.id !== myId);
-        await localNotificationService.notifyYourTurn({matchId: next.id, opponentName: opponent?.displayName ?? "Ton adversaire"});
-    }
+        if (isMyTurn && !wasMyTurn) {
+            const opponent = next.players.find((player) => player.id !== myId);
+            await localNotificationService.notifyYourTurn({matchId: next.id, opponentName: opponent?.displayName ?? "Ton adversaire"});
+        }
 
-    if (isMyTurn) {
-        await localNotificationService.scheduleExpiringSoon({matchId: next.id, expiresAt: next.expiresAt});
-    } else if (wasMyTurn) {
-        await localNotificationService.cancelExpiringSoon(next.id);
+        if (isMyTurn) {
+            await localNotificationService.scheduleExpiringSoon({matchId: next.id, expiresAt: next.expiresAt});
+        } else if (wasMyTurn) {
+            await localNotificationService.cancelExpiringSoon(next.id);
+        }
+    } catch {
+        // Ignoré volontairement — voir le commentaire ci-dessus.
     }
 }
 

@@ -52,9 +52,14 @@ const Joute = () => {
     );
 
     // Demande la permission de notifications au moment utile : juste après la création de la toute première partie, jamais au lancement.
+    // Ne doit jamais bloquer la suite (fermeture de la modale, navigation) si la permission échoue ou si le module est indisponible (ex. Expo Go).
     const maybeRequestNotificationPermission = async () => {
         if (matches.length === 0) {
-            await localNotificationService.requestPermission();
+            try {
+                await localNotificationService.requestPermission();
+            } catch {
+                // Ignoré volontairement — voir le commentaire ci-dessus.
+            }
         }
     };
 
