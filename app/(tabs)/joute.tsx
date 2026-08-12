@@ -175,13 +175,16 @@ const Joute = () => {
                         </Pressable>
                     </HardShadowCard>
 
-                    <View className="hub-mode-dashed">
-                        <Text className="hub-mode-icon">🔥</Text>
-                        <View className="min-w-0 flex-1">
-                            <Text className="hub-mode-title text-primary">4 à la suite</Text>
-                            <Text className="hub-mode-subtitle text-primary/60">Bientôt disponible</Text>
-                        </View>
-                    </View>
+                    <HardShadowCard borderRadius={20} offsetY={4} className="hub-mode-card hub-mode-card-wide bg-plateau-pink" style={{width: "100%"}}>
+                        <Pressable className="w-full flex-row items-center gap-3" onPress={() => router.push("/streak")} accessibilityRole="button" accessibilityLabel="4 à la suite">
+                            <Text className="hub-mode-icon-lg">🔥</Text>
+                            <View className="min-w-0 flex-1">
+                                <Text className="hub-mode-title-lg text-plateau-cream">4 à la suite</Text>
+                                <Text className="hub-mode-subtitle text-plateau-cream/70">Réponse libre · survie sans fin</Text>
+                            </View>
+                            <Text className="hub-mode-arrow text-plateau-cream">→</Text>
+                        </Pressable>
+                    </HardShadowCard>
                 </View>
 
                 <View>

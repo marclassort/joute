@@ -39,5 +39,6 @@ export function updateStreak(state: StreakState, today: string): StreakState {
 export const XP_PER_CORRECT_SOLO = 2;
 export const XP_PER_CORRECT_DUEL = 5;
 export const XP_PER_CORRECT_PLATEAU = 5;
+export const XP_PER_CORRECT_STREAK = 3;
 export const XP_DUEL_WIN_BONUS = 20;
 export const XP_PLATEAU_WIN_BONUS = 30;

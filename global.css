@@ -1385,4 +1385,168 @@
     .plateau-cta-text {
         @apply font-display text-base text-plateau-ink;
     }
+
+    .streak-header {
+        @apply flex-row items-center justify-between;
+    }
+
+    .streak-header-title {
+        @apply font-display text-[13px] text-plateau-cream;
+    }
+
+    .streak-badge {
+        @apply rounded-full bg-plateau-ink/25 px-3 py-[6px];
+    }
+
+    .streak-badge-text {
+        @apply font-display text-xs text-plateau-cream;
+    }
+
+    .streak-progress-track {
+        @apply mt-4 h-2 overflow-hidden rounded-full bg-plateau-cream/25;
+    }
+
+    .streak-progress-fill {
+        @apply h-full rounded-full bg-plateau-gold;
+    }
+
+    .streak-category-label {
+        @apply mt-[26px] font-display text-[11px] uppercase tracking-[2px] text-plateau-lime;
+    }
+
+    .streak-statement {
+        @apply mt-3 font-display text-[28px] leading-[1.22] tracking-[-0.3px] text-plateau-cream;
+    }
+
+    .streak-answer-card {
+        @apply mt-[26px] rounded-[22px] bg-plateau-cream p-[18px];
+    }
+
+    .streak-answer-label {
+        @apply font-sans-bold text-[11px] uppercase tracking-[1.5px] text-plateau-ink/45;
+    }
+
+    .streak-answer-input {
+        @apply mt-[10px] border-b-[3px] border-plateau-ink pb-[10px] font-display text-2xl text-plateau-ink;
+    }
+
+    .streak-tolerance-row {
+        @apply mt-3 flex-row items-center gap-2;
+    }
+
+    .streak-tolerance-check {
+        @apply size-[18px] items-center justify-center rounded-full bg-plateau-lime;
+    }
+
+    .streak-tolerance-check-text {
+        @apply font-display text-[10px] text-plateau-ink;
+    }
+
+    .streak-tolerance-text {
+        @apply text-xs font-sans-semibold text-plateau-ink/70;
+    }
+
+    .streak-actions-row {
+        @apply mt-[14px] flex-row flex-wrap gap-2;
+    }
+
+    .streak-action-pill {
+        @apply rounded-2xl bg-plateau-cream/[0.16] px-[13px] py-2;
+    }
+
+    .streak-action-pill-text {
+        @apply font-sans-bold text-xs text-plateau-cream;
+    }
+
+    .streak-footer {
+        @apply mt-4 rounded-t-3xl bg-plateau-ink px-5 pb-6 pt-4;
+    }
+
+    .streak-footer-row {
+        @apply flex-row items-center justify-between;
+    }
+
+    .streak-footer-label {
+        @apply text-xs font-sans-semibold text-plateau-cream/60;
+    }
+
+    .streak-footer-timer {
+        @apply font-display text-xl text-plateau-gold;
+    }
+
+    .streak-submit-button {
+        @apply mt-3 items-center rounded-2xl bg-plateau-lime p-[17px];
+    }
+
+    .streak-submit-text {
+        @apply font-display text-base text-plateau-ink;
+    }
+
+    .streak-reveal-card {
+        @apply mt-[18px] rounded-2xl p-4;
+    }
+
+    .streak-reveal-correct {
+        @apply bg-plateau-lime;
+    }
+
+    .streak-reveal-incorrect {
+        @apply bg-[#FFE1E9];
+    }
+
+    .streak-reveal-title {
+        @apply font-display text-sm text-plateau-ink;
+    }
+
+    .streak-reveal-explanation {
+        @apply mt-2 text-[13px] font-sans-medium leading-[1.4] text-plateau-ink/70;
+    }
+
+    .streak-hint-banner {
+        @apply mt-3 rounded-xl bg-plateau-ink/20 px-4 py-3;
+    }
+
+    .streak-hint-text {
+        @apply text-center font-display text-sm text-plateau-cream;
+    }
+
+    .streak-result-title {
+        @apply font-display text-[11px] uppercase tracking-[2.5px] text-plateau-cream/60;
+    }
+
+    .streak-result-heading {
+        @apply mt-[10px] font-display text-[34px] leading-[1.05] tracking-[-0.5px] text-plateau-cream;
+    }
+
+    .streak-result-score-card {
+        @apply mt-6 items-center rounded-[26px] bg-plateau-cream p-6;
+    }
+
+    .streak-result-score {
+        @apply font-display text-[56px] leading-none text-plateau-ink;
+    }
+
+    .streak-result-score-label {
+        @apply mt-2 text-[13px] font-sans-semibold text-plateau-ink/60;
+    }
+
+    .streak-result-best-pill {
+        @apply mt-3 rounded-full bg-plateau-gold px-3 py-1 font-display text-xs text-plateau-ink;
+    }
+
+    .streak-result-xp-pill {
+        @apply mt-2 rounded-full bg-plateau-lime px-3 py-1 font-display text-xs text-plateau-ink;
+    }
+
+    .streak-result-actions {
+        @apply mt-6 gap-3;
+    }
+
+    .streak-result-secondary-button {
+        @apply items-center rounded-2xl border-2 border-plateau-cream/30 p-[14px];
+    }
+
+    .streak-result-secondary-text {
+        @apply text-sm font-sans-bold text-plateau-cream/80;
+    }
 }
