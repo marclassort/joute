@@ -1,5 +1,5 @@
 import {Image, Pressable, ScrollView, Text, View} from "react-native";
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
 import {styled} from "nativewind";
 import {useRouter} from "expo-router";
@@ -8,6 +8,7 @@ import {
     availablePlateauCategories,
     canPlayerOpenRound,
     computePlateauActivity,
+    computePlateauScore,
     computePlateauStandings,
     openPlateauRound,
     submitPlateauAnswer,
@@ -22,6 +23,8 @@ import {plateauColors} from "@/constants/theme";
 import {formatRelativeTime} from "@/lib/utils";
 // eslint-disable-next-line import/no-named-as-default
 import clsx from "clsx";
+import {XP_PER_CORRECT_PLATEAU, XP_PLATEAU_WIN_BONUS} from "@/game/gamification";
+import {localGamificationRepository} from "@/services/localGamificationRepository";
 import {useCurrentPlayer} from "@/features/joute/hooks/useCurrentPlayer";
 import {usePlateauMatch} from "../hooks/usePlateauMatch";
 import PlateauTrackRow from "../components/PlateauTrackRow";
@@ -40,6 +43,16 @@ const PlateauBoardScreen = ({matchId}: PlateauBoardScreenProps) => {
     const {match, isLoading, saveMatch} = usePlateauMatch(matchId);
     const [phase, setPhase] = useState<"board" | "category" | "question">("board");
     const [questionIndex, setQuestionIndex] = useState(0);
+    const hasAwardedRef = useRef(false);
+
+    useEffect(() => {
+        if (!match || match.status !== "completed" || hasAwardedRef.current) return;
+        hasAwardedRef.current = true;
+
+        const won = computePlateauStandings(match)[0]?.player.id === myId;
+        const xp = computePlateauScore(match, myId) * XP_PER_CORRECT_PLATEAU + (won ? XP_PLATEAU_WIN_BONUS : 0);
+        localGamificationRepository.awardXpForMatch(match.id, xp);
+    }, [match, myId]);
 
     if (isLoading || !match) {
         return (

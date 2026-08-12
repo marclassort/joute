@@ -1046,6 +1046,10 @@
         @apply mt-2 text-[13px] font-sans-semibold text-plateau-ink/60;
     }
 
+    .solo-result-xp-pill {
+        @apply mt-3 rounded-full bg-plateau-gold px-3 py-1 font-display text-xs text-plateau-ink;
+    }
+
     .solo-result-stats-card {
         @apply mt-4 gap-[10px] rounded-2xl bg-plateau-ink/[0.08] p-[18px];
     }

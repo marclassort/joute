@@ -8,8 +8,10 @@ import {useMatches} from "@/features/joute/hooks/useMatches";
 import {useCurrentPlayer} from "@/features/joute/hooks/useCurrentPlayer";
 import {computeMatchStats, computeScore} from "@/game/rules";
 import {WINNING_SCORE} from "@/game/types";
+import {computeLevel} from "@/game/gamification";
 import {formatTimeRemaining} from "@/lib/utils";
 import {plateauColors} from "@/constants/theme";
+import {useGamification} from "@/hooks/useGamification";
 import MatchCard from "@/features/joute/components/MatchCard";
 import HardShadowCard from "@/features/joute/components/HardShadowCard";
 
@@ -19,8 +21,10 @@ const Joute = () => {
     const {id: myId, displayName, avatarUrl: avatarUri} = useCurrentPlayer();
     const router = useRouter();
     const {matches} = useMatches();
+    const {totalXp, currentStreak: dailyStreak} = useGamification();
 
     const stats = useMemo(() => computeMatchStats(matches, myId), [matches, myId]);
+    const level = computeLevel(totalXp);
 
     const toPlay = useMemo(
         () =>
@@ -68,12 +72,15 @@ const Joute = () => {
                             Salut, {displayName}
                         </Text>
                         <View className="hub-pills-row">
+                            <View className="hub-pill bg-plateau-violet">
+                                <Text className="hub-pill-text text-plateau-cream">Niv. {level}</Text>
+                            </View>
                             <View className="hub-pill bg-plateau-lime">
                                 <Text className="hub-pill-text">{stats.wins} victoire{stats.wins > 1 ? "s" : ""}</Text>
                             </View>
-                            {stats.currentStreak > 1 && (
+                            {dailyStreak > 1 && (
                                 <View className="hub-pill bg-plateau-gold">
-                                    <Text className="hub-pill-text">Série {stats.currentStreak}</Text>
+                                    <Text className="hub-pill-text">🔥 {dailyStreak} j</Text>
                                 </View>
                             )}
                         </View>

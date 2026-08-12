@@ -7,6 +7,8 @@ import {Category} from "@/game/types";
 import {pickQuestions} from "@/game/rules";
 import {ALL_QUESTIONS} from "@/data/questions";
 import {buildSoloAnswer, computeAverageResponseMs, computeLongestCorrectStreak, computeSoloScore, SoloAnswer} from "@/game/soloEngine";
+import {XP_PER_CORRECT_SOLO} from "@/game/gamification";
+import {localGamificationRepository} from "@/services/localGamificationRepository";
 import {generateId} from "@/lib/utils";
 import {SOLO_QUESTIONS_PER_SESSION} from "../constants";
 import {useSoloStats} from "../hooks/useSoloStats";
@@ -67,17 +69,21 @@ const SoloScreen = ({category}: SoloScreenProps) => {
     useEffect(() => {
         if (phase !== "results" || hasRecordedRef.current) return;
         hasRecordedRef.current = true;
-        recordSession(category, computeSoloScore(answers), answers.length);
+        const score = computeSoloScore(answers);
+        recordSession(category, score, answers.length);
+        localGamificationRepository.awardXp(score * XP_PER_CORRECT_SOLO);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [phase]);
 
     if (phase === "results") {
+        const score = computeSoloScore(answers);
         return (
             <SafeAreaView className="flex-1 bg-plateau-cream p-5">
                 <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="pb-6">
                     <SoloResultCard
                         category={category}
-                        score={computeSoloScore(answers)}
+                        score={score}
+                        xpEarned={score * XP_PER_CORRECT_SOLO}
                         averageResponseMs={computeAverageResponseMs(answers)}
                         longestCorrectStreak={computeLongestCorrectStreak(answers)}
                         onReplay={handleReplay}

@@ -1,10 +1,12 @@
 import {Pressable, ScrollView, Text, View} from "react-native";
-import React from "react";
+import React, {useEffect, useRef} from "react";
 import {styled} from "nativewind";
 import {SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
 import {useRouter} from "expo-router";
 import {createMatch} from "@/game/engine";
 import {computeOutcomeForPlayer, computePlayerMatchStats, computeScore} from "@/game/rules";
+import {XP_DUEL_WIN_BONUS, XP_PER_CORRECT_DUEL} from "@/game/gamification";
+import {localGamificationRepository} from "@/services/localGamificationRepository";
 import {generateId} from "@/lib/utils";
 import {useMatch} from "../hooks/useMatch";
 import {useCurrentPlayer} from "../hooks/useCurrentPlayer";
@@ -30,6 +32,19 @@ const ResultScreen = ({matchId}: ResultScreenProps) => {
     const {id: myId} = useCurrentPlayer();
     const router = useRouter();
     const {match, isLoading, saveMatch} = useMatch(matchId);
+    const hasAwardedRef = useRef(false);
+
+    useEffect(() => {
+        if (!match || hasAwardedRef.current) return;
+        if (match.status !== "completed" && match.status !== "expired") return;
+
+        const outcome = computeOutcomeForPlayer(match, myId);
+        if (outcome === null) return;
+
+        hasAwardedRef.current = true;
+        const xp = computeScore(match, myId) * XP_PER_CORRECT_DUEL + (outcome === "win" ? XP_DUEL_WIN_BONUS : 0);
+        localGamificationRepository.awardXpForMatch(match.id, xp);
+    }, [match, myId]);
 
     if (isLoading) {
         return (

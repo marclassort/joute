@@ -8,6 +8,7 @@ import {SOLO_QUESTIONS_PER_SESSION} from "../constants";
 export interface SoloResultCardProps {
     category: Category;
     score: number;
+    xpEarned: number;
     averageResponseMs: number;
     longestCorrectStreak: number;
     onReplay: () => void;
@@ -20,7 +21,7 @@ function headingFor(score: number): string {
     return "Continue,\ntu progresses !";
 }
 
-const SoloResultCard = ({category, score, averageResponseMs, longestCorrectStreak, onReplay, onBackToThemes}: SoloResultCardProps) => (
+const SoloResultCard = ({category, score, xpEarned, averageResponseMs, longestCorrectStreak, onReplay, onBackToThemes}: SoloResultCardProps) => (
     <View>
         <Text className="solo-result-title">{CATEGORY_LABELS[category]} · partie terminée</Text>
         <Text className="solo-result-heading">{headingFor(score)}</Text>
@@ -31,6 +32,7 @@ const SoloResultCard = ({category, score, averageResponseMs, longestCorrectStrea
                 <Text className="solo-result-score-total">/{SOLO_QUESTIONS_PER_SESSION}</Text>
             </View>
             <Text className="solo-result-score-label">bonnes réponses</Text>
+            <Text className="solo-result-xp-pill">+{xpEarned} XP</Text>
         </View>
 
         <View className="solo-result-stats-card">
