@@ -88,7 +88,7 @@ const JoinMatchScreen = ({code}: JoinMatchScreenProps) => {
 
     if (errorMessage) {
         return (
-            <SafeAreaView className="flex-1 items-center justify-center gap-2 bg-plateau-cream p-5">
+            <SafeAreaView className="flex-1 items-center justify-center gap-2 bg-plateau-paper p-5">
                 <Text className="joute-step-title">Invitation invalide</Text>
                 <Text className="home-empty-state">{errorMessage}</Text>
             </SafeAreaView>
@@ -96,7 +96,7 @@ const JoinMatchScreen = ({code}: JoinMatchScreenProps) => {
     }
 
     return (
-        <SafeAreaView className="flex-1 bg-plateau-cream p-5">
+        <SafeAreaView className="flex-1 bg-plateau-paper p-5">
             <View className="joute-skeleton" />
         </SafeAreaView>
     );

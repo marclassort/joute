@@ -1,15 +1,16 @@
 import type { ImageSourcePropType } from "react-native";
+import type { TabIconName } from "@/components/TabBarIcon";
 
 declare global {
     interface AppTab {
         name: string;
         title: string;
-        icon: string;
+        icon: TabIconName;
     }
 
     interface TabIconProps {
         focused: boolean;
-        icon: string;
+        icon: TabIconName;
     }
 
     interface Subscription {

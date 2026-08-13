@@ -9,6 +9,7 @@ import {computeScore, drawCategoryOptions, pickQuestions} from "@/game/rules";
 import {ALL_QUESTIONS} from "@/data/questions";
 import {formatTimeRemaining} from "@/lib/utils";
 import {buildInvitationLink} from "@/services/invitations";
+import {localQuestRepository} from "@/services/localQuestRepository";
 import {useMatch} from "../hooks/useMatch";
 import {useCurrentPlayer} from "../hooks/useCurrentPlayer";
 import CategoryChoiceStep from "../components/CategoryChoiceStep";
@@ -155,6 +156,7 @@ const MatchScreen = ({matchId}: MatchScreenProps) => {
         const handleAnswer = async (selectedIndex: number | null, elapsedMs: number) => {
             const updated = submitAnswer({match, playerId: myId, question, selectedIndex, elapsedMs});
             await saveMatch(updated);
+            localQuestRepository.recordAnswer(selectedIndex === question.correctIndex, elapsedMs);
         };
 
         return (

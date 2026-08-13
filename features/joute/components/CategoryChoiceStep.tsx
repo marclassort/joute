@@ -1,7 +1,7 @@
 import {Pressable, Text, View} from "react-native";
 import React from "react";
 import {Category} from "@/game/types";
-import {CATEGORY_COLORS, CATEGORY_ICONS, CATEGORY_LABELS} from "../constants";
+import {CATEGORY_ICONS, CATEGORY_LABELS, CATEGORY_TINTS} from "../constants";
 
 export interface CategoryChoiceStepProps {
     options: Category[];
@@ -22,7 +22,7 @@ const CategoryChoiceStep = ({options, roundNumber, onChoose}: CategoryChoiceStep
                     <Pressable
                         key={category}
                         className="duel-category-card"
-                        style={{backgroundColor: CATEGORY_COLORS[category]}}
+                        style={{backgroundColor: CATEGORY_TINTS[category]}}
                         onPress={() => onChoose(category)}
                         accessibilityRole="button"
                         accessibilityLabel={`Choisir le thème ${CATEGORY_LABELS[category]}`}

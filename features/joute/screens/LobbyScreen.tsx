@@ -14,7 +14,7 @@ import {localInvitationRepository} from "@/services/localInvitationRepository";
 import {localNotificationService} from "@/services/localNotificationService";
 import {useMatches} from "../hooks/useMatches";
 import {useCurrentPlayer} from "../hooks/useCurrentPlayer";
-import HardShadowCard from "../components/HardShadowCard";
+import ShadowCard from "@/components/ShadowCard";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -79,17 +79,17 @@ const LobbyScreen = () => {
             <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="pb-6">
                 <View className="duel-lobby-stats-card">
                     <View className="duel-lobby-stat">
-                        <Text className="font-display text-lg" style={{color: plateauColors.lime}}>
+                        <Text className="font-display text-lg" style={{color: plateauColors.teal}}>
                             {stats.wins}
                         </Text>
                         <Text className="duel-lobby-stat-label">Victoires</Text>
                     </View>
                     <View className="duel-lobby-stat">
-                        <Text className="font-display text-lg text-plateau-cream">{stats.losses}</Text>
+                        <Text className="font-display text-lg text-plateau-paper">{stats.losses}</Text>
                         <Text className="duel-lobby-stat-label">Défaites</Text>
                     </View>
                     <View className="duel-lobby-stat">
-                        <Text className="font-display text-lg" style={{color: plateauColors.gold}}>
+                        <Text className="font-display text-lg" style={{color: plateauColors.brass}}>
                             {stats.currentStreak}
                         </Text>
                         <Text className="duel-lobby-stat-label">Série</Text>
@@ -97,7 +97,7 @@ const LobbyScreen = () => {
                 </View>
 
                 <Text className="duel-lobby-rule-heading">Règle de la joute</Text>
-                <HardShadowCard borderRadius={18} offsetY={4} className="duel-lobby-rule-card">
+                <ShadowCard borderRadius={18} className="duel-lobby-rule-card">
                     <View className="duel-lobby-rule-badge">
                         <Text className="duel-lobby-rule-badge-text">{WINNING_SCORE}</Text>
                     </View>
@@ -105,15 +105,15 @@ const LobbyScreen = () => {
                         <Text className="duel-lobby-rule-title">{WINNING_SCORE} points gagnants</Text>
                         <Text className="duel-lobby-rule-subtitle">Le premier à {WINNING_SCORE} remporte la joute</Text>
                     </View>
-                </HardShadowCard>
+                </ShadowCard>
             </ScrollView>
 
             <View className="duel-lobby-actions">
-                <HardShadowCard borderRadius={20} offsetY={5} className="solo-cta-button">
+                <ShadowCard borderRadius={20} className="solo-cta-button">
                     <Pressable onPress={handleRandomOpponent} accessibilityRole="button">
                         <Text className="solo-cta-text">Adversaire aléatoire</Text>
                     </Pressable>
-                </HardShadowCard>
+                </ShadowCard>
                 <Pressable className="duel-lobby-secondary-button" onPress={handleInviteFriend} accessibilityRole="button">
                     <Text className="duel-lobby-secondary-text">Inviter un ami</Text>
                 </Pressable>

@@ -10,7 +10,7 @@ import {PLATEAU_MAX_PLAYERS, PLATEAU_MIN_PLAYERS, PLATEAU_WINNING_SCORE, Player}
 import ghosts from "@/data/ghosts";
 import {generateId} from "@/lib/utils";
 import {useCurrentPlayer} from "@/features/joute/hooks/useCurrentPlayer";
-import HardShadowCard from "@/features/joute/components/HardShadowCard";
+import ShadowCard from "@/components/ShadowCard";
 import {plateauColors} from "@/constants/theme";
 import {usePlateauMatches} from "../hooks/usePlateauMatches";
 
@@ -53,8 +53,8 @@ const CreatePlateauScreen = () => {
             </View>
 
             <View className="mt-5">
-                <Text className="solo-hero-title text-plateau-cream">Combien de{"\n"}joueurs ?</Text>
-                <Text className="solo-hero-subtitle text-plateau-cream/60">
+                <Text className="solo-hero-title text-plateau-paper">Combien de{"\n"}joueurs ?</Text>
+                <Text className="solo-hero-subtitle text-plateau-paper/60">
                     Course collective à {PLATEAU_WINNING_SCORE} points · les places libres sont remplies par des profils de démonstration
                 </Text>
 
@@ -62,13 +62,13 @@ const CreatePlateauScreen = () => {
                     {PLAYER_COUNT_OPTIONS.map((count) => (
                         <Pressable
                             key={count}
-                            className={clsx("duel-category-card", "flex-1 justify-center", playerCount === count && "border-plateau-lime")}
-                            style={{backgroundColor: playerCount === count ? plateauColors.lime : "rgba(255,246,226,0.06)"}}
+                            className={clsx("duel-category-card", "flex-1 justify-center", playerCount === count && "border-plateau-teal")}
+                            style={{backgroundColor: playerCount === count ? plateauColors.teal : "rgba(255,253,248,0.06)"}}
                             onPress={() => setPlayerCount(count)}
                             accessibilityRole="button"
                             accessibilityState={{selected: playerCount === count}}
                         >
-                            <Text className={clsx("duel-category-label text-center", playerCount === count ? "text-plateau-ink" : "text-plateau-cream")}>
+                            <Text className={clsx("duel-category-label text-center", playerCount === count ? "text-plateau-ink" : "text-plateau-paper")}>
                                 {count}
                             </Text>
                         </Pressable>
@@ -77,11 +77,11 @@ const CreatePlateauScreen = () => {
             </View>
 
             <View className="mt-auto">
-                <HardShadowCard borderRadius={20} offsetY={5} className="solo-cta-button">
+                <ShadowCard borderRadius={20} className="solo-cta-button">
                     <Pressable onPress={handleCreate} accessibilityRole="button">
                         <Text className="solo-cta-text">Créer la partie</Text>
                     </Pressable>
-                </HardShadowCard>
+                </ShadowCard>
             </View>
         </SafeAreaView>
     );

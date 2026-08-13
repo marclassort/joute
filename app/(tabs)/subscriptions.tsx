@@ -13,9 +13,9 @@ const Subscriptions = () => {
     const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<string | null>(null);
 
     return (
-        <SafeAreaView className="flex-1 bg-background p-5">
+        <SafeAreaView className="flex-1 bg-plateau-paper p-5">
             <FlatList
-                ListHeaderComponent={<ListHeading title="Tous les abonnements" />}
+                ListHeaderComponent={<ListHeading title="Abonnements suivis" />}
                 data={subscriptions}
                 keyExtractor={(item) => item.id}
                 renderItem={({item}) => (
@@ -27,7 +27,7 @@ const Subscriptions = () => {
                     />
                 )}
                 extraData={expandedSubscriptionId}
-                ItemSeparatorComponent={() => <View className="h-4" />}
+                ItemSeparatorComponent={() => <View className="h-[10px]" />}
                 ListEmptyComponent={<Text className="home-empty-state">Pas d&#39;abonnements encore.</Text>}
                 contentContainerClassName="pb-30"
             />

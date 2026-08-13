@@ -1,4 +1,5 @@
 import {createAudioPlayer, type AudioPlayer} from "expo-audio";
+import {isSoundEnabled} from "./preferences";
 
 const SOUND_SOURCES = {
     correct: require("@/assets/sounds/correct.mp3"),
@@ -21,6 +22,7 @@ function getPlayer(name: SoundName): AudioPlayer {
 
 /** Joue un effet sonore court (bonne/mauvaise réponse, victoire). Best-effort : un son ne doit jamais faire planter l'app (permissions, mode silencieux, module indisponible). */
 export function playSound(name: SoundName): void {
+    if (!isSoundEnabled()) return;
     try {
         const player = getPlayer(name);
         player.seekTo(0).catch(() => {});

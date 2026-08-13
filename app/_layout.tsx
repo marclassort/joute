@@ -23,13 +23,13 @@ if (!publishableKey) {
 function RootNavigator() {
   const router = useRouter();
   const [fontsLoaded] = useFonts({
-    'sans-regular': require("@/assets/fonts/PlusJakartaSans-Regular.ttf"),
-    'sans-bold': require("@/assets/fonts/PlusJakartaSans-Bold.ttf"),
-    'sans-medium': require("@/assets/fonts/PlusJakartaSans-Medium.ttf"),
-    'sans-semibold': require("@/assets/fonts/PlusJakartaSans-SemiBold.ttf"),
-    'sans-extrabold': require("@/assets/fonts/PlusJakartaSans-ExtraBold.ttf"),
-    'sans-light': require("@/assets/fonts/PlusJakartaSans-Light.ttf"),
-    'archivo-extrabold': require("@/assets/fonts/Archivo-ExtraBold.ttf"),
+    'sans-light': require("@/assets/fonts/InstrumentSans-Regular.ttf"),
+    'sans-regular': require("@/assets/fonts/InstrumentSans-Regular.ttf"),
+    'sans-medium': require("@/assets/fonts/InstrumentSans-Medium.ttf"),
+    'sans-semibold': require("@/assets/fonts/InstrumentSans-SemiBold.ttf"),
+    'sans-bold': require("@/assets/fonts/InstrumentSans-Bold.ttf"),
+    'sans-extrabold': require("@/assets/fonts/InstrumentSans-Bold.ttf"),
+    'display-extrabold': require("@/assets/fonts/BricolageGrotesque-ExtraBold.ttf"),
   });
   const { isLoaded: authLoaded, isSignedIn } = useAuth();
 
@@ -61,7 +61,11 @@ function RootNavigator() {
 
   if (!ready) return null;
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="profile-modal" options={{ presentation: "modal" }} />
+    </Stack>
+  );
 }
 
 export default function RootLayout() {

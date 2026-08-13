@@ -10,6 +10,7 @@ import {StreakAnswer, computeCurrentStreak} from "@/game/streakEngine";
 import {XP_PER_CORRECT_STREAK} from "@/game/gamification";
 import {localGamificationRepository} from "@/services/localGamificationRepository";
 import {localStreakStatsRepository} from "@/services/localStreakStatsRepository";
+import {localQuestRepository} from "@/services/localQuestRepository";
 import {playSound} from "@/lib/sounds";
 import StreakQuestionCard from "../components/StreakQuestionCard";
 import StreakResultCard from "../components/StreakResultCard";
@@ -42,6 +43,7 @@ const StreakScreen = () => {
     const handleAnswer = (submittedText: string, usedHint: boolean, elapsedMs: number, isCorrect: boolean) => {
         if (!currentQuestion) return;
         setAnswers((previous) => [...previous, {questionId: currentQuestion.id, submittedText, isCorrect, usedHint, elapsedMs}]);
+        localQuestRepository.recordAnswer(isCorrect, elapsedMs);
     };
 
     const handleContinue = () => {
@@ -80,7 +82,7 @@ const StreakScreen = () => {
     if (phase === "results") {
         const finalStreak = computeCurrentStreak(answers);
         return (
-            <SafeAreaView className="flex-1 bg-plateau-violet p-5">
+            <SafeAreaView className="flex-1 bg-plateau-iris p-5">
                 <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="pb-6">
                     <StreakResultCard
                         finalStreak={finalStreak}
@@ -96,14 +98,14 @@ const StreakScreen = () => {
 
     if (!currentQuestion) {
         return (
-            <SafeAreaView className="flex-1 bg-plateau-violet p-5">
-                <Text className="home-empty-state text-plateau-cream">Impossible de charger cette question.</Text>
+            <SafeAreaView className="flex-1 bg-plateau-iris p-5">
+                <Text className="home-empty-state text-plateau-paper">Impossible de charger cette question.</Text>
             </SafeAreaView>
         );
     }
 
     return (
-        <SafeAreaView className="flex-1 bg-plateau-violet p-5">
+        <SafeAreaView className="flex-1 bg-plateau-iris p-5">
             <Pressable className="duel-close-button" onPress={handleClose} accessibilityRole="button" accessibilityLabel="Quitter">
                 <Text className="duel-close-icon">✕</Text>
             </Pressable>

@@ -2,13 +2,13 @@ import {Pressable, Text, TextInput, View} from "react-native";
 import React, {useEffect, useRef, useState} from "react";
 // eslint-disable-next-line import/no-named-as-default
 import clsx from "clsx";
-import * as Haptics from "expo-haptics";
 import Animated, {Easing, FadeInDown, ZoomIn, useAnimatedStyle, useReducedMotion, useSharedValue, withTiming} from "react-native-reanimated";
 import {Question} from "@/game/types";
 import {isAnswerCorrect} from "@/game/textMatch";
 import {computeHint} from "@/game/streakEngine";
 import {CATEGORY_LABELS, QUESTION_ALERT_THRESHOLD_MS, QUESTION_DURATION_MS} from "@/features/joute/constants";
 import {playSound} from "@/lib/sounds";
+import {notifyError, notifySuccess} from "@/lib/haptics";
 
 export interface StreakQuestionCardProps {
     question: Question;
@@ -44,7 +44,8 @@ const StreakQuestionCard = ({question, streakCount, onAnswer, onContinue}: Strea
 
             const correct = isAnswerCorrect(submittedText, question.choices[question.correctIndex]);
             setIsCorrect(correct);
-            Haptics.notificationAsync(correct ? Haptics.NotificationFeedbackType.Success : Haptics.NotificationFeedbackType.Error);
+            if (correct) notifySuccess();
+            else notifyError();
             playSound(correct ? "correct" : "incorrect");
 
             const elapsedMs = Math.min(QUESTION_DURATION_MS, Date.now() - startedAtRef.current);
@@ -160,7 +161,7 @@ const StreakQuestionCard = ({question, streakCount, onAnswer, onContinue}: Strea
                 <View className="streak-footer">
                     <View className="streak-footer-row">
                         <Text className="streak-footer-label">Il te reste</Text>
-                        <Text className={clsx("streak-footer-timer", isUrgent && "text-plateau-pink")}>
+                        <Text className={clsx("streak-footer-timer", isUrgent && "text-plateau-rose")}>
                             {String(secondsLeft).padStart(2, "0")} s
                         </Text>
                     </View>

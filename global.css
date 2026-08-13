@@ -17,25 +17,34 @@
     --color-destructive: #dc2626;
     --color-subscription: #8fd1bd;
 
-    /* Charte "plateau" (nouveaux écrans multi-modes) — coexiste avec la palette crème/encre/corail
-       ci-dessus, qui reste inchangée pour Abonnements/Réglages/le duel non encore restylé. */
-    --color-plateau-ink: #0B1026;
-    --color-plateau-ink-surface: #141B3D;
-    --color-plateau-cream: #FFF6E2;
-    --color-plateau-orange: #FF6A3D;
-    --color-plateau-violet: #6C4DF6;
-    --color-plateau-lime: #C9F24D;
-    --color-plateau-cyan: #35D6E7;
-    --color-plateau-gold: #FFC93C;
-    --color-plateau-pink: #FF4D8D;
+    /* Charte v2 (project-update/) — coexiste avec la palette crème/encre/corail ci-dessus, qui reste
+       inchangée pour les écrans pas encore migrés (voir plan de refonte). */
+    --color-plateau-ink: #14121F;
+    --color-plateau-ink-surface: #1E1B36;
+    --color-plateau-paper: #F6F0E6;
+    --color-plateau-card: #FFFDF8;
+    --color-plateau-coral: #F4744C;
+    --color-plateau-teal: #2FB8A8;
+    --color-plateau-iris: #7C6BF5;
+    --color-plateau-brass: #E7B24B;
+    --color-plateau-rose: #E75A8E;
 
-    --font-sans: sans-regular;
+    /* Nom volontairement différent de "--font-sans" : cette clé précise déclenche le Preflight de Tailwind
+       qui l'applique comme police par défaut de TOUTE l'app (y compris les Text ne portant aucune classe
+       font-*), ce qui casse le repli natif vers la police système pour les emoji (glyphes "tofu" sur iOS/Android). */
+    --font-sans-regular: sans-regular;
     --font-sans-light: sans-light;
     --font-sans-medium: sans-medium;
     --font-sans-semibold: sans-semibold;
     --font-sans-extrabold: sans-extrabold;
     --font-sans-bold: sans-bold;
-    --font-display: archivo-extrabold;
+    --font-display: display-extrabold;
+
+    --radius-pill: 12px;
+    --radius-card: 20px;
+    --radius-hero: 26px;
+    --radius-tabbar: 28px;
+    --radius-sheet: 30px;
 
     --spacing-0: 0px;
     --spacing-1: 4px;
@@ -56,47 +65,88 @@
     --spacing-20: 80px;
     --spacing-24: 96px;
     --spacing-30: 120px;
-
-    --font-sans: sans-regular;
-    --font-sans-light: sans-light;
-    --font-sans-medium: sans-medium;
-    --font-sans-semibold: sans-semibold;
-    --font-sans-bold: sans-bold;
-    --font-sans-extrabold: sans-extrabold;
 }
 
 @layer components {
-    .tabs-icon {
-        @apply size-12 items-center justify-center;
+    .tabs-icon-pill {
+        @apply size-11 items-center justify-center rounded-full;
     }
 
-    .tabs-pill {
-        @apply size-12 items-center justify-center rounded-full bg-transparent;
+    .tabs-icon-pill-active {
+        @apply bg-plateau-coral;
     }
 
-    .tabs-active {
-        @apply bg-accent;
+    .tabs-label {
+        @apply mt-[2px] text-center font-sans-bold text-[10px] uppercase tracking-[0.04em] text-plateau-paper/60;
     }
 
-    .tabs-glyph {
-        @apply text-xl leading-none;
+    .tabs-label-active {
+        @apply text-plateau-coral;
     }
 
+    /* Échelle typographique charte v2 (project-update/ · "Typographie & formes") */
+
+    .text-hero-title {
+        @apply font-display text-[50px] leading-[1.02] tracking-[-0.04em];
+    }
+
+    .text-section-title {
+        @apply font-display text-[22px] tracking-[-0.02em];
+    }
+
+    /* Titre d'écran plein — "Solo", "Classement", "Quêtes", "Paramètres"… (25–27px selon l'écran) */
+    .text-screen-title {
+        @apply font-display text-[26px] tracking-[-0.03em];
+    }
+
+    .text-victory {
+        @apply font-display text-[42px] leading-none tracking-[-0.035em];
+    }
+
+    .text-score {
+        @apply font-display text-[34px] leading-none tracking-[-0.03em];
+    }
+
+    .text-question {
+        @apply font-display text-[25px] tracking-[-0.02em];
+    }
+
+    .text-body {
+        @apply font-sans-medium text-[17px];
+    }
+
+    .text-label {
+        @apply font-sans-semibold text-[15px] text-plateau-ink/[0.62];
+    }
+
+    .text-eyebrow {
+        @apply font-sans-bold text-[11.5px] uppercase tracking-[0.1em];
+    }
+
+    /* Bordure hairline (1px, jamais 2px) — .hairline sur fond clair, .hairline-dark sur fond encre */
+
+    .hairline {
+        @apply border border-plateau-ink/[0.1];
+    }
+
+    .hairline-dark {
+        @apply border border-plateau-paper/[0.1];
+    }
 
     .list-head {
         @apply my-5 flex-row items-center justify-between;
     }
 
     .list-title {
-        @apply text-2xl font-sans-bold text-primary;
+        @apply font-display text-[22px] tracking-[-0.02em] text-plateau-ink;
     }
 
     .list-action {
-        @apply rounded-full border border-black/20 px-4 py-1;
+        @apply border border-plateau-ink/[0.1] rounded-xl px-4 py-[7px];
     }
 
     .list-action-text {
-        @apply text-lg font-sans-semibold text-primary;
+        @apply text-[13px] font-sans-bold text-plateau-ink;
     }
 
     .upcoming-card {
@@ -128,15 +178,15 @@
     }
 
     .sub-card {
-        @apply rounded-2xl border border-border p-4;
+        @apply border border-plateau-ink/[0.1] rounded-[22px] bg-plateau-card p-4;
     }
 
     .sub-card-expanded {
-        @apply bg-subscription;
+        @apply bg-plateau-card;
     }
 
     .sub-head {
-        @apply flex-row items-center py-2;
+        @apply flex-row items-center py-1;
     }
 
     .sub-main {
@@ -144,7 +194,7 @@
     }
 
     .sub-icon {
-        @apply size-16 rounded-lg;
+        @apply size-14 rounded-2xl;
     }
 
     .sub-copy {
@@ -152,11 +202,11 @@
     }
 
     .sub-title {
-        @apply mb-1 text-lg font-sans-bold text-primary;
+        @apply text-[15px] font-sans-bold text-plateau-ink;
     }
 
     .sub-meta {
-        @apply text-sm font-sans-semibold text-muted-foreground;
+        @apply text-[12.5px] font-sans-semibold text-plateau-ink/55;
     }
 
     .sub-price-box {
@@ -164,19 +214,19 @@
     }
 
     .sub-price {
-        @apply mb-1 text-lg font-sans-bold text-primary;
+        @apply font-display text-lg text-plateau-ink;
     }
 
     .sub-billing {
-        @apply text-sm font-sans-medium text-muted-foreground;
+        @apply text-[11.5px] font-sans-medium text-plateau-ink/50;
     }
 
     .sub-body {
-        @apply mt-6 gap-4;
+        @apply mt-4 gap-3;
     }
 
     .sub-details {
-        @apply gap-6;
+        @apply border border-plateau-ink/[0.1] gap-3 rounded-[16px] bg-plateau-ink/[0.04] p-3;
     }
 
     .sub-row {
@@ -188,23 +238,23 @@
     }
 
     .sub-label {
-        @apply shrink-0 text-base font-sans-medium text-muted-foreground;
+        @apply shrink-0 text-[13px] font-sans-medium text-plateau-ink/55;
     }
 
     .sub-value {
-        @apply flex-1 font-sans-bold text-primary;
+        @apply flex-1 text-right text-[13px] font-sans-bold text-plateau-ink;
     }
 
     .sub-cancel {
-        @apply mt-2 items-center rounded-full bg-primary py-4;
+        @apply mt-2 items-center rounded-[17px] bg-plateau-ink py-4;
     }
 
     .sub-cancel-disabled {
-        @apply bg-primary/35;
+        @apply opacity-35;
     }
 
     .sub-cancel-text {
-        @apply font-sans-bold text-background;
+        @apply text-[14px] font-sans-bold text-plateau-paper;
     }
 
     .home-empty-state {
@@ -212,15 +262,15 @@
     }
 
     .settings-title {
-        @apply mb-8 font-display text-2xl text-plateau-ink;
+        @apply font-display text-[26px] tracking-[-0.03em] text-plateau-ink;
     }
 
     .settings-card {
-        @apply rounded-3xl border-2 border-plateau-ink bg-white p-5;
+        @apply border border-plateau-ink/[0.1] gap-[2px] rounded-[22px] bg-plateau-card p-5;
     }
 
     .settings-card-label {
-        @apply mb-4 font-display text-xs uppercase tracking-[1.5px] text-plateau-ink/50;
+        @apply font-sans-bold text-[11.5px] uppercase tracking-[0.1em] mb-2 text-plateau-ink/45;
     }
 
     .settings-profile-row {
@@ -228,7 +278,7 @@
     }
 
     .settings-avatar {
-        @apply size-20 shrink-0 rounded-full border-2 border-plateau-ink;
+        @apply border border-plateau-ink/[0.1] size-20 shrink-0 rounded-full;
     }
 
     .settings-profile-copy {
@@ -244,7 +294,7 @@
     }
 
     .settings-signout-button {
-        @apply mt-4 items-center rounded-2xl border-2 border-plateau-ink bg-plateau-pink py-4;
+        @apply mt-4 items-center rounded-2xl bg-plateau-rose py-4;
     }
 
     .settings-signout-button-disabled {
@@ -252,7 +302,47 @@
     }
 
     .settings-signout-text {
-        @apply font-display text-base text-plateau-ink;
+        @apply text-[15px] font-sans-bold text-plateau-ink;
+    }
+
+    .settings-row {
+        @apply flex-row items-center gap-3 py-[13px];
+    }
+
+    .settings-row-divider {
+        @apply border-b border-plateau-ink/[0.09];
+    }
+
+    .settings-row-icon {
+        @apply text-lg;
+    }
+
+    .settings-row-copy {
+        @apply min-w-0 flex-1 gap-[1px];
+    }
+
+    .settings-row-label {
+        @apply text-[15px] font-sans-bold text-plateau-ink;
+    }
+
+    .settings-row-hint {
+        @apply text-[12.5px] text-plateau-ink/55;
+    }
+
+    .settings-row-value {
+        @apply text-[13px] font-sans-semibold text-plateau-ink/50;
+    }
+
+    .settings-row-chevron {
+        @apply text-[17px] text-plateau-ink/30;
+    }
+
+    .settings-toggle-track {
+        @apply h-[30px] w-[50px] items-center justify-center rounded-full p-[3px];
+    }
+
+    .settings-toggle-knob {
+        @apply size-6 rounded-full bg-plateau-card;
     }
 
     .auth-field {
@@ -312,19 +402,19 @@
     }
 
     .modal-title-dark {
-        @apply text-plateau-cream;
+        @apply text-plateau-paper;
     }
 
     .modal-close-dark {
-        @apply bg-plateau-cream/10;
+        @apply bg-plateau-paper/10;
     }
 
     .modal-close-text-dark {
-        @apply text-plateau-cream;
+        @apply text-plateau-paper;
     }
 
     .modal-header-dark {
-        @apply border-plateau-cream/10;
+        @apply border-plateau-paper/10;
     }
 
     .picker-row {
@@ -368,11 +458,11 @@
     }
 
     .joute-new-match-button {
-        @apply mt-5 items-center rounded-2xl border-2 border-plateau-ink bg-plateau-orange py-5;
+        @apply mt-5 items-center rounded-[19px] bg-plateau-coral py-5;
     }
 
     .joute-new-match-text {
-        @apply font-display text-lg text-plateau-ink;
+        @apply text-[17px] font-sans-bold text-plateau-ink;
     }
 
     .joute-card {
@@ -400,7 +490,7 @@
     }
 
     .joute-card-meta-dark {
-        @apply text-plateau-cream/60;
+        @apply text-plateau-paper/60;
     }
 
     .joute-card-score {
@@ -448,11 +538,11 @@
     }
 
     .joute-round-theme {
-        @apply text-base font-sans-bold text-plateau-cream;
+        @apply text-base font-sans-bold text-plateau-paper;
     }
 
     .joute-round-chooser {
-        @apply text-xs font-sans-medium text-plateau-cream/50;
+        @apply text-xs font-sans-medium text-plateau-paper/50;
     }
 
     .joute-pellets-row {
@@ -460,27 +550,27 @@
     }
 
     .joute-pellet-label {
-        @apply w-10 shrink-0 text-xs font-sans-semibold text-plateau-cream/50;
+        @apply w-10 shrink-0 text-xs font-sans-semibold text-plateau-paper/50;
     }
 
     .joute-pellet {
-        @apply size-8 items-center justify-center rounded-full bg-plateau-cream/10;
+        @apply size-8 items-center justify-center rounded-full bg-plateau-paper/10;
     }
 
     .joute-pellet-correct {
-        @apply bg-plateau-lime;
+        @apply bg-plateau-teal;
     }
 
     .joute-pellet-incorrect {
-        @apply bg-plateau-pink;
+        @apply bg-plateau-rose;
     }
 
     .joute-pellet-pending {
-        @apply bg-plateau-cream/10;
+        @apply bg-plateau-paper/10;
     }
 
     .joute-pellet-text {
-        @apply text-sm font-sans-bold text-plateau-cream;
+        @apply text-sm font-sans-bold text-plateau-paper;
     }
 
     .joute-pellet-text-dark {
@@ -499,184 +589,205 @@
         @apply flex-1;
     }
 
-    .hub-header {
-        @apply flex-row items-center gap-3;
-    }
-
-    .hub-avatar {
-        @apply size-[52px] items-center justify-center rounded-full bg-plateau-violet;
-    }
-
-    .hub-avatar-text {
-        @apply font-display text-xl text-plateau-cream;
-    }
-
-    .hub-greeting {
-        @apply font-display text-xl text-primary;
-    }
-
-    .hub-pills-row {
-        @apply mt-1 flex-row items-center gap-2;
-    }
-
-    .hub-pill {
-        @apply self-start rounded-full border-[1.5px] border-primary px-2 py-1;
-    }
-
-    .hub-pill-text {
-        @apply font-sans-bold text-[11px] text-primary;
-    }
+    /* Ex-hub-header/hub-hero/hub-modes (charte v1) : encore utilisées par ProfileScreen et MatchWaitingCard,
+       donc conservées. Le hub d'accueil utilise les classes v2 ci-dessous. */
 
     .hub-gear-button {
-        @apply size-10 items-center justify-center rounded-xl border-2 border-primary bg-background;
+        @apply border border-plateau-paper/[0.12] size-10 items-center justify-center rounded-xl bg-plateau-paper/[0.1];
     }
 
     .hub-gear-icon {
         @apply text-lg;
     }
 
-    .hub-hero-card {
-        @apply relative overflow-hidden rounded-[22px] bg-plateau-ink px-5 py-[18px];
-    }
-
-    .hub-hero-decoration {
-        @apply absolute -right-[40px] -top-[40px] z-0 size-[110px] rounded-full bg-plateau-violet opacity-40;
-    }
-
-    .hub-hero-content {
-        @apply relative z-10;
-    }
-
-    .hub-hero-label {
-        @apply font-display text-[10px] uppercase tracking-[2px] text-plateau-lime;
-    }
-
-    .hub-hero-row {
-        @apply mt-3 flex-row items-center gap-3;
-    }
-
-    .hub-hero-avatar {
-        @apply size-11 items-center justify-center rounded-full border-2 border-plateau-cream bg-plateau-pink;
-    }
-
-    .hub-hero-avatar-text {
-        @apply font-display text-sm text-plateau-cream;
-    }
-
-    .hub-hero-copy {
-        @apply min-w-0 flex-1;
-    }
-
-    .hub-hero-name {
-        @apply font-display text-[17px] text-plateau-cream;
-    }
-
-    .hub-hero-meta {
-        @apply mt-[3px] text-[12.5px] font-sans-medium text-plateau-cream/60;
-    }
-
-    .hub-hero-score {
-        @apply font-display text-2xl text-plateau-lime;
-    }
-
-    .hub-hero-progress-row {
-        @apply mt-[14px] flex-row gap-1;
-    }
-
     .hub-hero-progress-seg {
         @apply h-[6px] flex-1 rounded-full;
     }
 
-    .hub-hero-cta {
-        @apply mt-[14px] items-center rounded-2xl bg-plateau-orange p-3;
-    }
-
-    .hub-hero-cta-text {
-        @apply font-display text-sm text-plateau-ink;
-    }
-
-    .hub-hero-empty-title {
-        @apply font-display text-[15px] text-plateau-cream;
-    }
-
-    .hub-hero-empty-subtitle {
-        @apply mt-1 text-[12.5px] font-sans-medium text-plateau-cream/60;
-    }
-
     .hub-modes-label {
-        @apply mb-3 mt-5 font-display text-[11px] uppercase tracking-[2px] text-primary/50;
+        @apply font-sans-bold text-[11.5px] uppercase tracking-[0.1em] mb-3 mt-5 text-plateau-ink/45;
     }
 
-    .hub-modes-grid {
-        @apply flex-row flex-wrap gap-3;
+    /* Hub d'accueil v2 (project-update/) */
+
+    .hub-topbar {
+        @apply flex-row items-center gap-[10px];
     }
 
-    .hub-mode-card {
-        @apply border-2 border-primary p-4;
+    .hub-logo-badge {
+        @apply size-[38px] items-center justify-center rounded-[13px] bg-plateau-ink;
     }
 
-    .hub-mode-card-wide {
-        @apply w-full flex-row items-center gap-3;
+    .hub-logo-mark {
+        @apply font-display text-[19px] text-plateau-paper;
     }
 
-    .hub-mode-card-half {
-        @apply min-h-[104px] flex-1 basis-[47%] justify-between;
+    .hub-wordmark {
+        @apply flex-1 font-display text-[21px] tracking-[-0.025em] text-plateau-ink;
     }
 
-    .hub-mode-icon {
-        @apply text-[26px] leading-none;
+    .hub-stat-pill {
+        @apply flex-row items-center gap-[6px] rounded-xl px-[11px] py-[7px];
     }
 
-    .hub-mode-icon-lg {
-        @apply text-[30px] leading-none;
+    .hub-stat-pill-text {
+        @apply text-[13px] font-sans-bold;
     }
 
-    .hub-mode-title {
-        @apply font-display text-base;
+    .hub-hero {
+        @apply relative gap-4 overflow-hidden rounded-[26px] bg-plateau-ink p-5;
     }
 
-    .hub-mode-title-lg {
-        @apply font-display text-lg;
+    .hub-hero-blob {
+        @apply absolute -right-14 -top-14 size-[186px] rounded-full bg-plateau-coral/[0.28];
     }
 
-    .hub-mode-subtitle {
-        @apply mt-[2px] text-[12px] font-sans-medium;
+    .hub-hero-eyebrow-row {
+        @apply relative flex-row items-center gap-2;
     }
 
-    .hub-mode-arrow {
-        @apply font-display text-xl text-plateau-ink;
+    .hub-hero-eyebrow-dot {
+        @apply size-2 rounded-full bg-plateau-teal;
     }
 
-    .solo-header {
-        @apply flex-row items-center gap-3;
+    .hub-hero-title {
+        @apply relative font-display text-[28px] leading-[1.05] tracking-[-0.03em] text-plateau-paper;
     }
 
-    .solo-back-button {
-        @apply size-[38px] items-center justify-center rounded-xl border-2 border-plateau-ink;
+    .hub-hero-subtitle {
+        @apply relative text-[14px] font-sans-medium text-plateau-paper/70;
     }
 
-    .solo-back-icon {
-        @apply font-display text-base text-plateau-ink;
+    .hub-hero-footer {
+        @apply relative flex-row items-center gap-[14px];
     }
 
-    .solo-header-title {
+    .hub-hero-avatars {
+        @apply flex-row items-center gap-[6px];
+    }
+
+    .hub-hero-avatar-chip {
+        @apply size-[38px] items-center justify-center rounded-[13px] border-2 border-plateau-ink bg-plateau-rose;
+    }
+
+    .hub-hero-avatar-chip-text {
+        @apply font-display text-[15px] text-plateau-paper;
+    }
+
+    .hub-hero-action {
+        @apply h-[52px] flex-1 flex-row items-center justify-center gap-2 rounded-[17px] bg-plateau-coral;
+    }
+
+    .hub-hero-action-text {
+        @apply text-[17px] font-sans-bold text-plateau-ink;
+    }
+
+    .hub-tile-row {
+        @apply flex-row gap-[10px];
+    }
+
+    .hub-tile {
+        @apply gap-[9px] bg-plateau-card p-[13px];
+    }
+
+    .hub-tile-icon {
+        @apply size-[34px] items-center justify-center rounded-xl;
+    }
+
+    .hub-tile-title {
+        @apply text-[14.5px] font-sans-bold text-plateau-ink;
+    }
+
+    .hub-tile-subtitle {
+        @apply text-[11.5px] text-plateau-ink/[0.55];
+    }
+
+    .hub-section-head {
+        @apply flex-row items-baseline justify-between;
+    }
+
+    .hub-section-link {
+        @apply text-[12.5px] font-sans-bold text-plateau-coral;
+    }
+
+    .hub-resume-row {
+        @apply flex-row items-center gap-[11px] rounded-[20px] bg-plateau-card p-[12px];
+    }
+
+    .hub-resume-avatar {
+        @apply size-10 items-center justify-center rounded-[14px];
+    }
+
+    .hub-resume-avatar-text {
+        @apply font-display text-sm text-plateau-paper;
+    }
+
+    .hub-resume-copy {
+        @apply min-w-0 flex-1 gap-[3px];
+    }
+
+    .hub-resume-name {
+        @apply text-[14.5px] font-sans-bold text-plateau-ink;
+    }
+
+    .hub-resume-meta {
+        @apply text-[11.5px] text-plateau-ink/[0.55];
+    }
+
+    .hub-resume-score {
         @apply font-display text-[17px] text-plateau-ink;
     }
 
+    .hub-quest-teaser {
+        @apply flex-row items-center gap-[13px] rounded-[22px] bg-plateau-iris p-[15px];
+    }
+
+    .hub-quest-teaser-icon {
+        @apply size-12 items-center justify-center rounded-full bg-plateau-paper/[0.15];
+    }
+
+    .hub-quest-teaser-copy {
+        @apply min-w-0 flex-1 gap-[2px];
+    }
+
+    .hub-quest-teaser-title {
+        @apply text-[14.5px] font-sans-bold text-plateau-paper;
+    }
+
+    .hub-quest-teaser-subtitle {
+        @apply text-[12px] font-sans-medium text-plateau-paper/75;
+    }
+
+    .solo-header {
+        @apply flex-row items-center gap-[11px];
+    }
+
+    .solo-back-button {
+        @apply border border-plateau-ink/[0.1] size-[38px] items-center justify-center rounded-[13px];
+    }
+
+    .solo-back-icon {
+        @apply text-[17px] text-plateau-ink;
+    }
+
+    .solo-header-title {
+        @apply flex-1 font-display text-[25px] tracking-[-0.03em] text-plateau-ink;
+    }
+
     .solo-hero-title {
-        @apply font-display text-[30px] leading-[1.05] tracking-[-0.5px] text-plateau-ink;
+        @apply font-display text-[28px] leading-[1.05] tracking-[-0.03em] text-plateau-ink;
     }
 
     .solo-hero-subtitle {
-        @apply mt-2 text-[13.5px] font-sans-medium text-plateau-ink/60;
+        @apply text-[15px] leading-[1.5] font-sans-medium text-plateau-ink/62;
     }
 
     .solo-filters-row {
-        @apply mt-4 flex-row gap-2;
+        @apply flex-row gap-2;
     }
 
     .solo-filter-chip {
-        @apply self-start rounded-full border-[1.5px] border-plateau-ink/25 px-[14px] py-2;
+        @apply border border-plateau-ink/[0.1] self-start rounded-xl px-[14px] py-2;
     }
 
     .solo-filter-chip-active {
@@ -688,39 +799,31 @@
     }
 
     .solo-filter-chip-text-active {
-        @apply text-plateau-cream;
+        @apply text-plateau-paper;
     }
 
     .solo-grid {
-        @apply mt-4 flex-row flex-wrap gap-3;
+        @apply flex-row flex-wrap gap-[10px];
     }
 
     .solo-theme-card {
-        @apply basis-[47%] border-2 border-plateau-ink p-[14px];
+        @apply border border-plateau-ink/[0.1] aspect-square basis-[31%] items-center justify-center gap-[6px] rounded-[19px] p-[10px];
     }
 
     .solo-theme-card-selected {
-        @apply border-[3px];
+        @apply border-plateau-ink;
     }
 
     .solo-theme-icon {
-        @apply text-[26px] leading-none;
+        @apply text-2xl leading-none;
     }
 
     .solo-theme-label {
-        @apply mt-2 font-display text-[15px] text-plateau-ink;
-    }
-
-    .solo-theme-progress-track {
-        @apply mt-2 h-[5px] overflow-hidden rounded-full bg-plateau-ink/[0.18];
-    }
-
-    .solo-theme-progress-fill {
-        @apply h-full rounded-full bg-plateau-ink;
+        @apply text-center text-[11.5px] font-sans-bold leading-[1.15] text-plateau-ink;
     }
 
     .solo-theme-progress-label {
-        @apply mt-[5px] text-[10.5px] font-sans-semibold text-plateau-ink/65;
+        @apply text-[9.5px] font-sans-semibold text-plateau-ink/50;
     }
 
     .solo-footer {
@@ -728,7 +831,7 @@
     }
 
     .solo-cta-button {
-        @apply items-center border-2 border-plateau-ink bg-plateau-orange p-[18px];
+        @apply items-center rounded-[19px] bg-plateau-coral p-[18px];
     }
 
     .solo-cta-button-disabled {
@@ -736,139 +839,123 @@
     }
 
     .solo-cta-text {
-        @apply font-display text-base text-plateau-ink;
+        @apply text-[17px] font-sans-bold text-plateau-ink;
     }
 
     .solo-question-header {
-        @apply flex-row items-center justify-between;
+        @apply relative flex-row items-center justify-between;
     }
 
     .solo-question-close-button {
-        @apply size-9 items-center justify-center rounded-xl bg-plateau-ink/10;
+        @apply border border-plateau-paper/[0.1] size-9 items-center justify-center rounded-xl;
     }
 
     .solo-question-close-icon {
-        @apply font-display text-sm text-plateau-ink;
+        @apply text-sm text-plateau-paper;
     }
 
     .solo-question-title {
-        @apply font-display text-[13px] text-plateau-ink;
+        @apply text-[12.5px] font-sans-semibold text-plateau-paper;
     }
 
     .solo-question-subtitle {
-        @apply mt-[2px] text-[11px] font-sans-semibold text-plateau-ink/50;
+        @apply mt-[2px] text-[11px] font-sans-semibold text-plateau-paper/50;
     }
 
-    .solo-timer-track {
-        @apply mt-[14px] h-2 overflow-hidden rounded-full bg-plateau-ink/10;
+    .solo-question-score-row {
+        @apply relative mt-[18px] flex-row items-center justify-between py-[14px];
     }
 
-    .solo-timer-fill {
-        @apply h-full rounded-full;
+    .solo-question-score-side {
+        @apply flex-row items-center gap-[9px];
     }
 
-    .solo-question-category-pill {
-        @apply mt-6 inline-flex flex-row items-center gap-[7px] self-start rounded-full border-2 border-plateau-ink px-3 py-[6px];
+    .solo-question-avatar {
+        @apply size-10 rounded-2xl;
     }
 
-    .solo-question-category-text {
-        @apply font-display text-[11px] text-plateau-ink;
+    .solo-question-score-value {
+        @apply font-display text-[27px] text-plateau-paper;
+    }
+
+    .solo-question-timer-face {
+        @apply items-center justify-center gap-[2px];
+    }
+
+    .solo-question-timer-value {
+        @apply font-display text-2xl leading-none;
+    }
+
+    .solo-question-timer-label {
+        @apply text-[9px] font-sans-semibold tracking-[0.1em] text-plateau-paper/45;
     }
 
     .solo-question-statement {
-        @apply mt-4 font-display text-[26px] leading-[1.25] tracking-[-0.3px] text-plateau-ink;
+        @apply border border-plateau-paper/[0.1] relative min-h-[152px] justify-center gap-[9px] rounded-[26px] bg-plateau-paper/[0.07] px-5 py-[22px];
     }
 
     .solo-choices {
-        @apply mt-6 gap-3;
+        @apply relative mt-[18px] gap-[10px];
     }
 
     .solo-choice {
-        @apply flex-row items-center gap-3 rounded-[18px] border-2 border-plateau-ink/20 bg-plateau-cream p-[15px];
-    }
-
-    .solo-choice-correct {
-        @apply border-plateau-ink bg-plateau-lime;
-    }
-
-    .solo-choice-incorrect {
-        @apply border-plateau-pink bg-[#FFE1E9];
+        @apply h-[60px] flex-row items-center gap-3 rounded-[19px] border px-[15px];
     }
 
     .solo-choice-badge {
-        @apply size-[26px] items-center justify-center rounded-full bg-plateau-ink/10;
-    }
-
-    .solo-choice-badge-correct {
-        @apply bg-plateau-ink;
-    }
-
-    .solo-choice-badge-incorrect {
-        @apply bg-plateau-pink;
+        @apply size-[30px] items-center justify-center rounded-[10px];
     }
 
     .solo-choice-badge-text {
-        @apply font-display text-xs text-plateau-ink/60;
-    }
-
-    .solo-choice-badge-text-correct {
-        @apply text-plateau-lime;
-    }
-
-    .solo-choice-badge-text-incorrect {
-        @apply text-plateau-cream;
+        @apply text-[13px] font-sans-bold;
     }
 
     .solo-choice-text {
-        @apply flex-1 font-sans-semibold text-[15px] text-plateau-ink/65;
-    }
-
-    .solo-choice-text-revealed {
-        @apply font-sans-bold text-plateau-ink;
+        @apply flex-1 text-[16.5px] font-sans-semibold;
     }
 
     .solo-explanation-card {
-        @apply mt-5 rounded-[20px] bg-plateau-ink p-[18px];
+        @apply border border-plateau-paper/[0.1] relative mt-5 rounded-[20px] bg-plateau-paper/[0.07] p-[18px];
     }
 
     .solo-explanation-label {
-        @apply font-display text-[10px] uppercase tracking-[2.5px] text-plateau-gold;
+        @apply font-sans-bold text-[11.5px] uppercase tracking-[0.1em] text-plateau-brass;
     }
 
     .solo-explanation-text {
-        @apply mt-2 text-[13px] leading-[1.45] font-sans-medium text-plateau-cream/85;
+        @apply mt-2 text-[13.5px] leading-[1.45] font-sans-medium text-plateau-paper/85;
     }
 
     .solo-result-title {
-        @apply font-display text-[11px] uppercase tracking-[2.5px] text-plateau-ink/60;
+        @apply font-sans-bold text-[11.5px] uppercase tracking-[0.1em] relative text-plateau-teal;
     }
 
     .solo-result-heading {
-        @apply mt-[10px] font-display text-[34px] leading-[1.05] tracking-[-0.5px] text-plateau-ink;
+        @apply font-display text-[42px] leading-none tracking-[-0.035em] relative text-plateau-paper;
     }
 
     .solo-result-score-card {
-        @apply mt-6 items-center rounded-[26px] border-2 border-plateau-ink bg-plateau-cream p-6;
+        @apply border border-plateau-paper/[0.1] relative mt-4 items-center rounded-[26px] bg-plateau-paper/[0.07] p-6;
     }
 
     .solo-result-score {
-        @apply font-display text-[56px] leading-none text-plateau-ink;
+        @apply font-display text-[56px] leading-none text-plateau-paper;
     }
 
     .solo-result-score-total {
-        @apply font-display text-2xl text-plateau-ink/40;
+        @apply font-display text-2xl text-plateau-paper/40;
     }
 
     .solo-result-score-label {
-        @apply mt-2 text-[13px] font-sans-semibold text-plateau-ink/60;
+        @apply mt-2 text-[13px] font-sans-semibold text-plateau-paper/60;
     }
 
     .solo-result-xp-pill {
-        @apply mt-3 rounded-full bg-plateau-gold px-3 py-1 font-display text-xs text-plateau-ink;
+        @apply mt-3 rounded-full bg-plateau-brass px-3 py-1 text-xs font-sans-bold text-plateau-ink;
     }
 
     .solo-result-stats-card {
-        @apply mt-4 gap-[10px] rounded-2xl bg-plateau-ink/[0.08] p-[18px];
+        @apply border border-plateau-paper/[0.1] relative mt-4 gap-[10px] rounded-[22px] bg-plateau-paper/[0.07] p-[18px];
     }
 
     .solo-result-stat-row {
@@ -876,23 +963,23 @@
     }
 
     .solo-result-stat-label {
-        @apply text-[12.5px] font-sans-bold text-plateau-ink;
+        @apply text-[13px] font-sans-semibold text-plateau-paper/65;
     }
 
     .solo-result-stat-value {
-        @apply font-display text-sm text-plateau-ink;
+        @apply font-display text-sm text-plateau-paper;
     }
 
     .solo-result-actions {
-        @apply gap-3 pt-6;
+        @apply relative gap-3 pt-6;
     }
 
     .solo-result-secondary-button {
-        @apply items-center rounded-[20px] border-2 border-plateau-ink/30 p-[14px];
+        @apply border border-plateau-paper/[0.1] items-center rounded-[17px] p-[14px];
     }
 
     .solo-result-secondary-text {
-        @apply text-sm font-sans-bold text-plateau-ink/75;
+        @apply text-sm font-sans-bold text-plateau-paper/80;
     }
 
     .duel-lobby-header {
@@ -900,19 +987,19 @@
     }
 
     .duel-lobby-back-button {
-        @apply size-[38px] items-center justify-center rounded-xl border-2 border-plateau-cream;
+        @apply size-[38px] items-center justify-center rounded-xl border border-plateau-paper;
     }
 
     .duel-lobby-back-icon {
-        @apply font-display text-base text-plateau-cream;
+        @apply font-display text-base text-plateau-paper;
     }
 
     .duel-lobby-header-title {
-        @apply font-display text-[17px] text-plateau-cream;
+        @apply font-display text-[17px] text-plateau-paper;
     }
 
     .duel-lobby-stats-card {
-        @apply mt-5 flex-row justify-around rounded-2xl bg-plateau-cream/10 p-4;
+        @apply mt-5 flex-row justify-around rounded-2xl bg-plateau-paper/10 p-4;
     }
 
     .duel-lobby-stat {
@@ -920,19 +1007,19 @@
     }
 
     .duel-lobby-stat-label {
-        @apply mt-1 text-[10px] font-sans-semibold uppercase tracking-wide text-plateau-cream/55;
+        @apply mt-1 text-[10px] font-sans-semibold uppercase tracking-wide text-plateau-paper/55;
     }
 
     .duel-lobby-rule-heading {
-        @apply mt-6 font-display text-[11px] uppercase tracking-[2.5px] text-plateau-cream/50;
+        @apply mt-6 font-display text-[11px] uppercase tracking-[2.5px] text-plateau-paper/50;
     }
 
     .duel-lobby-rule-card {
-        @apply flex-row items-center gap-3 border-2 border-plateau-ink bg-plateau-cream p-[14px];
+        @apply flex-row items-center gap-3 border border-plateau-ink bg-plateau-paper p-[14px];
     }
 
     .duel-lobby-rule-badge {
-        @apply size-[34px] items-center justify-center rounded-[11px] bg-plateau-gold;
+        @apply size-[34px] items-center justify-center rounded-[11px] bg-plateau-brass;
     }
 
     .duel-lobby-rule-badge-text {
@@ -952,11 +1039,11 @@
     }
 
     .duel-lobby-secondary-button {
-        @apply items-center rounded-[20px] border-2 border-plateau-cream/30 p-[14px];
+        @apply items-center rounded-[20px] border border-plateau-paper/30 p-[14px];
     }
 
     .duel-lobby-secondary-text {
-        @apply text-sm font-sans-bold text-plateau-cream/80;
+        @apply text-sm font-sans-bold text-plateau-paper/80;
     }
 
     .duel-header {
@@ -964,63 +1051,93 @@
     }
 
     .duel-close-button {
-        @apply size-9 items-center justify-center rounded-xl bg-plateau-cream/10;
+        @apply size-9 items-center justify-center rounded-xl bg-plateau-paper/10;
     }
 
     .duel-close-icon {
-        @apply font-display text-sm text-plateau-cream;
+        @apply font-display text-sm text-plateau-paper;
     }
 
     .duel-header-title {
-        @apply font-display text-[13px] text-plateau-cream;
+        @apply font-display text-[13px] text-plateau-paper;
     }
 
-    .duel-header-subtitle {
-        @apply mt-[2px] text-[11px] font-sans-semibold text-plateau-cream/50;
+    /* Écran de jeu v2 (project-update/) — QuestionStep */
+
+    .duel-play-topbar {
+        @apply relative flex-row items-center justify-between;
     }
 
-    .duel-score-row {
-        @apply mt-[18px] flex-row items-center justify-between;
+    .duel-play-close {
+        @apply border border-plateau-paper/[0.1] size-9 items-center justify-center rounded-xl;
     }
 
-    .duel-score-side {
+    .duel-play-pill {
+        @apply rounded-xl bg-plateau-paper/10 px-3 py-[7px];
+    }
+
+    .duel-play-pill-text {
+        @apply text-[12.5px] font-sans-semibold text-plateau-paper;
+    }
+
+    .duel-play-score-row {
+        @apply relative mt-[18px] flex-row items-center justify-between py-[14px];
+    }
+
+    .duel-play-score-side {
         @apply flex-row items-center gap-[9px];
     }
 
-    .duel-score-side-right {
+    .duel-play-score-side-right {
         @apply flex-row-reverse;
     }
 
-    .duel-avatar {
-        @apply size-[34px] rounded-full;
+    .duel-play-avatar {
+        @apply size-10 rounded-2xl;
     }
 
-    .duel-player-name {
-        @apply font-display text-xs text-plateau-cream;
+    .duel-play-score-value {
+        @apply font-display text-[27px] text-plateau-paper;
     }
 
-    .duel-player-score {
-        @apply font-display text-lg leading-tight;
+    .duel-play-timer-face {
+        @apply items-center justify-center gap-[2px];
     }
 
-    .duel-timer-track {
-        @apply mt-[18px] h-2 overflow-hidden rounded-full bg-plateau-cream/10;
+    .duel-play-timer-value {
+        @apply font-display text-2xl leading-none;
     }
 
-    .duel-timer-fill {
-        @apply h-full rounded-full;
+    .duel-play-timer-label {
+        @apply text-[9px] font-sans-semibold tracking-[0.1em] text-plateau-paper/45;
     }
 
-    .duel-question-card {
-        @apply mt-[18px] rounded-[24px] bg-plateau-ink-surface p-5;
+    .duel-play-question-card {
+        @apply border border-plateau-paper/[0.1] relative min-h-[152px] justify-center gap-[9px] rounded-[26px] bg-plateau-paper/[0.07] px-5 py-[22px];
     }
 
-    .duel-question-label {
-        @apply font-display text-[10px] uppercase tracking-[2.5px] text-plateau-gold;
+    .duel-play-choices {
+        @apply relative mt-[18px] gap-[10px];
+    }
+
+    .duel-play-choice {
+        @apply h-[60px] flex-row items-center gap-3 rounded-[19px] border px-[15px];
+    }
+
+    .duel-play-choice-badge {
+        @apply size-[30px] items-center justify-center rounded-[10px];
+    }
+
+    .duel-play-choice-badge-text {
+        @apply text-[13px] font-sans-bold;
+    }
+
+    .duel-play-choice-label {
+        @apply flex-1 text-[16.5px] font-sans-semibold;
     }
 
     .duel-question-statement {
-        @apply mt-3 font-display text-[23px] leading-[1.25] tracking-[-0.3px] text-plateau-cream;
+        @apply mt-3 font-display text-[23px] leading-[1.25] tracking-[-0.3px] text-plateau-paper;
     }
 
     .duel-choices {
@@ -1028,31 +1145,15 @@
     }
 
     .duel-choice {
-        @apply flex-row items-center gap-3 rounded-[18px] border-[1.5px] border-plateau-cream/15 bg-plateau-cream/[0.07] p-4;
+        @apply flex-row items-center gap-3 rounded-[18px] border-[1.5px] border-plateau-paper/15 bg-plateau-paper/[0.07] p-4;
     }
 
     .duel-choice-selected {
-        @apply border-plateau-orange bg-plateau-orange;
-    }
-
-    .duel-choice-badge {
-        @apply size-7 items-center justify-center rounded-[9px] bg-plateau-cream/10;
-    }
-
-    .duel-choice-badge-selected {
-        @apply bg-plateau-ink/20;
-    }
-
-    .duel-choice-badge-text {
-        @apply font-display text-[13px] text-plateau-cream;
-    }
-
-    .duel-choice-badge-text-selected {
-        @apply text-plateau-ink;
+        @apply border-plateau-coral bg-plateau-coral;
     }
 
     .duel-choice-text {
-        @apply flex-1 font-sans-semibold text-[15px] text-plateau-cream;
+        @apply flex-1 font-sans-semibold text-[15px] text-plateau-paper;
     }
 
     .duel-choice-text-selected {
@@ -1060,15 +1161,15 @@
     }
 
     .duel-step-heading {
-        @apply font-display text-[13px] text-plateau-cream;
+        @apply font-sans-bold text-[11.5px] uppercase tracking-[0.1em] text-plateau-teal;
     }
 
     .duel-step-subheading {
-        @apply mt-1 font-display text-xl text-plateau-cream;
+        @apply mt-1 font-display text-[22px] tracking-[-0.02em] text-plateau-paper;
     }
 
     .duel-category-card {
-        @apply flex-row items-center gap-3 rounded-[18px] border-2 border-plateau-cream/40 p-4;
+        @apply border border-plateau-paper/[0.1] flex-row items-center gap-3 rounded-[18px] p-4;
     }
 
     .duel-category-icon {
@@ -1076,15 +1177,15 @@
     }
 
     .duel-category-label {
-        @apply font-display text-[15px] text-plateau-ink;
+        @apply font-sans-bold text-[15px] text-plateau-paper;
     }
 
     .duel-recap-heading {
-        @apply font-display text-[13px] text-plateau-cream;
+        @apply font-display text-[13px] text-plateau-paper;
     }
 
     .duel-recap-subheading {
-        @apply mt-1 text-[13px] font-sans-medium text-plateau-cream/60;
+        @apply mt-1 text-[13px] font-sans-medium text-plateau-paper/60;
     }
 
     .duel-recap-card {
@@ -1092,15 +1193,15 @@
     }
 
     .duel-recap-statement {
-        @apply font-sans-semibold text-sm text-plateau-cream;
+        @apply font-sans-semibold text-sm text-plateau-paper;
     }
 
     .duel-recap-answer {
-        @apply text-[13px] font-sans-medium text-plateau-lime;
+        @apply text-[13px] font-sans-medium text-plateau-teal;
     }
 
     .duel-recap-explanation {
-        @apply text-xs font-sans-medium text-plateau-cream/60;
+        @apply text-xs font-sans-medium text-plateau-paper/60;
     }
 
     .duel-recap-footer {
@@ -1112,19 +1213,19 @@
     }
 
     .duel-recap-correct {
-        @apply text-plateau-lime;
+        @apply text-plateau-teal;
     }
 
     .duel-recap-incorrect {
-        @apply text-plateau-pink;
+        @apply text-plateau-rose;
     }
 
     .duel-empty-state {
-        @apply py-4 text-sm font-sans-medium text-plateau-cream/60;
+        @apply py-4 text-sm font-sans-medium text-plateau-paper/60;
     }
 
     .duel-skeleton {
-        @apply h-24 rounded-2xl bg-plateau-cream/10;
+        @apply h-24 rounded-2xl bg-plateau-paper/10;
     }
 
     .duel-players-row {
@@ -1136,39 +1237,39 @@
     }
 
     .duel-players-avatar {
-        @apply size-14 rounded-full bg-plateau-cream/10;
+        @apply size-14 rounded-full bg-plateau-paper/10;
     }
 
     .duel-players-name {
-        @apply font-sans-bold text-sm text-plateau-cream;
+        @apply font-sans-bold text-sm text-plateau-paper;
     }
 
     .duel-players-score {
-        @apply px-3 font-display text-2xl text-plateau-cream;
+        @apply px-3 font-display text-2xl text-plateau-paper;
     }
 
     .plateau-header-title {
-        @apply font-display text-lg text-plateau-cream;
+        @apply font-display text-[20px] tracking-[-0.02em] text-plateau-paper;
     }
 
     .plateau-header-subtitle {
-        @apply mt-[3px] text-[11.5px] font-sans-semibold text-plateau-cream/50;
+        @apply mt-[3px] text-[11.5px] font-sans-semibold text-plateau-paper/50;
     }
 
     .plateau-turn-pill {
-        @apply self-start rounded-full bg-plateau-orange px-3 py-[7px];
+        @apply self-start rounded-xl bg-plateau-coral px-3 py-[7px];
     }
 
     .plateau-turn-pill-text {
-        @apply font-display text-[11px] text-plateau-ink;
+        @apply text-[11.5px] font-sans-bold text-plateau-ink;
     }
 
     .plateau-track-card {
-        @apply mt-5 rounded-[24px] bg-plateau-ink-surface p-4;
+        @apply border border-plateau-paper/[0.1] relative mt-5 overflow-hidden rounded-[24px] bg-plateau-paper/[0.07] p-4;
     }
 
     .plateau-track-label {
-        @apply mb-4 font-display text-[10px] uppercase tracking-[2px] text-plateau-cream/45;
+        @apply font-sans-bold text-[11.5px] uppercase tracking-[0.1em] relative mb-4 text-plateau-paper/45;
     }
 
     .plateau-track-row {
@@ -1176,11 +1277,11 @@
     }
 
     .plateau-track-avatar {
-        @apply size-[30px] rounded-full border-2;
+        @apply size-[30px] rounded-full border;
     }
 
     .plateau-track-bar-track {
-        @apply relative h-3 flex-1 overflow-visible rounded-full bg-plateau-cream/10;
+        @apply relative h-3 flex-1 overflow-visible rounded-full bg-plateau-paper/10;
     }
 
     .plateau-track-bar-fill {
@@ -1188,19 +1289,19 @@
     }
 
     .plateau-track-bar-knob {
-        @apply absolute -top-[5px] size-[22px] rounded-full border-2 border-plateau-ink-surface;
+        @apply absolute -top-[5px] size-[22px] rounded-full border border-plateau-ink-surface;
     }
 
     .plateau-track-score {
-        @apply w-[34px] text-right font-display text-sm text-plateau-cream;
+        @apply w-[34px] text-right font-display text-sm text-plateau-paper;
     }
 
     .plateau-activity-label {
-        @apply mb-3 mt-6 font-display text-[11px] uppercase tracking-[2px] text-plateau-cream/45;
+        @apply font-sans-bold text-[11.5px] uppercase tracking-[0.1em] mb-3 mt-6 text-plateau-paper/45;
     }
 
     .plateau-activity-row {
-        @apply flex-row items-center gap-[11px] rounded-2xl bg-plateau-cream/[0.06] p-3;
+        @apply flex-row items-center gap-[11px] rounded-2xl bg-plateau-paper/[0.06] p-3;
     }
 
     .plateau-activity-avatar {
@@ -1208,27 +1309,27 @@
     }
 
     .plateau-activity-text {
-        @apply flex-1 text-[12.5px] font-sans-medium leading-[1.35] text-plateau-cream/85;
+        @apply flex-1 text-[12.5px] font-sans-medium leading-[1.35] text-plateau-paper/85;
     }
 
     .plateau-activity-name {
-        @apply font-sans-bold text-plateau-cream;
+        @apply font-sans-bold text-plateau-paper;
     }
 
     .plateau-activity-time {
-        @apply text-[11px] font-sans-bold text-plateau-cream/40;
+        @apply text-[11px] font-sans-bold text-plateau-paper/40;
     }
 
     .plateau-activity-time-alert {
-        @apply text-plateau-orange;
+        @apply text-plateau-coral;
     }
 
     .plateau-cta-button {
-        @apply items-center border-2 border-plateau-ink bg-plateau-lime p-[18px];
+        @apply items-center rounded-[19px] bg-plateau-teal p-[18px];
     }
 
     .plateau-cta-text {
-        @apply font-display text-base text-plateau-ink;
+        @apply text-[17px] font-sans-bold text-plateau-ink;
     }
 
     .streak-header {
@@ -1236,7 +1337,7 @@
     }
 
     .streak-header-title {
-        @apply font-display text-[13px] text-plateau-cream;
+        @apply font-display text-[13px] text-plateau-paper;
     }
 
     .streak-badge {
@@ -1244,27 +1345,27 @@
     }
 
     .streak-badge-text {
-        @apply font-display text-xs text-plateau-cream;
+        @apply font-display text-xs text-plateau-paper;
     }
 
     .streak-progress-track {
-        @apply mt-4 h-2 overflow-hidden rounded-full bg-plateau-cream/25;
+        @apply mt-4 h-2 overflow-hidden rounded-full bg-plateau-paper/25;
     }
 
     .streak-progress-fill {
-        @apply h-full rounded-full bg-plateau-gold;
+        @apply h-full rounded-full bg-plateau-brass;
     }
 
     .streak-category-label {
-        @apply mt-[26px] font-display text-[11px] uppercase tracking-[2px] text-plateau-lime;
+        @apply mt-[26px] font-display text-[11px] uppercase tracking-[2px] text-plateau-teal;
     }
 
     .streak-statement {
-        @apply mt-3 font-display text-[28px] leading-[1.22] tracking-[-0.3px] text-plateau-cream;
+        @apply mt-3 font-display text-[28px] leading-[1.22] tracking-[-0.3px] text-plateau-paper;
     }
 
     .streak-answer-card {
-        @apply mt-[26px] rounded-[22px] bg-plateau-cream p-[18px];
+        @apply mt-[26px] rounded-[22px] bg-plateau-paper p-[18px];
     }
 
     .streak-answer-label {
@@ -1280,7 +1381,7 @@
     }
 
     .streak-tolerance-check {
-        @apply size-[18px] items-center justify-center rounded-full bg-plateau-lime;
+        @apply size-[18px] items-center justify-center rounded-full bg-plateau-teal;
     }
 
     .streak-tolerance-check-text {
@@ -1296,11 +1397,11 @@
     }
 
     .streak-action-pill {
-        @apply rounded-2xl bg-plateau-cream/[0.16] px-[13px] py-2;
+        @apply rounded-2xl bg-plateau-paper/[0.16] px-[13px] py-2;
     }
 
     .streak-action-pill-text {
-        @apply font-sans-bold text-xs text-plateau-cream;
+        @apply font-sans-bold text-xs text-plateau-paper;
     }
 
     .streak-footer {
@@ -1312,15 +1413,15 @@
     }
 
     .streak-footer-label {
-        @apply text-xs font-sans-semibold text-plateau-cream/60;
+        @apply text-xs font-sans-semibold text-plateau-paper/60;
     }
 
     .streak-footer-timer {
-        @apply font-display text-xl text-plateau-gold;
+        @apply font-display text-xl text-plateau-brass;
     }
 
     .streak-submit-button {
-        @apply mt-3 items-center rounded-2xl bg-plateau-lime p-[17px];
+        @apply mt-3 items-center rounded-2xl bg-plateau-teal p-[17px];
     }
 
     .streak-submit-text {
@@ -1332,11 +1433,11 @@
     }
 
     .streak-reveal-correct {
-        @apply bg-plateau-lime;
+        @apply bg-plateau-teal;
     }
 
     .streak-reveal-incorrect {
-        @apply bg-[#FFE1E9];
+        @apply bg-plateau-rose/22;
     }
 
     .streak-reveal-title {
@@ -1352,19 +1453,19 @@
     }
 
     .streak-hint-text {
-        @apply text-center font-display text-sm text-plateau-cream;
+        @apply text-center font-display text-sm text-plateau-paper;
     }
 
     .streak-result-title {
-        @apply font-display text-[11px] uppercase tracking-[2.5px] text-plateau-cream/60;
+        @apply font-display text-[11px] uppercase tracking-[2.5px] text-plateau-paper/60;
     }
 
     .streak-result-heading {
-        @apply mt-[10px] font-display text-[34px] leading-[1.05] tracking-[-0.5px] text-plateau-cream;
+        @apply mt-[10px] font-display text-[34px] leading-[1.05] tracking-[-0.5px] text-plateau-paper;
     }
 
     .streak-result-score-card {
-        @apply mt-6 items-center rounded-[26px] bg-plateau-cream p-6;
+        @apply mt-6 items-center rounded-[26px] bg-plateau-paper p-6;
     }
 
     .streak-result-score {
@@ -1376,11 +1477,11 @@
     }
 
     .streak-result-best-pill {
-        @apply mt-3 rounded-full bg-plateau-gold px-3 py-1 font-display text-xs text-plateau-ink;
+        @apply mt-3 rounded-full bg-plateau-brass px-3 py-1 font-display text-xs text-plateau-ink;
     }
 
     .streak-result-xp-pill {
-        @apply mt-2 rounded-full bg-plateau-lime px-3 py-1 font-display text-xs text-plateau-ink;
+        @apply mt-2 rounded-full bg-plateau-teal px-3 py-1 font-display text-xs text-plateau-ink;
     }
 
     .streak-result-actions {
@@ -1388,59 +1489,55 @@
     }
 
     .streak-result-secondary-button {
-        @apply items-center rounded-2xl border-2 border-plateau-cream/30 p-[14px];
+        @apply items-center rounded-2xl border border-plateau-paper/30 p-[14px];
     }
 
     .streak-result-secondary-text {
-        @apply text-sm font-sans-bold text-plateau-cream/80;
+        @apply text-sm font-sans-bold text-plateau-paper/80;
     }
 
     .profile-header-card {
-        @apply relative overflow-hidden rounded-[26px] bg-plateau-ink p-5;
-    }
-
-    .profile-header-decoration {
-        @apply absolute -bottom-10 -right-10 z-0 size-[150px] rounded-full bg-plateau-orange opacity-30;
+        @apply relative gap-4 overflow-hidden rounded-[28px] bg-plateau-ink p-[18px];
     }
 
     .profile-header-content {
-        @apply relative z-10;
+        @apply relative;
     }
 
     .profile-header-row {
-        @apply flex-row items-center gap-[14px];
+        @apply flex-row items-center gap-[13px];
     }
 
     .profile-avatar {
-        @apply size-16 items-center justify-center rounded-full border-[3px] border-plateau-lime bg-plateau-violet;
+        @apply items-center justify-center rounded-[24px] border-2 border-plateau-paper/35 bg-plateau-iris size-[70px];
     }
 
     .profile-avatar-text {
-        @apply font-display text-xl text-plateau-cream;
+        @apply font-display text-2xl text-plateau-paper;
     }
 
     .profile-name {
-        @apply font-display text-xl text-plateau-cream;
+        @apply font-display text-[22px] tracking-[-0.025em] text-plateau-paper;
     }
 
     .profile-level-label {
-        @apply mt-1 text-xs font-sans-semibold text-plateau-cream/60;
+        @apply mt-[6px] self-start rounded-[9px] bg-plateau-iris px-[9px] py-1 text-[11.5px] font-sans-bold text-plateau-paper;
     }
 
     .profile-stats-row {
-        @apply mt-[18px] flex-row gap-[9px];
+        @apply relative mt-[2px] flex-row gap-[9px];
     }
 
     .profile-stat-chip {
-        @apply flex-1 items-center rounded-[14px] bg-plateau-cream/[0.08] p-[11px];
+        @apply flex-1 items-center rounded-[14px] bg-plateau-paper/[0.08] p-[11px];
     }
 
     .profile-stat-value {
-        @apply font-display text-[17px] text-plateau-cream;
+        @apply font-display text-[17px] text-plateau-paper;
     }
 
     .profile-stat-label {
-        @apply mt-[3px] text-[10px] font-sans-semibold text-plateau-cream/55;
+        @apply mt-[3px] text-[10px] font-sans-semibold text-plateau-paper/55;
     }
 
     .profile-mastery-row {
@@ -1448,11 +1545,11 @@
     }
 
     .profile-mastery-label {
-        @apply w-20 text-xs font-sans-bold text-primary;
+        @apply w-20 text-xs font-sans-bold text-plateau-ink;
     }
 
     .profile-mastery-track {
-        @apply h-[10px] flex-1 overflow-hidden rounded-full bg-primary/[0.12];
+        @apply h-[10px] flex-1 overflow-hidden rounded-full bg-plateau-ink/[0.1];
     }
 
     .profile-mastery-fill {
@@ -1460,31 +1557,63 @@
     }
 
     .profile-mastery-percent {
-        @apply w-[34px] text-right font-display text-xs text-primary;
+        @apply w-[34px] text-right font-display text-xs text-plateau-ink;
     }
 
     .profile-leaderboard-card {
-        @apply items-center rounded-2xl bg-primary/[0.06] p-4;
+        @apply border border-plateau-ink/[0.1] items-center rounded-[22px] bg-plateau-card p-4;
     }
 
     .profile-leaderboard-text {
-        @apply text-center text-sm font-sans-medium text-primary/60;
+        @apply text-center text-sm font-sans-medium text-plateau-ink/60;
     }
 
-    .duel-result-verdict {
-        @apply text-center font-display text-3xl text-plateau-cream;
+    .duel-result-kicker-row {
+        @apply relative gap-[6px];
     }
 
-    .duel-result-pills-row {
-        @apply flex-row justify-center gap-2;
+    .duel-result-score-card {
+        @apply border border-plateau-paper/[0.1] relative flex-row items-center justify-between rounded-[26px] bg-plateau-paper/[0.07] p-[18px];
+    }
+
+    .duel-result-player {
+        @apply items-center gap-2;
+    }
+
+    .duel-result-player-avatar {
+        @apply size-[60px] items-center justify-center rounded-[20px];
+    }
+
+    .duel-result-player-name {
+        @apply text-[12.5px] font-sans-bold text-plateau-paper;
+    }
+
+    .duel-result-score {
+        @apply font-display text-[40px] tracking-[-0.03em] text-plateau-paper;
+    }
+
+    .duel-result-chip-row {
+        @apply relative flex-row gap-[10px];
+    }
+
+    .duel-result-chip {
+        @apply flex-1 gap-[2px] rounded-[20px] p-[14px];
+    }
+
+    .duel-result-chip-label {
+        @apply text-[11.5px] font-sans-bold;
+    }
+
+    .duel-result-chip-value {
+        @apply font-display text-2xl;
     }
 
     .duel-result-stats-card {
-        @apply gap-[14px] rounded-2xl bg-plateau-cream/[0.08] p-4;
+        @apply border border-plateau-paper/[0.1] relative gap-[14px] rounded-[22px] bg-plateau-paper/[0.07] p-[18px];
     }
 
     .duel-result-stats-label {
-        @apply font-display text-[11px] uppercase tracking-[2px] text-plateau-cream/45;
+        @apply font-sans-bold text-[11.5px] uppercase tracking-[0.1em] text-plateau-paper/45;
     }
 
     .duel-result-stat-row {
@@ -1492,35 +1621,55 @@
     }
 
     .duel-result-stat-label {
-        @apply text-[13px] font-sans-semibold text-plateau-cream/70;
+        @apply text-[13px] font-sans-semibold text-plateau-paper/65;
     }
 
     .duel-result-stat-value {
-        @apply font-display text-sm text-plateau-cream;
+        @apply font-display text-sm text-plateau-paper;
+    }
+
+    .duel-result-cta {
+        @apply relative h-14 items-center justify-center rounded-[19px] bg-plateau-coral;
+    }
+
+    .duel-result-cta-text {
+        @apply text-[17px] font-sans-bold text-plateau-ink;
+    }
+
+    .duel-result-secondary-row {
+        @apply relative flex-row gap-[10px];
+    }
+
+    .duel-result-secondary-button {
+        @apply border border-plateau-paper/[0.1] h-[50px] flex-1 items-center justify-center rounded-[17px];
+    }
+
+    .duel-result-secondary-text {
+        @apply text-[15px] font-sans-semibold text-plateau-paper;
     }
 
     .profile-badges-row {
-        @apply flex-row flex-wrap gap-2;
+        @apply flex-row flex-wrap gap-[10px];
     }
 
     .profile-badge-pill {
-        @apply flex-row items-center gap-[6px] rounded-full bg-primary/[0.08] px-3 py-2;
+        @apply items-center gap-[6px] rounded-[20px] bg-plateau-brass/[0.9] px-[8px] py-3 basis-[31%];
     }
 
     .profile-badge-icon {
-        @apply text-sm;
+        @apply text-2xl leading-none;
     }
 
     .profile-badge-text {
-        @apply text-xs font-sans-bold text-primary;
+        @apply text-center text-[11px] font-sans-bold leading-[1.15] text-plateau-ink;
     }
 
     .session-safe-area {
-        @apply flex-1 bg-plateau-cream;
+        @apply flex-1 bg-plateau-paper;
     }
 
     .session-screen {
-        @apply flex-1 bg-plateau-cream;
+        @apply flex-1 bg-plateau-paper;
     }
 
     .session-scroll {
@@ -1540,7 +1689,7 @@
     }
 
     .session-logo-mark {
-        @apply relative size-14 items-center justify-center rounded-2xl border-2 border-plateau-ink bg-plateau-orange;
+        @apply relative size-14 items-center justify-center rounded-2xl bg-plateau-coral;
     }
 
     .session-logo-mark-text {
@@ -1548,7 +1697,7 @@
     }
 
     .session-wordmark {
-        @apply font-display text-3xl text-plateau-ink;
+        @apply font-display text-3xl tracking-[-0.03em] text-plateau-ink;
     }
 
     .session-wordmark-sub {
@@ -1556,15 +1705,15 @@
     }
 
     .session-title {
-        @apply font-display text-3xl text-plateau-ink;
+        @apply font-display text-[28px] tracking-[-0.03em] text-plateau-ink;
     }
 
     .session-subtitle {
-        @apply mt-2 max-w-[320px] text-center text-base font-sans-medium text-plateau-ink/60;
+        @apply mt-2 max-w-[320px] text-center text-[15px] font-sans-medium text-plateau-ink/62;
     }
 
     .session-card {
-        @apply mt-8 rounded-3xl border-2 border-plateau-ink bg-white p-5;
+        @apply border border-plateau-ink/[0.1] mt-8 rounded-[22px] bg-plateau-card p-5;
     }
 
     .session-form {
@@ -1580,15 +1729,15 @@
     }
 
     .session-input {
-        @apply rounded-2xl border-2 border-plateau-ink/15 bg-plateau-cream px-4 py-4 text-base font-sans-medium text-plateau-ink;
+        @apply border border-plateau-ink/[0.1] rounded-2xl bg-plateau-paper px-4 py-4 text-base font-sans-medium text-plateau-ink;
     }
 
     .session-input-error {
-        @apply border-plateau-pink;
+        @apply border-plateau-rose;
     }
 
     .session-error {
-        @apply text-xs font-sans-medium text-plateau-pink;
+        @apply text-xs font-sans-medium text-plateau-rose;
     }
 
     .session-helper {
@@ -1616,11 +1765,11 @@
     }
 
     .session-link {
-        @apply text-sm font-sans-bold text-plateau-orange;
+        @apply text-sm font-sans-bold text-plateau-coral;
     }
 
     .session-secondary-button {
-        @apply items-center rounded-2xl border-2 border-plateau-ink/25 py-3;
+        @apply border border-plateau-ink/[0.1] items-center rounded-2xl py-3;
     }
 
     .session-secondary-text {
@@ -1628,7 +1777,7 @@
     }
 
     .profile-leaderboard-row {
-        @apply flex-row items-center gap-[11px] rounded-2xl border-2 border-plateau-ink/[0.14] bg-white px-[13px] py-[11px];
+        @apply flex-row items-center gap-[11px] rounded-2xl border border-plateau-ink/[0.1] bg-plateau-card px-[13px] py-[11px];
     }
 
     .profile-leaderboard-row-me {
@@ -1640,11 +1789,11 @@
     }
 
     .profile-leaderboard-rank-me {
-        @apply text-plateau-lime;
+        @apply text-plateau-teal;
     }
 
     .profile-leaderboard-avatar {
-        @apply size-7 rounded-full bg-plateau-violet;
+        @apply size-7 rounded-full bg-plateau-iris;
     }
 
     .profile-leaderboard-name {
@@ -1652,7 +1801,7 @@
     }
 
     .profile-leaderboard-name-me {
-        @apply text-plateau-cream;
+        @apply text-plateau-paper;
     }
 
     .profile-leaderboard-xp {
@@ -1660,15 +1809,109 @@
     }
 
     .profile-leaderboard-xp-me {
-        @apply text-plateau-lime;
+        @apply text-plateau-teal;
     }
 
     .profile-leaderboard-separator {
         @apply py-1 text-center text-xs font-sans-bold text-plateau-ink/40;
     }
 
+    /* Onglet Classement v2 (project-update/) */
+
+    .leaderboard-title-row {
+        @apply flex-row items-center justify-between;
+    }
+
+    .leaderboard-scope-pill {
+        @apply border border-plateau-ink/[0.1] rounded-xl bg-plateau-ink/[0.06] px-3 py-[7px];
+    }
+
+    .leaderboard-scope-pill-text {
+        @apply text-[12px] font-sans-bold text-plateau-ink/70;
+    }
+
+    .leaderboard-empty-card {
+        @apply border border-plateau-ink/[0.1] mt-[14px] gap-2 rounded-[22px] bg-plateau-card p-5;
+    }
+
+    .leaderboard-podium-row {
+        @apply flex-row items-end gap-[9px] pt-[6px];
+    }
+
+    .leaderboard-podium-item {
+        @apply flex-1 items-center gap-[7px];
+    }
+
+    .leaderboard-podium-avatar {
+        @apply items-center justify-center overflow-hidden rounded-[18px];
+    }
+
+    .leaderboard-podium-avatar-text {
+        @apply font-display text-lg text-plateau-paper;
+    }
+
+    .leaderboard-podium-card {
+        @apply border border-plateau-ink/[0.1] w-full items-center justify-center gap-[1px] rounded-t-[18px] border-b-0 bg-plateau-card;
+    }
+
+    .leaderboard-podium-rank {
+        @apply font-display text-xl text-plateau-ink;
+    }
+
+    .leaderboard-podium-name {
+        @apply text-[11.5px] font-sans-bold text-plateau-ink;
+    }
+
+    .leaderboard-podium-score {
+        @apply text-[11px] font-sans-semibold text-plateau-ink/50;
+    }
+
+    .leaderboard-row {
+        @apply border border-plateau-ink/[0.1] flex-row items-center gap-[11px] rounded-[18px] bg-plateau-card p-[13px];
+    }
+
+    .leaderboard-row-me {
+        @apply border-plateau-ink bg-plateau-ink;
+    }
+
+    .leaderboard-row-rank {
+        @apply w-5 text-center font-display text-[15px] text-plateau-ink;
+    }
+
+    .leaderboard-row-rank-me {
+        @apply text-plateau-paper;
+    }
+
+    .leaderboard-row-avatar-frame {
+        @apply size-[38px] items-center justify-center overflow-hidden rounded-[13px] bg-plateau-iris/[0.16];
+    }
+
+    .leaderboard-row-avatar-text {
+        @apply font-display text-sm text-plateau-ink;
+    }
+
+    .leaderboard-row-name {
+        @apply flex-1 text-[14.5px] font-sans-bold text-plateau-ink;
+    }
+
+    .leaderboard-row-name-me {
+        @apply text-plateau-paper;
+    }
+
+    .leaderboard-row-score {
+        @apply text-[14.5px] font-sans-bold text-plateau-ink;
+    }
+
+    .leaderboard-row-score-me {
+        @apply text-plateau-paper;
+    }
+
+    .leaderboard-separator {
+        @apply text-center text-lg text-plateau-ink/30;
+    }
+
     .duel-waiting-label {
-        @apply text-center font-display text-xl text-plateau-cream;
+        @apply text-center font-display text-xl text-plateau-paper;
     }
 
     .duel-waiting-progress-row {
@@ -1676,7 +1919,147 @@
     }
 
     .duel-waiting-meta {
-        @apply mt-3 text-center text-[13px] font-sans-semibold text-plateau-cream/50;
+        @apply mt-3 text-center text-[13px] font-sans-semibold text-plateau-paper/50;
+    }
+
+    /* Onglet Quêtes v2 (project-update/) */
+
+    .quest-title-row {
+        @apply flex-row items-center justify-between;
+    }
+
+    .quest-chain-card {
+        @apply relative gap-[14px] overflow-hidden rounded-[24px] bg-plateau-ink p-[18px];
+    }
+
+    .quest-chain-header {
+        @apply relative flex-row items-baseline justify-between;
+    }
+
+    .quest-chain-row {
+        @apply relative flex-row items-center;
+    }
+
+    .quest-chain-node {
+        @apply flex-1 items-center gap-[6px];
+    }
+
+    .quest-chain-line {
+        @apply h-[3px] w-full;
+    }
+
+    .quest-chain-dot {
+        @apply size-10 items-center justify-center rounded-[14px];
+    }
+
+    .quest-chain-label {
+        @apply text-[10px] font-sans-bold;
+    }
+
+    .quest-chain-caption {
+        @apply relative text-[12.5px] leading-[1.5] text-plateau-paper/65;
+    }
+
+    .quest-card-row {
+        @apply flex-row items-start gap-[11px];
+    }
+
+    .quest-card-icon {
+        @apply size-[38px] items-center justify-center rounded-[13px];
+    }
+
+    .quest-card-copy {
+        @apply min-w-0 flex-1 gap-[2px];
+    }
+
+    .quest-card-title {
+        @apply text-[15px] font-sans-bold text-plateau-ink;
+    }
+
+    .quest-card-desc {
+        @apply text-[12.5px] leading-[1.4] text-plateau-ink/60;
+    }
+
+    .quest-card-reward {
+        @apply rounded-[10px] bg-plateau-brass/20 px-[9px] py-[5px] text-[12px] font-sans-bold text-plateau-brass;
+    }
+
+    .quest-card-progress-row {
+        @apply flex-row items-center gap-[11px];
+    }
+
+    .quest-card-track {
+        @apply h-[9px] flex-1 overflow-hidden rounded-full bg-plateau-ink/10;
+    }
+
+    .quest-card-fill {
+        @apply h-full rounded-full;
+    }
+
+    .quest-card-progress-text {
+        @apply text-[12px] font-sans-bold text-plateau-ink/55;
+    }
+
+    .quest-card-done-badge {
+        @apply rounded-[10px] bg-plateau-teal/20 px-[9px] py-[5px] text-[12px] font-sans-bold text-plateau-teal;
+    }
+
+    /* Accueil / bienvenue v2 (project-update/) */
+
+    .welcome-header {
+        @apply relative flex-row items-center gap-[11px];
+    }
+
+    .welcome-logo-badge {
+        @apply size-[46px] items-center justify-center rounded-[15px] bg-plateau-coral;
+    }
+
+    .welcome-logo-text {
+        @apply font-display text-2xl text-plateau-ink;
+    }
+
+    .welcome-wordmark {
+        @apply font-display text-[26px] tracking-[-0.03em] text-plateau-paper;
+    }
+
+    .welcome-tiles-row {
+        @apply relative flex-row gap-[9px];
+    }
+
+    .welcome-tile {
+        @apply aspect-square flex-1 items-center justify-center rounded-[22px];
+    }
+
+    .welcome-title {
+        @apply relative font-display text-[40px] leading-[1.02] tracking-[-0.035em] text-plateau-paper;
+    }
+
+    .welcome-subtitle {
+        @apply relative max-w-[300px] text-[16.5px] leading-[1.5] font-sans-medium text-plateau-paper/70;
+    }
+
+    .welcome-actions {
+        @apply relative gap-[11px];
+    }
+
+    .welcome-cta {
+        @apply h-14 items-center justify-center rounded-[19px] bg-plateau-coral;
+    }
+
+    .welcome-cta-text {
+        @apply text-[17px] font-sans-bold text-plateau-ink;
+    }
+
+    .welcome-secondary {
+        @apply border border-plateau-paper/[0.1] h-[52px] items-center justify-center rounded-[18px];
+    }
+
+    .welcome-secondary-text {
+        @apply text-[16px] font-sans-semibold text-plateau-paper/85;
+    }
+
+    .welcome-caption {
+        @apply relative text-center text-[11.5px] leading-[1.5] text-plateau-paper/40;
     }
 
 }

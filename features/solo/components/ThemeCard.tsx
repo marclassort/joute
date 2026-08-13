@@ -3,8 +3,7 @@ import React from "react";
 // eslint-disable-next-line import/no-named-as-default
 import clsx from "clsx";
 import {Category} from "@/game/types";
-import {CATEGORY_COLORS, CATEGORY_ICONS, CATEGORY_LABELS} from "@/features/joute/constants";
-import HardShadowCard from "@/features/joute/components/HardShadowCard";
+import {CATEGORY_ICONS, CATEGORY_LABELS, CATEGORY_TINTS} from "@/features/joute/constants";
 
 export interface ThemeCardProps {
     category: Category;
@@ -14,28 +13,20 @@ export interface ThemeCardProps {
 }
 
 const ThemeCard = ({category, masteryPercent, selected, onPress}: ThemeCardProps) => (
-    <HardShadowCard
-        borderRadius={18}
-        offsetY={4}
+    <Pressable
         className={clsx("solo-theme-card", selected && "solo-theme-card-selected")}
-        style={{backgroundColor: CATEGORY_COLORS[category]}}
+        style={{backgroundColor: CATEGORY_TINTS[category]}}
+        onPress={onPress}
+        accessibilityRole="button"
+        accessibilityLabel={`Thème ${CATEGORY_LABELS[category]}`}
+        accessibilityState={{selected}}
     >
-        <Pressable
-            onPress={onPress}
-            accessibilityRole="button"
-            accessibilityLabel={`Thème ${CATEGORY_LABELS[category]}`}
-            accessibilityState={{selected}}
-        >
-            <Text className="solo-theme-icon">{CATEGORY_ICONS[category]}</Text>
-            <Text className="solo-theme-label">{CATEGORY_LABELS[category]}</Text>
-            <View className="solo-theme-progress-track">
-                <View className="solo-theme-progress-fill" style={{width: `${masteryPercent ?? 0}%`}} />
-            </View>
-            <Text className="solo-theme-progress-label">
-                {masteryPercent === null ? "Pas encore joué" : `${masteryPercent} % de réussite`}
-            </Text>
-        </Pressable>
-    </HardShadowCard>
+        <Text className="solo-theme-icon">{CATEGORY_ICONS[category]}</Text>
+        <Text className="solo-theme-label" numberOfLines={2}>
+            {CATEGORY_LABELS[category]}
+        </Text>
+        {masteryPercent !== null && <Text className="solo-theme-progress-label">{masteryPercent}%</Text>}
+    </Pressable>
 );
 
 export default ThemeCard;

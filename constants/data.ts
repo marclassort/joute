@@ -1,9 +1,11 @@
 import { icons } from "./icons";
 
 export const tabs: AppTab[] = [
-    { name: "index", title: "Accueil", icon: "🏠" },
-    { name: "joute", title: "Duels", icon: "⚔️" },
-    { name: "profile", title: "Profil", icon: "👤" },
+    { name: "index", title: "Jouer", icon: "play" },
+    { name: "quests", title: "Quêtes", icon: "quests" },
+    { name: "leaderboard", title: "Classement", icon: "leaderboard" },
+    { name: "subscriptions", title: "Premium", icon: "premium" },
+    { name: "profile", title: "Profil", icon: "profile" },
 ];
 
 export const HOME_BALANCE = {

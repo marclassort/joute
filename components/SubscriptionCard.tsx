@@ -1,11 +1,12 @@
 import {View, Text, Image, Pressable} from "react-native";
 import React from "react";
 import {formatCurrency, formatStatusLabel, formatSubscriptionDateTime} from "@/lib/utils";
+// eslint-disable-next-line import/no-named-as-default
 import clsx from "clsx";
 
 const SubscriptionCard = ( {name, price, currency, icon, billing, color, category, plan, renewalDate, expanded, onPress, paymentMethod, startDate, status }:
                            SubscriptionCardProps) => {
-    const fallback = "Not provided";
+    const fallback = "Non renseigné";
     return (
         <Pressable onPress={onPress} className={clsx('sub-card', expanded ? 'sub-card-expanded' : 'bg-card')} style={!expanded && color ? { backgroundColor: color } : undefined }>
             <View className="sub-head">
@@ -31,55 +32,34 @@ const SubscriptionCard = ( {name, price, currency, icon, billing, color, categor
                 <View className="sub-body">
                     <View className="sub-details">
                         <View className="sub-row">
-                            <View className="sub-row-copy">
-                                <Text className="sub-label">Payment:</Text>
-                                <Text
-                                    className="sub-value"
-                                    numberOfLines={1}
-                                    ellipsizeMode="tail">{paymentMethod?.trim() || fallback}
-                                </Text>
-                            </View>
+                            <Text className="sub-label">Paiement</Text>
+                            <Text className="sub-value" numberOfLines={1} ellipsizeMode="tail">
+                                {paymentMethod?.trim() || fallback}
+                            </Text>
                         </View>
                         <View className="sub-row">
-                            <View className="sub-row-copy">
-                                <Text className="sub-label">Category:</Text>
-                                <Text
-                                    className="sub-value"
-                                    numberOfLines={1}
-                                    ellipsizeMode="tail">{category?.trim() || plan?.trim() || fallback}
-                                </Text>
-                            </View>
+                            <Text className="sub-label">Catégorie</Text>
+                            <Text className="sub-value" numberOfLines={1} ellipsizeMode="tail">
+                                {category?.trim() || plan?.trim() || fallback}
+                            </Text>
                         </View>
                         <View className="sub-row">
-                            <View className="sub-row-copy">
-                                <Text className="sub-label">Started:</Text>
-                                <Text
-                                    className="sub-value"
-                                    numberOfLines={1}
-                                    ellipsizeMode="tail">{startDate ? formatSubscriptionDateTime(startDate) : fallback}
-                                </Text>
-                            </View>
+                            <Text className="sub-label">Depuis</Text>
+                            <Text className="sub-value" numberOfLines={1} ellipsizeMode="tail">
+                                {startDate ? formatSubscriptionDateTime(startDate) : fallback}
+                            </Text>
                         </View>
                         <View className="sub-row">
-                            <View className="sub-row-copy">
-                                <Text className="sub-label">Renewal date:</Text>
-                                <Text
-                                    className="sub-value"
-                                    numberOfLines={1}
-                                    ellipsizeMode="tail">{renewalDate ?
-                                    formatSubscriptionDateTime(renewalDate) : fallback}
-                                </Text>
-                            </View>
+                            <Text className="sub-label">Renouvellement</Text>
+                            <Text className="sub-value" numberOfLines={1} ellipsizeMode="tail">
+                                {renewalDate ? formatSubscriptionDateTime(renewalDate) : fallback}
+                            </Text>
                         </View>
                         <View className="sub-row">
-                            <View className="sub-row-copy">
-                                <Text className="sub-label">Status:</Text>
-                                <Text
-                                    className="sub-value"
-                                    numberOfLines={1}
-                                    ellipsizeMode="tail">{status ? formatStatusLabel(status) : fallback}
-                                </Text>
-                            </View>
+                            <Text className="sub-label">Statut</Text>
+                            <Text className="sub-value" numberOfLines={1} ellipsizeMode="tail">
+                                {status ? formatStatusLabel(status) : fallback}
+                            </Text>
                         </View>
                     </View>
                 </View>

@@ -48,4 +48,5 @@ app-example
 
 # Claude Design handoff bundle (reference artifact, not app source)
 /project
+/project-update
 /README-claude.md
