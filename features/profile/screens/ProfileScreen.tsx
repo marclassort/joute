@@ -7,9 +7,13 @@ import {useCurrentPlayer} from "@/features/joute/hooks/useCurrentPlayer";
 import {useMatches} from "@/features/joute/hooks/useMatches";
 import {DRAWABLE_CATEGORIES, computeMatchStats} from "@/game/rules";
 import {computeLevel} from "@/game/gamification";
+import {computeEarnedBadges} from "@/game/badges";
+import {computePlateauStandings} from "@/game/plateauEngine";
 import {useGamification} from "@/hooks/useGamification";
 import {useSoloStats} from "@/features/solo/hooks/useSoloStats";
 import {masteryPercent} from "@/services/localSoloStatsRepository";
+import {usePlateauMatches} from "@/features/plateau/hooks/usePlateauMatches";
+import {useStreakStats} from "@/features/streak/hooks/useStreakStats";
 import {CATEGORY_LABELS} from "@/features/joute/constants";
 import {plateauColors} from "@/constants/theme";
 
@@ -20,13 +24,34 @@ const MASTERY_COLORS = [plateauColors.ink, plateauColors.pink, plateauColors.cya
 const ProfileScreen = () => {
     const router = useRouter();
     const {displayName, avatarUrl, id: myId} = useCurrentPlayer();
-    const {totalXp, currentStreak: dailyStreak} = useGamification();
+    const {totalXp, currentStreak: dailyStreak, longestStreak} = useGamification();
     const {matches} = useMatches();
+    const {matches: plateauMatches} = usePlateauMatches();
     const {stats: soloStats} = useSoloStats();
+    const {bestStreak: bestFreeAnswerStreak} = useStreakStats();
 
     const duelStats = useMemo(() => computeMatchStats(matches, myId), [matches, myId]);
+    const plateauWins = useMemo(
+        () => plateauMatches.filter((match) => match.status === "completed" && computePlateauStandings(match)[0]?.player.id === myId).length,
+        [plateauMatches, myId],
+    );
     const level = computeLevel(totalXp);
     const avatarInitial = displayName.trim().charAt(0).toUpperCase() || "?";
+
+    const badges = useMemo(
+        () =>
+            computeEarnedBadges({
+                soloStats,
+                totalXp,
+                currentStreak: dailyStreak,
+                longestStreak,
+                duelWins: duelStats.wins,
+                plateauWins,
+                bestFreeAnswerStreak,
+                level,
+            }),
+        [soloStats, totalXp, dailyStreak, longestStreak, duelStats.wins, plateauWins, bestFreeAnswerStreak, level],
+    );
 
     const masteryRows = useMemo(
         () =>
@@ -87,6 +112,20 @@ const ProfileScreen = () => {
                         </View>
                     </View>
                 </View>
+
+                {badges.length > 0 && (
+                    <View>
+                        <Text className="hub-modes-label">Badges</Text>
+                        <View className="profile-badges-row">
+                            {badges.map((badge) => (
+                                <View key={badge.id} className="profile-badge-pill">
+                                    <Text className="profile-badge-icon">{badge.icon}</Text>
+                                    <Text className="profile-badge-text">{badge.label}</Text>
+                                </View>
+                            ))}
+                        </View>
+                    </View>
+                )}
 
                 <View>
                     <Text className="hub-modes-label">Maîtrise par thème</Text>

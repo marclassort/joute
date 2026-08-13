@@ -1637,4 +1637,20 @@
     .duel-result-stat-value {
         @apply font-display text-sm text-plateau-cream;
     }
+
+    .profile-badges-row {
+        @apply flex-row flex-wrap gap-2;
+    }
+
+    .profile-badge-pill {
+        @apply flex-row items-center gap-[6px] rounded-full bg-primary/[0.08] px-3 py-2;
+    }
+
+    .profile-badge-icon {
+        @apply text-sm;
+    }
+
+    .profile-badge-text {
+        @apply text-xs font-sans-bold text-primary;
+    }
 }
