@@ -25,6 +25,7 @@ function drawNextQuestion(excludeIds: readonly string[]): Question {
 const StreakScreen = () => {
     const router = useRouter();
     const [questions, setQuestions] = useState<Question[]>(() => [drawNextQuestion([])]);
+    const [currentIndex, setCurrentIndex] = useState(0);
     const [answers, setAnswers] = useState<StreakAnswer[]>([]);
     const [phase, setPhase] = useState<"playing" | "results">("playing");
     const [bestStreak, setBestStreak] = useState(0);
@@ -34,7 +35,7 @@ const StreakScreen = () => {
         localStreakStatsRepository.get().then((stats) => setBestStreak(stats.bestStreak));
     }, []);
 
-    const currentQuestion = questions[answers.length];
+    const currentQuestion = questions[currentIndex];
     const streakCount = computeCurrentStreak(answers);
 
     const handleAnswer = (submittedText: string, usedHint: boolean, elapsedMs: number, isCorrect: boolean) => {
@@ -49,12 +50,14 @@ const StreakScreen = () => {
             return;
         }
         setQuestions((previous) => [...previous, drawNextQuestion(previous.map((question) => question.id))]);
+        setCurrentIndex((index) => index + 1);
     };
 
     const handleClose = () => router.back();
 
     const handleReplay = () => {
         setQuestions([drawNextQuestion([])]);
+        setCurrentIndex(0);
         setAnswers([]);
         setPhase("playing");
         hasRecordedRef.current = false;
