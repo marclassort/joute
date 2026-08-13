@@ -1,14 +1,21 @@
 import * as Notifications from "expo-notifications";
 import {EXPIRING_SOON_WARNING_MS, NotificationService} from "./notifications";
 
-Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-        shouldShowBanner: true,
-        shouldShowList: true,
-        shouldPlaySound: false,
-        shouldSetBadge: false,
-    }),
-});
+// expo-notifications n'est pas pleinement disponible dans Expo Go (SDK 53+, notamment Android) :
+// cet appel peut lever au chargement du module, ce qui ferait planter tout l'import chain en amont
+// (MatchesContext -> useMatches -> onglets). Les notifications restent un confort, jamais un chemin critique.
+try {
+    Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+            shouldShowBanner: true,
+            shouldShowList: true,
+            shouldPlaySound: false,
+            shouldSetBadge: false,
+        }),
+    });
+} catch {
+    // Ignoré volontairement — voir le commentaire ci-dessus.
+}
 
 const expiringNotificationIds = new Map<string, string>();
 
