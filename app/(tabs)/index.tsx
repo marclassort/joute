@@ -1,106 +1,176 @@
-import "@/global.css"
-import {FlatList, Image, Pressable, Text, View} from "react-native";
-import { styled } from "nativewind";
-import {SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
-import {useUser} from "@clerk/expo";
+import {Image, Pressable, ScrollView, Text, View} from "react-native";
+import React, {useMemo} from "react";
+import {styled} from "nativewind";
+import {SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
 import {useRouter} from "expo-router";
-import {HOME_BALANCE, UPCOMING_SUBSCRIPTIONS} from "@/constants/data";
-import {icons} from "@/constants/icons";
-import {formatCurrency} from "@/lib/utils";
-import dayjs from "dayjs";
-import ListHeading from "@/components/ListHeading";
-import UpcomingSubscriptionCard from "@/components/UpcomingSubscriptionCard";
-import {useState} from "react";
-import SubscriptionCard from "@/components/SubscriptionCard";
-import CreateSubscriptionModal from "@/components/CreateSubscriptionModal";
-import {useSubscriptions} from "@/context/SubscriptionsContext";
+import {useMatches} from "@/features/joute/hooks/useMatches";
+import {useCurrentPlayer} from "@/features/joute/hooks/useCurrentPlayer";
+import {computeMatchStats, computeScore} from "@/game/rules";
+import {WINNING_SCORE} from "@/game/types";
+import {computeLevel} from "@/game/gamification";
+import {formatTimeRemaining} from "@/lib/utils";
+import {plateauColors} from "@/constants/theme";
+import {useGamification} from "@/hooks/useGamification";
+import HardShadowCard from "@/features/joute/components/HardShadowCard";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
-export default function App() {
-    const {subscriptions, addSubscription} = useSubscriptions();
-    const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<string | null>(null);
-    const [isCreateModalVisible, setCreateModalVisible] = useState(false);
-    const { user } = useUser();
+const Home = () => {
+    const {id: myId, displayName, avatarUrl: avatarUri} = useCurrentPlayer();
     const router = useRouter();
+    const {matches} = useMatches();
+    const {totalXp, currentStreak: dailyStreak} = useGamification();
 
-    const displayName = user?.firstName || user?.primaryEmailAddress?.emailAddress || "";
-    const avatarUri = user?.imageUrl;
+    const stats = useMemo(() => computeMatchStats(matches, myId), [matches, myId]);
+    const level = computeLevel(totalXp);
+
+    const toPlay = useMemo(
+        () =>
+            matches
+                .filter((match) => match.status === "active" && match.currentTurnPlayerId === myId)
+                .sort((a, b) => a.expiresAt - b.expiresAt),
+        [matches, myId],
+    );
+
+    const heroMatch = toPlay[0] ?? null;
+    const heroOpponent = heroMatch?.players.find((player) => player.id !== myId) ?? null;
+    const heroMyScore = heroMatch ? computeScore(heroMatch, myId) : 0;
+
+    const avatarInitial = displayName.trim().charAt(0).toUpperCase() || "?";
 
     return (
-        <SafeAreaView className="flex-1 bg-background p-5">
-            <FlatList
-                ListHeaderComponent={() => (
-                    <>
-                        <View className="home-header">
-                            <View className="home-user">
-                                {avatarUri ? (
-                                    <Image source={{ uri: avatarUri }} className="home-avatar" />
-                                ) : (
-                                    <View className="home-avatar bg-muted" />
-                                )}
-                                <Text className="home-user-name" numberOfLines={1} ellipsizeMode="tail">
-                                    {displayName}
-                                </Text>
-                                <Pressable onPress={() => setCreateModalVisible(true)}>
-                                    <Image source={icons.add} className="home-add-icon" />
+        <SafeAreaView className="flex-1 bg-plateau-cream p-5">
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="gap-6 pb-10">
+                <View className="hub-header">
+                    {avatarUri ? (
+                        <Image source={{uri: avatarUri}} className="hub-avatar" />
+                    ) : (
+                        <View className="hub-avatar">
+                            <Text className="hub-avatar-text">{avatarInitial}</Text>
+                        </View>
+                    )}
+                    <View className="min-w-0 flex-1">
+                        <Text className="hub-greeting" numberOfLines={1}>
+                            Salut, {displayName}
+                        </Text>
+                        <View className="hub-pills-row">
+                            <View className="hub-pill bg-plateau-violet">
+                                <Text className="hub-pill-text text-plateau-cream">Niv. {level}</Text>
+                            </View>
+                            <View className="hub-pill bg-plateau-lime">
+                                <Text className="hub-pill-text">{stats.wins} victoire{stats.wins > 1 ? "s" : ""}</Text>
+                            </View>
+                            {dailyStreak > 1 && (
+                                <View className="hub-pill bg-plateau-gold">
+                                    <Text className="hub-pill-text">🔥 {dailyStreak} j</Text>
+                                </View>
+                            )}
+                        </View>
+                    </View>
+                    <Pressable className="hub-gear-button" onPress={() => router.push("/settings")} accessibilityRole="button" accessibilityLabel="Réglages">
+                        <Text className="hub-gear-icon">⚙️</Text>
+                    </Pressable>
+                </View>
+
+                {heroMatch && heroOpponent ? (
+                    <Pressable onPress={() => router.push(`/joute/${heroMatch.id}`)}>
+                        <View className="hub-hero-card">
+                            <View className="hub-hero-decoration" />
+                            <View className="hub-hero-content">
+                                <Text className="hub-hero-label">À toi de jouer</Text>
+                                <View className="hub-hero-row">
+                                    {heroOpponent.avatarUrl ? (
+                                        <Image source={{uri: heroOpponent.avatarUrl}} className="hub-hero-avatar" />
+                                    ) : (
+                                        <View className="hub-hero-avatar">
+                                            <Text className="hub-hero-avatar-text">{heroOpponent.displayName.charAt(0).toUpperCase()}</Text>
+                                        </View>
+                                    )}
+                                    <View className="hub-hero-copy">
+                                        <Text className="hub-hero-name" numberOfLines={1}>
+                                            Duel contre {heroOpponent.displayName}
+                                        </Text>
+                                        <Text className="hub-hero-meta">
+                                            Manche {heroMatch.currentRoundIndex + 1} · {formatTimeRemaining(heroMatch.expiresAt)}
+                                        </Text>
+                                    </View>
+                                    <Text className="hub-hero-score">
+                                        {heroMyScore}–{computeScore(heroMatch, heroOpponent.id)}
+                                    </Text>
+                                </View>
+                                <View className="hub-hero-progress-row">
+                                    {Array.from({length: WINNING_SCORE}).map((_, index) => (
+                                        <View
+                                            key={index}
+                                            className="hub-hero-progress-seg"
+                                            style={{backgroundColor: index < heroMyScore ? plateauColors.lime : "rgba(255,246,226,0.2)"}}
+                                        />
+                                    ))}
+                                </View>
+                                <Pressable className="hub-hero-cta" onPress={() => router.push(`/joute/${heroMatch.id}`)}>
+                                    <Text className="hub-hero-cta-text">Reprendre la manche</Text>
                                 </Pressable>
                             </View>
-                            <Pressable onPress={() => router.push("/settings")} className="ml-3">
-                                <Image source={icons.menu} className="home-add-icon" />
-                            </Pressable>
                         </View>
-                        <View className="home-balance-card">
-                            <Text className="home-balance-label">
-                                Balance
-                            </Text>
-                            <View className="home-balance-row">
-                                <Text className="home-balance-amount">
-                                    {formatCurrency(HOME_BALANCE.amount)}
-                                </Text>
-                                <Text className="home-balance-date">
-                                    {dayjs(HOME_BALANCE.nextRenewalDate).format('DD/MM') }
-                                </Text>
-                            </View>
+                    </Pressable>
+                ) : (
+                    <View className="hub-hero-card">
+                        <View className="hub-hero-decoration" />
+                        <View className="hub-hero-content">
+                            <Text className="hub-hero-label">À toi de jouer</Text>
+                            <Text className="hub-hero-empty-title">Aucune partie en cours</Text>
+                            <Text className="hub-hero-empty-subtitle">Lance un défi pour commencer.</Text>
                         </View>
-                        <View className="mb-5">
-                            <ListHeading title="À venir" />
+                    </View>
+                )}
 
-                            <FlatList
-                                ListHeaderComponent={<View className="h-4" /> }
-                                data={UPCOMING_SUBSCRIPTIONS}
-                                renderItem={({ item }) => (
-                                    <UpcomingSubscriptionCard {...item} />
-                                )}
-                                keyExtractor={(item) => item.id}
-                                horizontal
-                                showsHorizontalScrollIndicator={false}
-                                ListEmptyComponent={<Text className="home-empty-state">Pas de nouveaux abonnements</Text>}
-                            />
-                        </View>
-                        <ListHeading title="Tous les abonnements" />
-                    </>
-                )}
-                data={subscriptions}
-                keyExtractor={(item) => item.id}
-                renderItem={({item}) => (
-                    <SubscriptionCard
-                        { ...item}
-                        expanded={expandedSubscriptionId === item.id }
-                        onPress={() => setExpandedSubscriptionId((currentId) =>
-                            (currentId === item.id ? null : item.id))}
-                    />
-                )}
-                extraData={expandedSubscriptionId}
-                ItemSeparatorComponent={() => <View className="h-4" />}
-                ListEmptyComponent={<Text className="home-empty-state">Pas d&#39;abonnements encore.</Text>}
-                contentContainerClassName="pb-30"
-            />
-            <CreateSubscriptionModal
-                visible={isCreateModalVisible}
-                onClose={() => setCreateModalVisible(false)}
-                onCreate={addSubscription}
-            />
+                <Text className="hub-modes-label">Modes de jeu</Text>
+                <View className="hub-modes-grid">
+                    <HardShadowCard borderRadius={20} offsetY={4} className="hub-mode-card hub-mode-card-wide bg-plateau-orange" style={{width: "100%"}}>
+                        <Pressable className="w-full flex-row items-center gap-3" onPress={() => router.push("/duel/lobby")} accessibilityRole="button">
+                            <Text className="hub-mode-icon-lg">⚡</Text>
+                            <View className="min-w-0 flex-1">
+                                <Text className="hub-mode-title-lg text-plateau-ink">Face-à-face</Text>
+                                <Text className="hub-mode-subtitle text-plateau-ink/70">Duel · premier à 9 points gagne</Text>
+                            </View>
+                            <Text className="hub-mode-arrow">→</Text>
+                        </Pressable>
+                    </HardShadowCard>
+
+                    <HardShadowCard borderRadius={20} offsetY={4} className="hub-mode-card hub-mode-card-half bg-plateau-violet" style={{width: "47%"}}>
+                        <Pressable className="w-full" onPress={() => router.push("/solo")} accessibilityRole="button" accessibilityLabel="Partie solo">
+                            <Text className="hub-mode-icon">🎯</Text>
+                            <View>
+                                <Text className="hub-mode-title text-plateau-cream">Solo</Text>
+                                <Text className="hub-mode-subtitle text-plateau-cream/70">Choisis un thème, 10 questions</Text>
+                            </View>
+                        </Pressable>
+                    </HardShadowCard>
+
+                    <HardShadowCard borderRadius={20} offsetY={4} className="hub-mode-card hub-mode-card-half bg-plateau-cyan" style={{width: "47%"}}>
+                        <Pressable className="w-full" onPress={() => router.push("/plateau")} accessibilityRole="button" accessibilityLabel="Plateau">
+                            <Text className="hub-mode-icon">🏟️</Text>
+                            <View>
+                                <Text className="hub-mode-title text-plateau-ink">Plateau</Text>
+                                <Text className="hub-mode-subtitle text-plateau-ink/70">4 à 6 joueurs · course à 24 pts</Text>
+                            </View>
+                        </Pressable>
+                    </HardShadowCard>
+
+                    <HardShadowCard borderRadius={20} offsetY={4} className="hub-mode-card hub-mode-card-wide bg-plateau-pink" style={{width: "100%"}}>
+                        <Pressable className="w-full flex-row items-center gap-3" onPress={() => router.push("/streak")} accessibilityRole="button" accessibilityLabel="4 à la suite">
+                            <Text className="hub-mode-icon-lg">🔥</Text>
+                            <View className="min-w-0 flex-1">
+                                <Text className="hub-mode-title-lg text-plateau-cream">4 à la suite</Text>
+                                <Text className="hub-mode-subtitle text-plateau-cream/70">Réponse libre · survie sans fin</Text>
+                            </View>
+                            <Text className="hub-mode-arrow text-plateau-cream">→</Text>
+                        </Pressable>
+                    </HardShadowCard>
+                </View>
+            </ScrollView>
         </SafeAreaView>
     );
-}
+};
+
+export default Home;

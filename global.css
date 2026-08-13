@@ -82,45 +82,6 @@
         @apply text-xl leading-none;
     }
 
-    .home-header {
-        @apply mb-2.5 flex-row items-center justify-between;
-    }
-
-    .home-user {
-        @apply min-w-0 flex-1 flex-row items-center;
-    }
-
-    .home-avatar {
-        @apply size-16 shrink-0 rounded-full;
-    }
-
-    .home-user-name {
-        @apply ml-4 min-w-0 flex-1 text-2xl font-sans-bold text-primary;
-    }
-
-    .home-add-icon {
-        @apply size-12;
-    }
-
-    .home-balance-card {
-        @apply my-2.5 min-h-50 justify-between gap-5 rounded-bl-4xl rounded-tr-4xl bg-accent p-6;
-    }
-
-    .home-balance-label {
-        @apply text-xl font-sans-semibold text-white/80;
-    }
-
-    .home-balance-row {
-        @apply flex-row items-center justify-between;
-    }
-
-    .home-balance-amount {
-        @apply text-4xl font-sans-extrabold text-white;
-    }
-
-    .home-balance-date {
-        @apply text-xl font-sans-medium text-white;
-    }
 
     .list-head {
         @apply my-5 flex-row items-center justify-between;

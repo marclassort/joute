@@ -17,7 +17,7 @@ const Onboarding = () => {
 
     const handleGuest = async () => {
         await markOnboardingSeen();
-        router.replace("/(tabs)/joute");
+        router.replace("/(tabs)");
     };
 
     return (

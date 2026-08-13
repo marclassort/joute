@@ -223,7 +223,7 @@ const SignIn = () => {
                         className="mt-3 items-center"
                         onPress={async () => {
                             await markOnboardingSeen();
-                            router.replace("/(tabs)/joute");
+                            router.replace("/(tabs)");
                         }}
                     >
                         <Text className="session-link">Continuer sans compte</Text>

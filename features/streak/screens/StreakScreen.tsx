@@ -60,7 +60,7 @@ const StreakScreen = () => {
         hasRecordedRef.current = false;
     };
 
-    const handleBackToHub = () => router.replace("/(tabs)/joute");
+    const handleBackToHub = () => router.replace("/(tabs)");
 
     useEffect(() => {
         if (phase !== "results" || hasRecordedRef.current) return;
