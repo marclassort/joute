@@ -8,6 +8,7 @@ import {Question} from "@/game/types";
 import {plateauColors} from "@/constants/theme";
 import {CATEGORY_COLORS, CATEGORY_ICONS, CATEGORY_LABELS, QUESTION_ALERT_THRESHOLD_MS, QUESTION_DURATION_MS} from "@/features/joute/constants";
 import HardShadowCard from "@/features/joute/components/HardShadowCard";
+import {playSound} from "@/lib/sounds";
 
 export interface SoloQuestionCardProps {
     question: Question;
@@ -48,6 +49,7 @@ const SoloQuestionCard = ({
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
             if (urgentTimeoutRef.current) clearTimeout(urgentTimeoutRef.current);
             if (index !== null) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            playSound(index !== null && index === question.correctIndex ? "correct" : "incorrect");
 
             setSelectedIndex(index);
             const elapsedMs = Math.min(QUESTION_DURATION_MS, Date.now() - startedAtRef.current);

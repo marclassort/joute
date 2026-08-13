@@ -10,6 +10,7 @@ import {buildSoloAnswer, computeAverageResponseMs, computeLongestCorrectStreak, 
 import {XP_PER_CORRECT_SOLO} from "@/game/gamification";
 import {localGamificationRepository} from "@/services/localGamificationRepository";
 import {generateId} from "@/lib/utils";
+import {playSound} from "@/lib/sounds";
 import {SOLO_QUESTIONS_PER_SESSION} from "../constants";
 import {useSoloStats} from "../hooks/useSoloStats";
 import SoloQuestionCard from "../components/SoloQuestionCard";
@@ -70,6 +71,7 @@ const SoloScreen = ({category}: SoloScreenProps) => {
         if (phase !== "results" || hasRecordedRef.current) return;
         hasRecordedRef.current = true;
         const score = computeSoloScore(answers);
+        if (score >= 6) playSound("victory");
         recordSession(category, score, answers.length);
         localGamificationRepository.awardXp(score * XP_PER_CORRECT_SOLO);
         // eslint-disable-next-line react-hooks/exhaustive-deps

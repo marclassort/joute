@@ -7,6 +7,7 @@ import Animated, {Easing, useAnimatedStyle, useReducedMotion, useSharedValue, wi
 import {Player, Question} from "@/game/types";
 import {plateauColors} from "@/constants/theme";
 import {QUESTION_ALERT_THRESHOLD_MS, QUESTION_DURATION_MS, QUESTION_TRANSITION_MS} from "../constants";
+import {playSound} from "@/lib/sounds";
 
 export interface QuestionStepProps {
     question: Question;
@@ -41,6 +42,7 @@ const QuestionStep = ({question, questionNumber, roundNumber, me, opponent, mySc
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
             if (urgentTimeoutRef.current) clearTimeout(urgentTimeoutRef.current);
             if (index !== null) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            playSound(index !== null && index === question.correctIndex ? "correct" : "incorrect");
 
             setSelectedIndex(index);
             const elapsedMs = Math.min(QUESTION_DURATION_MS, Date.now() - startedAtRef.current);

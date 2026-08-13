@@ -70,7 +70,8 @@
           "icon": "./assets/images/icon.png",
           "color": "#ea7a53"
         }
-      ]
+      ],
+      "expo-audio"
     ],
     "experiments": {
       "typedRoutes": true,

@@ -25,6 +25,7 @@ import {formatRelativeTime} from "@/lib/utils";
 import clsx from "clsx";
 import {XP_PER_CORRECT_PLATEAU, XP_PLATEAU_WIN_BONUS} from "@/game/gamification";
 import {localGamificationRepository} from "@/services/localGamificationRepository";
+import {playSound} from "@/lib/sounds";
 import {useCurrentPlayer} from "@/features/joute/hooks/useCurrentPlayer";
 import {usePlateauMatch} from "../hooks/usePlateauMatch";
 import PlateauTrackRow from "../components/PlateauTrackRow";
@@ -50,6 +51,7 @@ const PlateauBoardScreen = ({matchId}: PlateauBoardScreenProps) => {
         hasAwardedRef.current = true;
 
         const won = computePlateauStandings(match)[0]?.player.id === myId;
+        if (won) playSound("victory");
         const xp = computePlateauScore(match, myId) * XP_PER_CORRECT_PLATEAU + (won ? XP_PLATEAU_WIN_BONUS : 0);
         localGamificationRepository.awardXpForMatch(match.id, xp);
     }, [match, myId]);

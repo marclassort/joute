@@ -8,6 +8,7 @@ import {Question} from "@/game/types";
 import {isAnswerCorrect} from "@/game/textMatch";
 import {computeHint} from "@/game/streakEngine";
 import {CATEGORY_LABELS, QUESTION_ALERT_THRESHOLD_MS, QUESTION_DURATION_MS} from "@/features/joute/constants";
+import {playSound} from "@/lib/sounds";
 
 export interface StreakQuestionCardProps {
     question: Question;
@@ -44,6 +45,7 @@ const StreakQuestionCard = ({question, streakCount, onAnswer, onContinue}: Strea
             const correct = isAnswerCorrect(submittedText, question.choices[question.correctIndex]);
             setIsCorrect(correct);
             Haptics.notificationAsync(correct ? Haptics.NotificationFeedbackType.Success : Haptics.NotificationFeedbackType.Error);
+            playSound(correct ? "correct" : "incorrect");
 
             const elapsedMs = Math.min(QUESTION_DURATION_MS, Date.now() - startedAtRef.current);
             onAnswer(submittedText, hintUsedRef.current, elapsedMs, correct);

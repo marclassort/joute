@@ -8,6 +8,7 @@ import {computeOutcomeForPlayer, computePlayerMatchStats, computeScore} from "@/
 import {XP_DUEL_WIN_BONUS, XP_PER_CORRECT_DUEL, computeLevel} from "@/game/gamification";
 import {localGamificationRepository} from "@/services/localGamificationRepository";
 import {generateId} from "@/lib/utils";
+import {playSound} from "@/lib/sounds";
 import {plateauColors} from "@/constants/theme";
 import HardShadowCard from "@/features/joute/components/HardShadowCard";
 import {useMatch} from "../hooks/useMatch";
@@ -52,6 +53,7 @@ const ResultScreen = ({matchId}: ResultScreenProps) => {
         if (outcome === null) return;
 
         hasAwardedRef.current = true;
+        if (outcome === "win") playSound("victory");
         const xp = computeScore(match, myId) * XP_PER_CORRECT_DUEL + (outcome === "win" ? XP_DUEL_WIN_BONUS : 0);
 
         localGamificationRepository.get().then((before) => {

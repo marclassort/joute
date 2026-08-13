@@ -10,6 +10,7 @@ import {StreakAnswer, computeCurrentStreak} from "@/game/streakEngine";
 import {XP_PER_CORRECT_STREAK} from "@/game/gamification";
 import {localGamificationRepository} from "@/services/localGamificationRepository";
 import {localStreakStatsRepository} from "@/services/localStreakStatsRepository";
+import {playSound} from "@/lib/sounds";
 import StreakQuestionCard from "../components/StreakQuestionCard";
 import StreakResultCard from "../components/StreakResultCard";
 
@@ -70,6 +71,7 @@ const StreakScreen = () => {
         hasRecordedRef.current = true;
 
         const finalStreak = computeCurrentStreak(answers);
+        if (finalStreak >= 5) playSound("victory");
         localStreakStatsRepository.recordRun(finalStreak).then((stats) => setBestStreak(stats.bestStreak));
         localGamificationRepository.awardXp(finalStreak * XP_PER_CORRECT_STREAK);
         // eslint-disable-next-line react-hooks/exhaustive-deps
