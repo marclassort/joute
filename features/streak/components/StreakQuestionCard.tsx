@@ -26,6 +26,7 @@ const StreakQuestionCard = ({question, streakCount, onAnswer, onContinue}: Strea
     const [secondsLeft, setSecondsLeft] = useState(Math.ceil(QUESTION_DURATION_MS / 1000));
 
     const hintUsedRef = useRef(false);
+    const hasSubmittedRef = useRef(false);
     const startedAtRef = useRef(Date.now());
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const urgentTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -35,24 +36,22 @@ const StreakQuestionCard = ({question, streakCount, onAnswer, onContinue}: Strea
     const reducedMotion = useReducedMotion();
 
     const submit = (submittedText: string) => {
-        setIsRevealed((already) => {
-            if (already) return already;
+        if (hasSubmittedRef.current) return;
+        hasSubmittedRef.current = true;
 
-            if (timeoutRef.current) clearTimeout(timeoutRef.current);
-            if (urgentTimeoutRef.current) clearTimeout(urgentTimeoutRef.current);
-            if (intervalRef.current) clearInterval(intervalRef.current);
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        if (urgentTimeoutRef.current) clearTimeout(urgentTimeoutRef.current);
+        if (intervalRef.current) clearInterval(intervalRef.current);
 
-            const correct = isAnswerCorrect(submittedText, question.choices[question.correctIndex]);
-            setIsCorrect(correct);
-            if (correct) notifySuccess();
-            else notifyError();
-            playSound(correct ? "correct" : "incorrect");
+        const correct = isAnswerCorrect(submittedText, question.choices[question.correctIndex]);
+        setIsCorrect(correct);
+        setIsRevealed(true);
+        if (correct) notifySuccess();
+        else notifyError();
+        playSound(correct ? "correct" : "incorrect");
 
-            const elapsedMs = Math.min(QUESTION_DURATION_MS, Date.now() - startedAtRef.current);
-            onAnswer(submittedText, hintUsedRef.current, elapsedMs, correct);
-
-            return true;
-        });
+        const elapsedMs = Math.min(QUESTION_DURATION_MS, Date.now() - startedAtRef.current);
+        onAnswer(submittedText, hintUsedRef.current, elapsedMs, correct);
     };
 
     const handleHint = () => {
@@ -68,6 +67,7 @@ const StreakQuestionCard = ({question, streakCount, onAnswer, onContinue}: Strea
         setHint(null);
         setSecondsLeft(Math.ceil(QUESTION_DURATION_MS / 1000));
         hintUsedRef.current = false;
+        hasSubmittedRef.current = false;
         startedAtRef.current = Date.now();
 
         progress.value = 1;
