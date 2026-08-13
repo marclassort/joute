@@ -15,7 +15,7 @@ import CategoryChoiceStep from "../components/CategoryChoiceStep";
 import QuestionStep from "../components/QuestionStep";
 import RoundSummaryStep from "../components/RoundSummaryStep";
 import MatchHeader from "../components/MatchHeader";
-import HardShadowCard from "../components/HardShadowCard";
+import MatchWaitingCard from "../components/MatchWaitingCard";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -69,16 +69,21 @@ const MatchScreen = ({matchId}: MatchScreenProps) => {
         return (
             <SafeAreaView className="flex-1 bg-plateau-ink p-5">
                 <MatchHeader onBack={goBack} title="Invitation en attente" />
-                <Text className="duel-empty-state">
-                    En attente que ton ami rejoigne la partie{match.invitationCode ? ` (code ${match.invitationCode})` : ""}.
-                </Text>
-                {match.invitationCode && (
-                    <HardShadowCard borderRadius={20} offsetY={5} className="solo-cta-button mt-4">
-                        <Pressable onPress={handleReshare} accessibilityRole="button">
-                            <Text className="solo-cta-text">Repartager le lien</Text>
+                <MatchWaitingCard
+                    me={me}
+                    opponent={opponent}
+                    myScore={computeScore(match, myId)}
+                    opponentScore={computeScore(match, opponent.id)}
+                    label="En attente qu'un ami rejoigne"
+                    meta={match.invitationCode ? `Code ${match.invitationCode}` : undefined}
+                    onBackHome={() => router.replace("/(tabs)")}
+                >
+                    {match.invitationCode && (
+                        <Pressable className="duel-lobby-secondary-button" onPress={handleReshare} accessibilityRole="button">
+                            <Text className="duel-lobby-secondary-text">Repartager le lien</Text>
                         </Pressable>
-                    </HardShadowCard>
-                )}
+                    )}
+                </MatchWaitingCard>
             </SafeAreaView>
         );
     }
@@ -96,10 +101,16 @@ const MatchScreen = ({matchId}: MatchScreenProps) => {
     if (match.currentTurnPlayerId !== myId) {
         return (
             <SafeAreaView className="flex-1 bg-plateau-ink p-5">
-                <MatchHeader onBack={goBack} title="En attente de l'adversaire" />
-                <Text className="duel-empty-state">
-                    C&#39;est au tour de {opponent.displayName}. {formatTimeRemaining(match.expiresAt)}.
-                </Text>
+                <MatchHeader onBack={goBack} title="En attente" />
+                <MatchWaitingCard
+                    me={me}
+                    opponent={opponent}
+                    myScore={computeScore(match, myId)}
+                    opponentScore={computeScore(match, opponent.id)}
+                    label={`C'est au tour de ${opponent.displayName}`}
+                    meta={formatTimeRemaining(match.expiresAt)}
+                    onBackHome={() => router.replace("/(tabs)")}
+                />
             </SafeAreaView>
         );
     }

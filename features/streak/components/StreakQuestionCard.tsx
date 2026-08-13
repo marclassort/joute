@@ -3,7 +3,7 @@ import React, {useEffect, useRef, useState} from "react";
 // eslint-disable-next-line import/no-named-as-default
 import clsx from "clsx";
 import * as Haptics from "expo-haptics";
-import Animated, {Easing, useAnimatedStyle, useReducedMotion, useSharedValue, withTiming} from "react-native-reanimated";
+import Animated, {Easing, FadeInDown, ZoomIn, useAnimatedStyle, useReducedMotion, useSharedValue, withTiming} from "react-native-reanimated";
 import {Question} from "@/game/types";
 import {isAnswerCorrect} from "@/game/textMatch";
 import {computeHint} from "@/game/streakEngine";
@@ -143,12 +143,15 @@ const StreakQuestionCard = ({question, streakCount, onAnswer, onContinue}: Strea
             )}
 
             {isRevealed && (
-                <View className={clsx("streak-reveal-card", isCorrect ? "streak-reveal-correct" : "streak-reveal-incorrect")}>
+                <Animated.View
+                    entering={ZoomIn.duration(260)}
+                    className={clsx("streak-reveal-card", isCorrect ? "streak-reveal-correct" : "streak-reveal-incorrect")}
+                >
                     <Text className="streak-reveal-title">
                         {isCorrect ? "✓ Bonne réponse !" : `✕ La bonne réponse était : ${question.choices[question.correctIndex]}`}
                     </Text>
                     <Text className="streak-reveal-explanation">{question.explanation}</Text>
-                </View>
+                </Animated.View>
             )}
 
             {!isRevealed ? (
@@ -164,11 +167,11 @@ const StreakQuestionCard = ({question, streakCount, onAnswer, onContinue}: Strea
                     </Pressable>
                 </View>
             ) : (
-                <View className="streak-footer">
+                <Animated.View entering={FadeInDown.duration(280).delay(80)} className="streak-footer">
                     <Pressable className="streak-submit-button" onPress={onContinue} accessibilityRole="button">
                         <Text className="streak-submit-text">{isCorrect ? "Question suivante" : "Voir mon score"}</Text>
                     </Pressable>
-                </View>
+                </Animated.View>
             )}
         </View>
     );

@@ -1666,4 +1666,17 @@
     .profile-leaderboard-separator {
         @apply py-1 text-center text-xs font-sans-bold text-plateau-ink/40;
     }
+
+    .duel-waiting-label {
+        @apply text-center font-display text-xl text-plateau-cream;
+    }
+
+    .duel-waiting-progress-row {
+        @apply mt-4 flex-row gap-1;
+    }
+
+    .duel-waiting-meta {
+        @apply mt-3 text-center text-[13px] font-sans-semibold text-plateau-cream/50;
+    }
+
 }

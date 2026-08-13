@@ -3,7 +3,7 @@ import React, {useEffect, useRef, useState} from "react";
 // eslint-disable-next-line import/no-named-as-default
 import clsx from "clsx";
 import * as Haptics from "expo-haptics";
-import Animated, {Easing, useAnimatedStyle, useReducedMotion, useSharedValue, withTiming} from "react-native-reanimated";
+import Animated, {Easing, FadeInDown, useAnimatedStyle, useReducedMotion, useSharedValue, withTiming} from "react-native-reanimated";
 import {Question} from "@/game/types";
 import {plateauColors} from "@/constants/theme";
 import {CATEGORY_COLORS, CATEGORY_ICONS, CATEGORY_LABELS, QUESTION_ALERT_THRESHOLD_MS, QUESTION_DURATION_MS} from "@/features/joute/constants";
@@ -159,7 +159,7 @@ const SoloQuestionCard = ({
             </View>
 
             {isRevealed && (
-                <>
+                <Animated.View entering={FadeInDown.duration(280)}>
                     <View className="solo-explanation-card">
                         <Text className="solo-explanation-label">Le saviez-vous</Text>
                         <Text className="solo-explanation-text">{question.explanation}</Text>
@@ -172,7 +172,7 @@ const SoloQuestionCard = ({
                             </Pressable>
                         </HardShadowCard>
                     </View>
-                </>
+                </Animated.View>
             )}
         </View>
     );
