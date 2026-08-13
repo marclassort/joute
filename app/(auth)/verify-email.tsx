@@ -15,7 +15,8 @@ import { Link, useRouter } from "expo-router";
 // eslint-disable-next-line import/no-named-as-default
 import clsx from "clsx";
 import { useAuth, useSignUp } from "@clerk/expo";
-import { colors } from "@/constants/theme";
+import { plateauColors } from "@/constants/theme";
+import HardShadowCard from "@/features/joute/components/HardShadowCard";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -42,8 +43,8 @@ const VerifyEmail = () => {
 
     if (!isLoaded || !signUp || !email) {
         return (
-            <SafeAreaView className="auth-safe-area items-center justify-center">
-                <ActivityIndicator size="large" color={colors.accent} />
+            <SafeAreaView className="session-safe-area items-center justify-center">
+                <ActivityIndicator size="large" color={plateauColors.orange} />
             </SafeAreaView>
         );
     }
@@ -119,38 +120,38 @@ const VerifyEmail = () => {
     };
 
     return (
-        <SafeAreaView className="auth-safe-area">
+        <SafeAreaView className="session-safe-area">
             <KeyboardAvoidingView
-                className="auth-screen"
+                className="session-screen"
                 behavior={Platform.OS === "ios" ? "padding" : undefined}
             >
                 <ScrollView
-                    className="auth-scroll"
-                    contentContainerClassName="auth-content"
+                    className="session-scroll"
+                    contentContainerClassName="session-content"
                     keyboardShouldPersistTaps="handled"
                 >
-                    <View className="auth-brand-block">
-                        <View className="auth-logo-wrap">
-                            <View className="auth-logo-mark">
-                                <Text className="auth-logo-mark-text">J</Text>
+                    <View className="session-brand-block">
+                        <View className="session-logo-wrap">
+                            <View className="session-logo-mark">
+                                <Text className="session-logo-mark-text">J</Text>
                             </View>
                             <View>
-                                <Text className="auth-wordmark">Joute</Text>
-                                <Text className="auth-wordmark-sub">Vos abonnements</Text>
+                                <Text className="session-wordmark">Joute</Text>
+                                <Text className="session-wordmark-sub">Duels de culture générale</Text>
                             </View>
                         </View>
-                        <Text className="auth-title">Vérifiez votre e-mail</Text>
-                        <Text className="auth-subtitle">
+                        <Text className="session-title">Vérifiez votre e-mail</Text>
+                        <Text className="session-subtitle">
                             Entrez le code à 6 chiffres envoyé à {email}.
                         </Text>
                     </View>
 
-                    <View className="auth-card">
-                        <View className="auth-form">
-                            <View className="auth-field">
-                                <Text className="auth-label">Code de vérification</Text>
+                    <View className="session-card">
+                        <View className="session-form">
+                            <View className="session-field">
+                                <Text className="session-label">Code de vérification</Text>
                                 <TextInput
-                                    className={clsx("auth-input", error && "auth-input-error")}
+                                    className={clsx("session-input", error && "session-input-error")}
                                     style={{ textAlign: "center", letterSpacing: 8 }}
                                     value={code}
                                     onChangeText={(value) => {
@@ -158,49 +159,45 @@ const VerifyEmail = () => {
                                         if (error) setError(null);
                                     }}
                                     placeholder="000000"
-                                    placeholderTextColor={colors.mutedForeground}
+                                    placeholderTextColor={plateauColors.ink + "80"}
                                     keyboardType="number-pad"
                                     textContentType="oneTimeCode"
                                     maxLength={CODE_LENGTH}
                                     editable={!isSubmitting}
                                 />
-                                {error && <Text className="auth-error">{error}</Text>}
+                                {error && <Text className="session-error">{error}</Text>}
                             </View>
 
-                            <Pressable
-                                className={clsx("auth-button", isSubmitting && "auth-button-disabled")}
-                                onPress={handleVerify}
-                                disabled={isSubmitting}
-                            >
-                                <Text className="auth-button-text">
-                                    {isSubmitting ? "Vérification…" : "Confirmer"}
-                                </Text>
-                            </Pressable>
+                            <HardShadowCard borderRadius={16} offsetY={4} className={clsx("solo-cta-button", isSubmitting && "opacity-50")}>
+                                <Pressable onPress={handleVerify} disabled={isSubmitting} accessibilityRole="button">
+                                    <Text className="solo-cta-text">{isSubmitting ? "Vérification…" : "Confirmer"}</Text>
+                                </Pressable>
+                            </HardShadowCard>
                         </View>
                     </View>
 
-                    <View className="auth-divider-row">
-                        <View className="auth-divider-line" />
-                        <Text className="auth-divider-text">
+                    <View className="session-divider-row">
+                        <View className="session-divider-line" />
+                        <Text className="session-divider-text">
                             {resent ? "Code renvoyé" : "Rien reçu ?"}
                         </Text>
-                        <View className="auth-divider-line" />
+                        <View className="session-divider-line" />
                     </View>
 
                     <Pressable
-                        className="auth-secondary-button"
+                        className="session-secondary-button"
                         onPress={handleResend}
                         disabled={isResending}
                     >
-                        <Text className="auth-secondary-button-text">
+                        <Text className="session-secondary-text">
                             {isResending ? "Envoi…" : "Renvoyer le code"}
                         </Text>
                     </Pressable>
 
-                    <View className="auth-link-row">
-                        <Text className="auth-link-copy">Mauvaise adresse ?</Text>
+                    <View className="session-link-row">
+                        <Text className="session-link-copy">Mauvaise adresse ?</Text>
                         <Link href="/(auth)/sign-up" replace>
-                            <Text className="auth-link">Modifier</Text>
+                            <Text className="session-link">Modifier</Text>
                         </Link>
                     </View>
                 </ScrollView>

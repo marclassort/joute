@@ -21,19 +21,19 @@ const Onboarding = () => {
     };
 
     return (
-        <SafeAreaView className="flex-1 items-center justify-center bg-background p-5">
-            <View className="auth-logo-wrap">
-                <View className="auth-logo-mark">
-                    <Text className="auth-logo-mark-text">J</Text>
+        <SafeAreaView className="flex-1 items-center justify-center bg-plateau-cream p-5">
+            <View className="session-logo-wrap">
+                <View className="session-logo-mark">
+                    <Text className="session-logo-mark-text">J</Text>
                 </View>
                 <View>
-                    <Text className="auth-wordmark">Joute</Text>
-                    <Text className="auth-wordmark-sub">Duels de culture générale</Text>
+                    <Text className="session-wordmark">Joute</Text>
+                    <Text className="session-wordmark-sub">Duels de culture générale</Text>
                 </View>
             </View>
 
-            <Text className="auth-title mt-8 text-center">Défie tes amis en duel</Text>
-            <Text className="auth-subtitle">
+            <Text className="session-title mt-8 text-center">Défie tes amis en duel</Text>
+            <Text className="session-subtitle">
                 8 manches, 24 questions, un ami ou un profil de démonstration. Réponds le plus vite et le plus juste possible.
             </Text>
 
@@ -41,8 +41,8 @@ const Onboarding = () => {
                 <Pressable className="joute-new-match-button" onPress={handleSignIn} accessibilityRole="button">
                     <Text className="joute-new-match-text">Se connecter</Text>
                 </Pressable>
-                <Pressable className="auth-secondary-button" onPress={handleGuest} accessibilityRole="button">
-                    <Text className="auth-secondary-button-text">Continuer sans compte</Text>
+                <Pressable className="session-secondary-button" onPress={handleGuest} accessibilityRole="button">
+                    <Text className="session-secondary-text">Continuer sans compte</Text>
                 </Pressable>
             </View>
         </SafeAreaView>

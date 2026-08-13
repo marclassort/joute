@@ -251,15 +251,15 @@
     }
 
     .settings-title {
-        @apply mb-8 text-2xl font-sans-bold text-primary;
+        @apply mb-8 font-display text-2xl text-plateau-ink;
     }
 
     .settings-card {
-        @apply rounded-3xl border border-border bg-card p-5;
+        @apply rounded-3xl border-2 border-plateau-ink bg-white p-5;
     }
 
     .settings-card-label {
-        @apply mb-4 text-xs font-sans-semibold uppercase tracking-[1px] text-muted-foreground;
+        @apply mb-4 font-display text-xs uppercase tracking-[1.5px] text-plateau-ink/50;
     }
 
     .settings-profile-row {
@@ -267,7 +267,7 @@
     }
 
     .settings-avatar {
-        @apply size-20 shrink-0 rounded-full;
+        @apply size-20 shrink-0 rounded-full border-2 border-plateau-ink;
     }
 
     .settings-profile-copy {
@@ -275,79 +275,23 @@
     }
 
     .settings-profile-name {
-        @apply text-lg font-sans-bold text-primary;
+        @apply font-display text-lg text-plateau-ink;
     }
 
     .settings-profile-email {
-        @apply mt-1 text-sm font-sans-medium text-muted-foreground;
+        @apply mt-1 text-sm font-sans-medium text-plateau-ink/60;
     }
 
     .settings-signout-button {
-        @apply mt-4 items-center rounded-2xl bg-accent py-4;
+        @apply mt-4 items-center rounded-2xl border-2 border-plateau-ink bg-plateau-pink py-4;
     }
 
     .settings-signout-button-disabled {
-        @apply bg-accent/45;
+        @apply opacity-45;
     }
 
     .settings-signout-text {
-        @apply text-base font-sans-bold text-primary;
-    }
-
-    .auth-safe-area {
-        @apply flex-1 bg-background;
-    }
-
-    .auth-screen {
-        @apply flex-1 bg-background;
-    }
-
-    .auth-scroll {
-        @apply flex-1;
-    }
-
-    .auth-content {
-        @apply grow px-5 pb-10 pt-8;
-    }
-
-    .auth-brand-block {
-        @apply mt-2 items-center;
-    }
-
-    .auth-logo-wrap {
-        @apply mb-7 flex-row items-center gap-3;
-    }
-
-    .auth-logo-mark {
-        @apply relative size-14 items-center justify-center rounded-2xl bg-accent;
-    }
-
-    .auth-logo-mark-text {
-        @apply text-2xl font-sans-extrabold text-background;
-    }
-
-    .auth-wordmark {
-        @apply text-3xl font-sans-extrabold text-primary;
-    }
-
-    .auth-wordmark-sub {
-        @apply -mt-1 text-xs font-sans-semibold uppercase tracking-[1px] text-muted-foreground;
-    }
-
-    .auth-title {
-        @apply text-3xl font-sans-bold text-primary;
-    }
-
-    .auth-subtitle {
-        @apply mt-2 max-w-[320px] text-center text-base font-sans-medium text-muted-foreground;
-    }
-
-    .auth-card {
-        @apply mt-8 rounded-3xl border border-border bg-card p-5;
-    }
-
-    .auth-form {
-        @apply gap-4;
+        @apply font-display text-base text-plateau-ink;
     }
 
     .auth-field {
@@ -362,18 +306,6 @@
         @apply rounded-2xl border border-border bg-background px-4 py-4 text-base font-sans-medium text-primary;
     }
 
-    .auth-input-error {
-        @apply border-destructive;
-    }
-
-    .auth-error {
-        @apply text-xs font-sans-medium text-destructive;
-    }
-
-    .auth-helper {
-        @apply text-sm font-sans-medium text-muted-foreground;
-    }
-
     .auth-button {
         @apply mt-1 items-center rounded-2xl bg-accent py-4;
     }
@@ -384,38 +316,6 @@
 
     .auth-button-text {
         @apply text-base font-sans-bold text-primary;
-    }
-
-    .auth-secondary-button {
-        @apply items-center rounded-2xl border border-accent/30 bg-accent/10 py-3;
-    }
-
-    .auth-secondary-button-text {
-        @apply text-sm font-sans-semibold text-accent;
-    }
-
-    .auth-divider-row {
-        @apply my-4 flex-row items-center gap-3;
-    }
-
-    .auth-divider-line {
-        @apply h-px flex-1 bg-border;
-    }
-
-    .auth-divider-text {
-        @apply text-[11px] font-sans-semibold uppercase tracking-[1px] text-muted-foreground;
-    }
-
-    .auth-link-row {
-        @apply mt-5 flex-row items-center justify-center gap-1;
-    }
-
-    .auth-link-copy {
-        @apply text-sm font-sans-medium text-muted-foreground;
-    }
-
-    .auth-link {
-        @apply text-sm font-sans-bold text-accent;
     }
 
     .modal-overlay {
@@ -507,11 +407,11 @@
     }
 
     .joute-new-match-button {
-        @apply mt-5 items-center rounded-2xl bg-accent py-5;
+        @apply mt-5 items-center rounded-2xl border-2 border-plateau-ink bg-plateau-orange py-5;
     }
 
     .joute-new-match-text {
-        @apply text-lg font-sans-bold text-white;
+        @apply font-display text-lg text-plateau-ink;
     }
 
     .joute-card {
@@ -1652,5 +1552,117 @@
 
     .profile-badge-text {
         @apply text-xs font-sans-bold text-primary;
+    }
+
+    .session-safe-area {
+        @apply flex-1 bg-plateau-cream;
+    }
+
+    .session-screen {
+        @apply flex-1 bg-plateau-cream;
+    }
+
+    .session-scroll {
+        @apply flex-1;
+    }
+
+    .session-content {
+        @apply grow px-5 pb-10 pt-8;
+    }
+
+    .session-brand-block {
+        @apply mt-2 items-center;
+    }
+
+    .session-logo-wrap {
+        @apply mb-7 flex-row items-center gap-3;
+    }
+
+    .session-logo-mark {
+        @apply relative size-14 items-center justify-center rounded-2xl border-2 border-plateau-ink bg-plateau-orange;
+    }
+
+    .session-logo-mark-text {
+        @apply font-display text-2xl text-plateau-ink;
+    }
+
+    .session-wordmark {
+        @apply font-display text-3xl text-plateau-ink;
+    }
+
+    .session-wordmark-sub {
+        @apply -mt-1 text-xs font-sans-semibold uppercase tracking-[1px] text-plateau-ink/50;
+    }
+
+    .session-title {
+        @apply font-display text-3xl text-plateau-ink;
+    }
+
+    .session-subtitle {
+        @apply mt-2 max-w-[320px] text-center text-base font-sans-medium text-plateau-ink/60;
+    }
+
+    .session-card {
+        @apply mt-8 rounded-3xl border-2 border-plateau-ink bg-white p-5;
+    }
+
+    .session-form {
+        @apply gap-4;
+    }
+
+    .session-field {
+        @apply gap-2;
+    }
+
+    .session-label {
+        @apply text-sm font-sans-semibold text-plateau-ink;
+    }
+
+    .session-input {
+        @apply rounded-2xl border-2 border-plateau-ink/15 bg-plateau-cream px-4 py-4 text-base font-sans-medium text-plateau-ink;
+    }
+
+    .session-input-error {
+        @apply border-plateau-pink;
+    }
+
+    .session-error {
+        @apply text-xs font-sans-medium text-plateau-pink;
+    }
+
+    .session-helper {
+        @apply text-sm font-sans-medium text-plateau-ink/50;
+    }
+
+    .session-divider-row {
+        @apply my-4 flex-row items-center gap-3;
+    }
+
+    .session-divider-line {
+        @apply h-px flex-1 bg-plateau-ink/15;
+    }
+
+    .session-divider-text {
+        @apply text-[11px] font-sans-semibold uppercase tracking-[1px] text-plateau-ink/50;
+    }
+
+    .session-link-row {
+        @apply mt-5 flex-row items-center justify-center gap-1;
+    }
+
+    .session-link-copy {
+        @apply text-sm font-sans-medium text-plateau-ink/60;
+    }
+
+    .session-link {
+        @apply text-sm font-sans-bold text-plateau-orange;
+    }
+
+    .session-secondary-button {
+        @apply items-center rounded-2xl border-2 border-plateau-ink/25 py-3;
+    }
+
+    .session-secondary-text {
+        @apply text-sm font-sans-bold text-plateau-ink/75;
     }
 }

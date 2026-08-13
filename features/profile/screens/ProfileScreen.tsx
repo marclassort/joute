@@ -62,7 +62,7 @@ const ProfileScreen = () => {
     );
 
     return (
-        <SafeAreaView className="flex-1 bg-background p-5">
+        <SafeAreaView className="flex-1 bg-plateau-cream p-5">
             <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="gap-6 pb-10">
                 <View className="flex-row items-center justify-between">
                     <Text className="settings-title">Profil</Text>

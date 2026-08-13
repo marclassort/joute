@@ -15,8 +15,9 @@ import { Link, useRouter } from "expo-router";
 // eslint-disable-next-line import/no-named-as-default
 import clsx from "clsx";
 import { useAuth, useSignUp } from "@clerk/expo";
-import { colors } from "@/constants/theme";
+import { plateauColors } from "@/constants/theme";
 import { isValidEmail } from "@/lib/utils";
+import HardShadowCard from "@/features/joute/components/HardShadowCard";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -38,8 +39,8 @@ const SignUp = () => {
 
     if (!isLoaded) {
         return (
-            <SafeAreaView className="auth-safe-area items-center justify-center">
-                <ActivityIndicator size="large" color={colors.accent} />
+            <SafeAreaView className="session-safe-area items-center justify-center">
+                <ActivityIndicator size="large" color={plateauColors.orange} />
             </SafeAreaView>
         );
     }
@@ -93,45 +94,45 @@ const SignUp = () => {
     };
 
     return (
-        <SafeAreaView className="auth-safe-area">
+        <SafeAreaView className="session-safe-area">
             <KeyboardAvoidingView
-                className="auth-screen"
+                className="session-screen"
                 behavior={Platform.OS === "ios" ? "padding" : undefined}
             >
                 <ScrollView
-                    className="auth-scroll"
-                    contentContainerClassName="auth-content"
+                    className="session-scroll"
+                    contentContainerClassName="session-content"
                     keyboardShouldPersistTaps="handled"
                 >
-                    <View className="auth-brand-block">
-                        <View className="auth-logo-wrap">
-                            <View className="auth-logo-mark">
-                                <Text className="auth-logo-mark-text">J</Text>
+                    <View className="session-brand-block">
+                        <View className="session-logo-wrap">
+                            <View className="session-logo-mark">
+                                <Text className="session-logo-mark-text">J</Text>
                             </View>
                             <View>
-                                <Text className="auth-wordmark">Joute</Text>
-                                <Text className="auth-wordmark-sub">Vos abonnements</Text>
+                                <Text className="session-wordmark">Joute</Text>
+                                <Text className="session-wordmark-sub">Duels de culture générale</Text>
                             </View>
                         </View>
-                        <Text className="auth-title">Créez votre compte</Text>
-                        <Text className="auth-subtitle">
-                            Centralisez vos abonnements et ne manquez plus jamais un renouvellement.
+                        <Text className="session-title">Créez votre compte</Text>
+                        <Text className="session-subtitle">
+                            Débloque les duels, le classement et le suivi de ta progression.
                         </Text>
                     </View>
 
-                    <View className="auth-card">
-                        <View className="auth-form">
-                            <View className="auth-field">
-                                <Text className="auth-label">Adresse e-mail</Text>
+                    <View className="session-card">
+                        <View className="session-form">
+                            <View className="session-field">
+                                <Text className="session-label">Adresse e-mail</Text>
                                 <TextInput
-                                    className={clsx("auth-input", emailError && "auth-input-error")}
+                                    className={clsx("session-input", emailError && "session-input-error")}
                                     value={email}
                                     onChangeText={(value) => {
                                         setEmail(value);
                                         if (emailError) setEmailError(null);
                                     }}
                                     placeholder="vous@exemple.com"
-                                    placeholderTextColor={colors.mutedForeground}
+                                    placeholderTextColor={plateauColors.ink + "80"}
                                     autoCapitalize="none"
                                     autoCorrect={false}
                                     autoComplete="email"
@@ -139,20 +140,20 @@ const SignUp = () => {
                                     textContentType="emailAddress"
                                     editable={!isSubmitting}
                                 />
-                                {emailError && <Text className="auth-error">{emailError}</Text>}
+                                {emailError && <Text className="session-error">{emailError}</Text>}
                             </View>
 
-                            <View className="auth-field">
-                                <Text className="auth-label">Mot de passe</Text>
+                            <View className="session-field">
+                                <Text className="session-label">Mot de passe</Text>
                                 <TextInput
-                                    className={clsx("auth-input", passwordError && "auth-input-error")}
+                                    className={clsx("session-input", passwordError && "session-input-error")}
                                     value={password}
                                     onChangeText={(value) => {
                                         setPassword(value);
                                         if (passwordError) setPasswordError(null);
                                     }}
                                     placeholder="••••••••"
-                                    placeholderTextColor={colors.mutedForeground}
+                                    placeholderTextColor={plateauColors.ink + "80"}
                                     secureTextEntry
                                     autoCapitalize="none"
                                     autoComplete="new-password"
@@ -161,25 +162,25 @@ const SignUp = () => {
                                     editable={!isSubmitting}
                                 />
                                 {passwordError ? (
-                                    <Text className="auth-error">{passwordError}</Text>
+                                    <Text className="session-error">{passwordError}</Text>
                                 ) : (
-                                    <Text className="auth-helper">
+                                    <Text className="session-helper">
                                         {MIN_PASSWORD_LENGTH} caractères minimum.
                                     </Text>
                                 )}
                             </View>
 
-                            <View className="auth-field">
-                                <Text className="auth-label">Confirmer le mot de passe</Text>
+                            <View className="session-field">
+                                <Text className="session-label">Confirmer le mot de passe</Text>
                                 <TextInput
-                                    className={clsx("auth-input", confirmPasswordError && "auth-input-error")}
+                                    className={clsx("session-input", confirmPasswordError && "session-input-error")}
                                     value={confirmPassword}
                                     onChangeText={(value) => {
                                         setConfirmPassword(value);
                                         if (confirmPasswordError) setConfirmPasswordError(null);
                                     }}
                                     placeholder="••••••••"
-                                    placeholderTextColor={colors.mutedForeground}
+                                    placeholderTextColor={plateauColors.ink + "80"}
                                     secureTextEntry
                                     autoCapitalize="none"
                                     autoComplete="new-password"
@@ -188,28 +189,24 @@ const SignUp = () => {
                                     editable={!isSubmitting}
                                 />
                                 {confirmPasswordError && (
-                                    <Text className="auth-error">{confirmPasswordError}</Text>
+                                    <Text className="session-error">{confirmPasswordError}</Text>
                                 )}
                             </View>
 
-                            {formError && <Text className="auth-error">{formError}</Text>}
+                            {formError && <Text className="session-error">{formError}</Text>}
 
-                            <Pressable
-                                className={clsx("auth-button", isSubmitting && "auth-button-disabled")}
-                                onPress={handleSignUp}
-                                disabled={isSubmitting}
-                            >
-                                <Text className="auth-button-text">
-                                    {isSubmitting ? "Création…" : "Créer mon compte"}
-                                </Text>
-                            </Pressable>
+                            <HardShadowCard borderRadius={16} offsetY={4} className={clsx("solo-cta-button", isSubmitting && "opacity-50")}>
+                                <Pressable onPress={handleSignUp} disabled={isSubmitting} accessibilityRole="button">
+                                    <Text className="solo-cta-text">{isSubmitting ? "Création…" : "Créer mon compte"}</Text>
+                                </Pressable>
+                            </HardShadowCard>
                         </View>
                     </View>
 
-                    <View className="auth-link-row">
-                        <Text className="auth-link-copy">Vous avez déjà un compte ?</Text>
+                    <View className="session-link-row">
+                        <Text className="session-link-copy">Vous avez déjà un compte ?</Text>
                         <Link href="/(auth)/sign-in" replace>
-                            <Text className="auth-link">Se connecter</Text>
+                            <Text className="session-link">Se connecter</Text>
                         </Link>
                     </View>
                 </ScrollView>

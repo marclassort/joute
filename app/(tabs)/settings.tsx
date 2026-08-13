@@ -29,7 +29,7 @@ const Settings = () => {
 
     if (!user) {
         return (
-            <SafeAreaView className="flex-1 bg-background p-5">
+            <SafeAreaView className="flex-1 bg-plateau-cream p-5">
                 <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="gap-6 pb-10">
                     <Text className="settings-title">Paramètres</Text>
                     <View className="settings-card gap-4">
@@ -53,7 +53,7 @@ const Settings = () => {
     const joinedAt = formatSubscriptionDateTime(user.createdAt?.toISOString());
 
     return (
-        <SafeAreaView className="flex-1 bg-background p-5">
+        <SafeAreaView className="flex-1 bg-plateau-cream p-5">
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerClassName="gap-6 pb-10"
@@ -62,7 +62,7 @@ const Settings = () => {
 
                 <View className="settings-card">
                     <View className="mb-4 flex-row items-center justify-between">
-                        <Text className="text-xs font-sans-semibold uppercase tracking-[1px] text-muted-foreground">
+                        <Text className="font-display text-xs uppercase tracking-[1.5px] text-plateau-ink/50">
                             Profil
                         </Text>
                         <Pressable className="list-action" onPress={() => setEditProfileVisible(true)}>
@@ -73,7 +73,7 @@ const Settings = () => {
                         {avatarUri ? (
                             <Image source={{ uri: avatarUri }} className="settings-avatar" />
                         ) : (
-                            <View className="settings-avatar bg-muted" />
+                            <View className="settings-avatar bg-plateau-violet" />
                         )}
                         <View className="settings-profile-copy">
                             <Text className="settings-profile-name" numberOfLines={1}>

@@ -14,7 +14,8 @@ import React, {useEffect, useState} from "react";
 import clsx from "clsx";
 import * as ImagePicker from "expo-image-picker";
 import {useUser} from "@clerk/expo";
-import {colors} from "@/constants/theme";
+import {plateauColors} from "@/constants/theme";
+import HardShadowCard from "@/features/joute/components/HardShadowCard";
 
 const EditProfileModal = ({visible, onClose}: EditProfileModalProps) => {
     const {user} = useUser();
@@ -97,48 +98,44 @@ const EditProfileModal = ({visible, onClose}: EditProfileModalProps) => {
                                 {avatarUri ? (
                                     <Image source={{uri: avatarUri}} className="settings-avatar" />
                                 ) : (
-                                    <View className="settings-avatar bg-muted" />
+                                    <View className="settings-avatar bg-plateau-violet" />
                                 )}
-                                <Text className="auth-link">Changer la photo</Text>
+                                <Text className="session-link">Changer la photo</Text>
                             </Pressable>
 
-                            <View className="auth-field">
-                                <Text className="auth-label">Prénom</Text>
+                            <View className="session-field">
+                                <Text className="session-label">Prénom</Text>
                                 <TextInput
-                                    className="auth-input"
+                                    className="session-input"
                                     value={firstName}
                                     onChangeText={setFirstName}
                                     placeholder="Prénom"
-                                    placeholderTextColor={colors.mutedForeground}
+                                    placeholderTextColor={plateauColors.ink + "80"}
                                     autoCapitalize="words"
                                     editable={!isSaving}
                                 />
                             </View>
 
-                            <View className="auth-field">
-                                <Text className="auth-label">Nom</Text>
+                            <View className="session-field">
+                                <Text className="session-label">Nom</Text>
                                 <TextInput
-                                    className="auth-input"
+                                    className="session-input"
                                     value={lastName}
                                     onChangeText={setLastName}
                                     placeholder="Nom"
-                                    placeholderTextColor={colors.mutedForeground}
+                                    placeholderTextColor={plateauColors.ink + "80"}
                                     autoCapitalize="words"
                                     editable={!isSaving}
                                 />
                             </View>
 
-                            {error && <Text className="auth-error">{error}</Text>}
+                            {error && <Text className="session-error">{error}</Text>}
 
-                            <Pressable
-                                className={clsx("auth-button", isSaving && "auth-button-disabled")}
-                                onPress={handleSave}
-                                disabled={isSaving}
-                            >
-                                <Text className="auth-button-text">
-                                    {isSaving ? "Enregistrement…" : "Enregistrer"}
-                                </Text>
-                            </Pressable>
+                            <HardShadowCard borderRadius={16} offsetY={4} className={clsx("solo-cta-button", isSaving && "opacity-50")}>
+                                <Pressable onPress={handleSave} disabled={isSaving} accessibilityRole="button">
+                                    <Text className="solo-cta-text">{isSaving ? "Enregistrement…" : "Enregistrer"}</Text>
+                                </Pressable>
+                            </HardShadowCard>
                         </ScrollView>
                     </View>
                 </KeyboardAvoidingView>

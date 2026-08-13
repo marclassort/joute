@@ -57,7 +57,7 @@ const Joute = () => {
     const avatarInitial = displayName.trim().charAt(0).toUpperCase() || "?";
 
     return (
-        <SafeAreaView className="flex-1 bg-background p-5">
+        <SafeAreaView className="flex-1 bg-plateau-cream p-5">
             <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="gap-6 pb-10">
                 <View className="hub-header">
                     {avatarUri ? (
@@ -148,8 +148,8 @@ const Joute = () => {
                         <Pressable className="w-full flex-row items-center gap-3" onPress={() => router.push("/duel/lobby")} accessibilityRole="button">
                             <Text className="hub-mode-icon-lg">⚡</Text>
                             <View className="min-w-0 flex-1">
-                                <Text className="hub-mode-title-lg text-primary">Face-à-face</Text>
-                                <Text className="hub-mode-subtitle text-primary/70">Duel · premier à 9 points gagne</Text>
+                                <Text className="hub-mode-title-lg text-plateau-ink">Face-à-face</Text>
+                                <Text className="hub-mode-subtitle text-plateau-ink/70">Duel · premier à 9 points gagne</Text>
                             </View>
                             <Text className="hub-mode-arrow">→</Text>
                         </Pressable>
@@ -169,8 +169,8 @@ const Joute = () => {
                         <Pressable className="w-full" onPress={() => router.push("/plateau")} accessibilityRole="button" accessibilityLabel="Plateau">
                             <Text className="hub-mode-icon">🏟️</Text>
                             <View>
-                                <Text className="hub-mode-title text-primary">Plateau</Text>
-                                <Text className="hub-mode-subtitle text-primary/70">4 à 6 joueurs · course à 24 pts</Text>
+                                <Text className="hub-mode-title text-plateau-ink">Plateau</Text>
+                                <Text className="hub-mode-subtitle text-plateau-ink/70">4 à 6 joueurs · course à 24 pts</Text>
                             </View>
                         </Pressable>
                     </HardShadowCard>
