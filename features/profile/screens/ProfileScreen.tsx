@@ -1,8 +1,12 @@
 import {Image, Pressable, ScrollView, Text, View} from "react-native";
-import React, {useMemo} from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import {styled} from "nativewind";
 import {SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
 import {useRouter} from "expo-router";
+import {useFocusEffect} from "@react-navigation/native";
+import {useAuth} from "@clerk/expo";
+// eslint-disable-next-line import/no-named-as-default
+import clsx from "clsx";
 import {useCurrentPlayer} from "@/features/joute/hooks/useCurrentPlayer";
 import {useMatches} from "@/features/joute/hooks/useMatches";
 import {DRAWABLE_CATEGORIES, computeMatchStats} from "@/game/rules";
@@ -16,6 +20,7 @@ import {usePlateauMatches} from "@/features/plateau/hooks/usePlateauMatches";
 import {useStreakStats} from "@/features/streak/hooks/useStreakStats";
 import {CATEGORY_LABELS} from "@/features/joute/constants";
 import {plateauColors} from "@/constants/theme";
+import {fetchLeaderboard, LeaderboardEntry} from "@/lib/api";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -29,6 +34,34 @@ const ProfileScreen = () => {
     const {matches: plateauMatches} = usePlateauMatches();
     const {stats: soloStats} = useSoloStats();
     const {bestStreak: bestFreeAnswerStreak} = useStreakStats();
+    const {isSignedIn, getToken} = useAuth();
+    const [leaderboardTop, setLeaderboardTop] = useState<LeaderboardEntry[] | null>(null);
+    const [leaderboardMe, setLeaderboardMe] = useState<LeaderboardEntry | null>(null);
+    const [leaderboardUnavailable, setLeaderboardUnavailable] = useState(false);
+
+    useFocusEffect(
+        useCallback(() => {
+            if (!isSignedIn) return;
+            let cancelled = false;
+
+            (async () => {
+                try {
+                    const token = await getToken();
+                    const data = await fetchLeaderboard(token);
+                    if (cancelled) return;
+                    setLeaderboardTop(data.top);
+                    setLeaderboardMe(data.me);
+                    setLeaderboardUnavailable(false);
+                } catch {
+                    if (!cancelled) setLeaderboardUnavailable(true);
+                }
+            })();
+
+            return () => {
+                cancelled = true;
+            };
+        }, [isSignedIn, getToken]),
+    );
 
     const duelStats = useMemo(() => computeMatchStats(matches, myId), [matches, myId]);
     const plateauWins = useMemo(
@@ -153,15 +186,52 @@ const ProfileScreen = () => {
 
                 <View>
                     <Text className="hub-modes-label">Classement mondial</Text>
-                    <View className="profile-leaderboard-card">
-                        <Text className="profile-leaderboard-text">
-                            Le classement mondial arrive bientôt — il faudra un compte pour y figurer.
-                        </Text>
-                    </View>
+                    {!isSignedIn ? (
+                        <View className="profile-leaderboard-card">
+                            <Text className="profile-leaderboard-text">
+                                Crée un compte pour figurer au classement mondial.
+                            </Text>
+                        </View>
+                    ) : leaderboardUnavailable || !leaderboardTop ? (
+                        <View className="profile-leaderboard-card">
+                            <Text className="profile-leaderboard-text">Classement indisponible pour le moment.</Text>
+                        </View>
+                    ) : leaderboardTop.length === 0 ? (
+                        <View className="profile-leaderboard-card">
+                            <Text className="profile-leaderboard-text">Sois le premier à jouer pour ouvrir le classement !</Text>
+                        </View>
+                    ) : (
+                        <View className="gap-2">
+                            {leaderboardTop.slice(0, 10).map((entry) => (
+                                <LeaderboardRow key={entry.id} entry={entry} isMe={entry.id === myId} />
+                            ))}
+                            {leaderboardMe && leaderboardMe.rank > 10 && (
+                                <>
+                                    <Text className="profile-leaderboard-separator">···</Text>
+                                    <LeaderboardRow entry={leaderboardMe} isMe />
+                                </>
+                            )}
+                        </View>
+                    )}
                 </View>
             </ScrollView>
         </SafeAreaView>
     );
 };
+
+const LeaderboardRow = ({entry, isMe}: {entry: LeaderboardEntry; isMe: boolean}) => (
+    <View className={clsx("profile-leaderboard-row", isMe && "profile-leaderboard-row-me")}>
+        <Text className={clsx("profile-leaderboard-rank", isMe && "profile-leaderboard-rank-me")}>{entry.rank}</Text>
+        {entry.avatarUrl ? (
+            <Image source={{uri: entry.avatarUrl}} className="profile-leaderboard-avatar" />
+        ) : (
+            <View className="profile-leaderboard-avatar" />
+        )}
+        <Text className={clsx("profile-leaderboard-name", isMe && "profile-leaderboard-name-me")} numberOfLines={1}>
+            {isMe ? "Toi" : entry.displayName}
+        </Text>
+        <Text className={clsx("profile-leaderboard-xp", isMe && "profile-leaderboard-xp-me")}>{entry.totalXp}</Text>
+    </View>
+);
 
 export default ProfileScreen;

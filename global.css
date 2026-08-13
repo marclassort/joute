@@ -1626,4 +1626,44 @@
     .session-secondary-text {
         @apply text-sm font-sans-bold text-plateau-ink/75;
     }
+
+    .profile-leaderboard-row {
+        @apply flex-row items-center gap-[11px] rounded-2xl border-2 border-plateau-ink/[0.14] bg-white px-[13px] py-[11px];
+    }
+
+    .profile-leaderboard-row-me {
+        @apply border-plateau-ink bg-plateau-ink;
+    }
+
+    .profile-leaderboard-rank {
+        @apply w-5 font-display text-[13px] text-plateau-ink/50;
+    }
+
+    .profile-leaderboard-rank-me {
+        @apply text-plateau-lime;
+    }
+
+    .profile-leaderboard-avatar {
+        @apply size-7 rounded-full bg-plateau-violet;
+    }
+
+    .profile-leaderboard-name {
+        @apply flex-1 text-[13px] font-sans-bold text-plateau-ink;
+    }
+
+    .profile-leaderboard-name-me {
+        @apply text-plateau-cream;
+    }
+
+    .profile-leaderboard-xp {
+        @apply font-display text-[13px] text-plateau-ink;
+    }
+
+    .profile-leaderboard-xp-me {
+        @apply text-plateau-lime;
+    }
+
+    .profile-leaderboard-separator {
+        @apply py-1 text-center text-xs font-sans-bold text-plateau-ink/40;
+    }
 }
