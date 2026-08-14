@@ -1,11 +1,15 @@
-import * as Notifications from "expo-notifications";
 import {EXPIRING_SOON_WARNING_MS, NotificationService} from "./notifications";
 
-// expo-notifications n'est pas pleinement disponible dans Expo Go (SDK 53+, notamment Android) :
-// cet appel peut lever au chargement du module, ce qui ferait planter tout l'import chain en amont
-// (MatchesContext -> useMatches -> onglets). Les notifications restent un confort, jamais un chemin critique.
+// expo-notifications peut lever dès son chargement dans Expo Go (SDK 53+, notamment Android) — pas
+// seulement au moment d'appeler une de ses méthodes. Un `import` statique s'exécute avant tout code,
+// y compris un try/catch placé après lui : impossible de s'en protéger avec la syntaxe `import`.
+// On charge donc le module via require(), qu'on peut envelopper dans un try/catch. Les notifications
+// restent un confort, jamais un chemin critique — chaque fonction ci-dessous tolère un module absent.
+let Notifications: typeof import("expo-notifications") | null = null;
 try {
-    Notifications.setNotificationHandler({
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    Notifications = require("expo-notifications");
+    Notifications?.setNotificationHandler({
         handleNotification: async () => ({
             shouldShowBanner: true,
             shouldShowList: true,
@@ -14,12 +18,13 @@ try {
         }),
     });
 } catch {
-    // Ignoré volontairement — voir le commentaire ci-dessus.
+    Notifications = null;
 }
 
 const expiringNotificationIds = new Map<string, string>();
 
 async function requestPermission(): Promise<boolean> {
+    if (!Notifications) return false;
     const current = await Notifications.getPermissionsAsync();
     if (current.granted) return true;
     const requested = await Notifications.requestPermissionsAsync();
@@ -27,6 +32,7 @@ async function requestPermission(): Promise<boolean> {
 }
 
 async function notifyYourTurn({matchId, opponentName}: {matchId: string; opponentName: string}): Promise<void> {
+    if (!Notifications) return;
     await Notifications.scheduleNotificationAsync({
         content: {
             title: "C'est ton tour",
@@ -38,6 +44,7 @@ async function notifyYourTurn({matchId, opponentName}: {matchId: string; opponen
 }
 
 async function notifyMatchFinished({matchId, resultLabel}: {matchId: string; resultLabel: string}): Promise<void> {
+    if (!Notifications) return;
     await Notifications.scheduleNotificationAsync({
         content: {
             title: "Ton défi t'attend",
@@ -49,6 +56,7 @@ async function notifyMatchFinished({matchId, resultLabel}: {matchId: string; res
 }
 
 async function cancelExpiringSoon(matchId: string): Promise<void> {
+    if (!Notifications) return;
     const id = expiringNotificationIds.get(matchId);
     if (!id) return;
     await Notifications.cancelScheduledNotificationAsync(id);
@@ -56,6 +64,7 @@ async function cancelExpiringSoon(matchId: string): Promise<void> {
 }
 
 async function scheduleExpiringSoon({matchId, expiresAt}: {matchId: string; expiresAt: number}): Promise<void> {
+    if (!Notifications) return;
     const fireAt = expiresAt - EXPIRING_SOON_WARNING_MS;
     if (fireAt <= Date.now()) return;
 

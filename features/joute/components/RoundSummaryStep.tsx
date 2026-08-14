@@ -2,9 +2,9 @@ import {Pressable, Text, View} from "react-native";
 import React, {useEffect} from "react";
 // eslint-disable-next-line import/no-named-as-default
 import clsx from "clsx";
-import * as Haptics from "expo-haptics";
 import {Question, Round} from "@/game/types";
-import HardShadowCard from "./HardShadowCard";
+import {impactMedium, notifyError, notifySuccess} from "@/lib/haptics";
+import ShadowCard from "@/components/ShadowCard";
 import {CATEGORY_LABELS} from "../constants";
 
 export interface RoundSummaryStepProps {
@@ -25,11 +25,11 @@ const RoundSummaryStep = ({round, questions, viewerId, opponentId, onContinue}: 
 
     useEffect(() => {
         if (opponentHasPlayed) {
-            if (myScore > opponentScore) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-            else if (myScore < opponentScore) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-            else Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            if (myScore > opponentScore) notifySuccess();
+            else if (myScore < opponentScore) notifyError();
+            else impactMedium();
         } else {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            impactMedium();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [round.index]);
@@ -77,11 +77,11 @@ const RoundSummaryStep = ({round, questions, viewerId, opponentId, onContinue}: 
                 })}
             </View>
 
-            <HardShadowCard borderRadius={20} offsetY={5} className="solo-cta-button">
+            <ShadowCard borderRadius={20} className="solo-cta-button">
                 <Pressable onPress={onContinue} accessibilityRole="button">
                     <Text className="solo-cta-text">Continuer</Text>
                 </Pressable>
-            </HardShadowCard>
+            </ShadowCard>
         </View>
     );
 };

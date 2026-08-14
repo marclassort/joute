@@ -7,7 +7,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import {ClerkProvider, useAuth} from "@clerk/expo";
 import {tokenCache} from "@clerk/expo/token-cache";
 import {frFR} from "@clerk/localizations";
-import {SubscriptionsProvider} from "@/context/SubscriptionsContext";
 import {MatchesProvider} from "@/features/joute/context/MatchesContext";
 import {PlateauMatchesProvider} from "@/features/plateau/context/PlateauMatchesContext";
 import {PENDING_INVITE_STORAGE_KEY} from "@/services/invitations";
@@ -23,13 +22,13 @@ if (!publishableKey) {
 function RootNavigator() {
   const router = useRouter();
   const [fontsLoaded] = useFonts({
-    'sans-regular': require("@/assets/fonts/PlusJakartaSans-Regular.ttf"),
-    'sans-bold': require("@/assets/fonts/PlusJakartaSans-Bold.ttf"),
-    'sans-medium': require("@/assets/fonts/PlusJakartaSans-Medium.ttf"),
-    'sans-semibold': require("@/assets/fonts/PlusJakartaSans-SemiBold.ttf"),
-    'sans-extrabold': require("@/assets/fonts/PlusJakartaSans-ExtraBold.ttf"),
-    'sans-light': require("@/assets/fonts/PlusJakartaSans-Light.ttf"),
-    'archivo-extrabold': require("@/assets/fonts/Archivo-ExtraBold.ttf"),
+    'sans-light': require("@/assets/fonts/InstrumentSans-Regular.ttf"),
+    'sans-regular': require("@/assets/fonts/InstrumentSans-Regular.ttf"),
+    'sans-medium': require("@/assets/fonts/InstrumentSans-Medium.ttf"),
+    'sans-semibold': require("@/assets/fonts/InstrumentSans-SemiBold.ttf"),
+    'sans-bold': require("@/assets/fonts/InstrumentSans-Bold.ttf"),
+    'sans-extrabold': require("@/assets/fonts/InstrumentSans-Bold.ttf"),
+    'display-extrabold': require("@/assets/fonts/BricolageGrotesque-ExtraBold.ttf"),
   });
   const { isLoaded: authLoaded, isSignedIn } = useAuth();
 
@@ -61,19 +60,26 @@ function RootNavigator() {
 
   if (!ready) return null;
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="onboarding" options={{ animation: "fade" }} />
+      <Stack.Screen name="solo/index" options={{ animation: "fade" }} />
+      <Stack.Screen name="streak/index" options={{ animation: "fade" }} />
+      <Stack.Screen name="plateau/new" options={{ animation: "fade" }} />
+      <Stack.Screen name="duel/lobby" options={{ animation: "fade" }} />
+      <Stack.Screen name="profile-modal" options={{ presentation: "modal" }} />
+    </Stack>
+  );
 }
 
 export default function RootLayout() {
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache} localization={frFR}>
-      <SubscriptionsProvider>
-        <MatchesProvider>
-          <PlateauMatchesProvider>
-            <RootNavigator />
-          </PlateauMatchesProvider>
-        </MatchesProvider>
-      </SubscriptionsProvider>
+      <MatchesProvider>
+        <PlateauMatchesProvider>
+          <RootNavigator />
+        </PlateauMatchesProvider>
+      </MatchesProvider>
     </ClerkProvider>
   );
 }

@@ -2,7 +2,7 @@ import {Pressable, Text, View} from "react-native";
 import React from "react";
 import {Category} from "@/game/types";
 import {CATEGORY_LABELS} from "@/features/joute/constants";
-import HardShadowCard from "@/features/joute/components/HardShadowCard";
+import InkPattern from "@/components/InkPattern";
 import {SOLO_QUESTIONS_PER_SESSION} from "../constants";
 
 export interface SoloResultCardProps {
@@ -22,7 +22,8 @@ function headingFor(score: number): string {
 }
 
 const SoloResultCard = ({category, score, xpEarned, averageResponseMs, longestCorrectStreak, onReplay, onBackToThemes}: SoloResultCardProps) => (
-    <View>
+    <View className="relative overflow-hidden">
+        <InkPattern />
         <Text className="solo-result-title">{CATEGORY_LABELS[category]} · partie terminée</Text>
         <Text className="solo-result-heading">{headingFor(score)}</Text>
 
@@ -47,11 +48,9 @@ const SoloResultCard = ({category, score, xpEarned, averageResponseMs, longestCo
         </View>
 
         <View className="solo-result-actions">
-            <HardShadowCard borderRadius={20} offsetY={5} className="solo-cta-button">
-                <Pressable onPress={onReplay} accessibilityRole="button">
-                    <Text className="solo-cta-text">Rejouer · {CATEGORY_LABELS[category]}</Text>
-                </Pressable>
-            </HardShadowCard>
+            <Pressable className="solo-cta-button" onPress={onReplay} accessibilityRole="button">
+                <Text className="solo-cta-text">Rejouer · {CATEGORY_LABELS[category]}</Text>
+            </Pressable>
             <Pressable className="solo-result-secondary-button" onPress={onBackToThemes} accessibilityRole="button">
                 <Text className="solo-result-secondary-text">Retour aux thèmes</Text>
             </Pressable>

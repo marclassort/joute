@@ -2,13 +2,14 @@ import {Pressable, Text, TextInput, View} from "react-native";
 import React, {useEffect, useRef, useState} from "react";
 // eslint-disable-next-line import/no-named-as-default
 import clsx from "clsx";
-import * as Haptics from "expo-haptics";
 import Animated, {Easing, FadeInDown, ZoomIn, useAnimatedStyle, useReducedMotion, useSharedValue, withTiming} from "react-native-reanimated";
 import {Question} from "@/game/types";
 import {isAnswerCorrect} from "@/game/textMatch";
 import {computeHint} from "@/game/streakEngine";
 import {CATEGORY_LABELS, QUESTION_ALERT_THRESHOLD_MS, QUESTION_DURATION_MS} from "@/features/joute/constants";
 import {playSound} from "@/lib/sounds";
+import {notifyError, notifySuccess} from "@/lib/haptics";
+import PressableScale from "@/components/PressableScale";
 
 export interface StreakQuestionCardProps {
     question: Question;
@@ -26,6 +27,7 @@ const StreakQuestionCard = ({question, streakCount, onAnswer, onContinue}: Strea
     const [secondsLeft, setSecondsLeft] = useState(Math.ceil(QUESTION_DURATION_MS / 1000));
 
     const hintUsedRef = useRef(false);
+    const hasSubmittedRef = useRef(false);
     const startedAtRef = useRef(Date.now());
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const urgentTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -35,23 +37,22 @@ const StreakQuestionCard = ({question, streakCount, onAnswer, onContinue}: Strea
     const reducedMotion = useReducedMotion();
 
     const submit = (submittedText: string) => {
-        setIsRevealed((already) => {
-            if (already) return already;
+        if (hasSubmittedRef.current) return;
+        hasSubmittedRef.current = true;
 
-            if (timeoutRef.current) clearTimeout(timeoutRef.current);
-            if (urgentTimeoutRef.current) clearTimeout(urgentTimeoutRef.current);
-            if (intervalRef.current) clearInterval(intervalRef.current);
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        if (urgentTimeoutRef.current) clearTimeout(urgentTimeoutRef.current);
+        if (intervalRef.current) clearInterval(intervalRef.current);
 
-            const correct = isAnswerCorrect(submittedText, question.choices[question.correctIndex]);
-            setIsCorrect(correct);
-            Haptics.notificationAsync(correct ? Haptics.NotificationFeedbackType.Success : Haptics.NotificationFeedbackType.Error);
-            playSound(correct ? "correct" : "incorrect");
+        const correct = isAnswerCorrect(submittedText, question.choices[question.correctIndex]);
+        setIsCorrect(correct);
+        setIsRevealed(true);
+        if (correct) notifySuccess();
+        else notifyError();
+        playSound(correct ? "correct" : "incorrect");
 
-            const elapsedMs = Math.min(QUESTION_DURATION_MS, Date.now() - startedAtRef.current);
-            onAnswer(submittedText, hintUsedRef.current, elapsedMs, correct);
-
-            return true;
-        });
+        const elapsedMs = Math.min(QUESTION_DURATION_MS, Date.now() - startedAtRef.current);
+        onAnswer(submittedText, hintUsedRef.current, elapsedMs, correct);
     };
 
     const handleHint = () => {
@@ -67,6 +68,7 @@ const StreakQuestionCard = ({question, streakCount, onAnswer, onContinue}: Strea
         setHint(null);
         setSecondsLeft(Math.ceil(QUESTION_DURATION_MS / 1000));
         hintUsedRef.current = false;
+        hasSubmittedRef.current = false;
         startedAtRef.current = Date.now();
 
         progress.value = 1;
@@ -129,12 +131,12 @@ const StreakQuestionCard = ({question, streakCount, onAnswer, onContinue}: Strea
 
             {!isRevealed && (
                 <View className="streak-actions-row">
-                    <Pressable className="streak-action-pill" onPress={handleHint} disabled={!!hint} accessibilityRole="button">
+                    <PressableScale className="streak-action-pill" onPress={handleHint} disabled={!!hint} accessibilityRole="button">
                         <Text className="streak-action-pill-text">💡 Indice</Text>
-                    </Pressable>
-                    <Pressable className="streak-action-pill" onPress={() => submit("")} accessibilityRole="button">
+                    </PressableScale>
+                    <PressableScale className="streak-action-pill" onPress={() => submit("")} accessibilityRole="button">
                         <Text className="streak-action-pill-text">Passer</Text>
-                    </Pressable>
+                    </PressableScale>
                 </View>
             )}
 
@@ -160,19 +162,19 @@ const StreakQuestionCard = ({question, streakCount, onAnswer, onContinue}: Strea
                 <View className="streak-footer">
                     <View className="streak-footer-row">
                         <Text className="streak-footer-label">Il te reste</Text>
-                        <Text className={clsx("streak-footer-timer", isUrgent && "text-plateau-pink")}>
+                        <Text className={clsx("streak-footer-timer", isUrgent && "text-plateau-rose")}>
                             {String(secondsLeft).padStart(2, "0")} s
                         </Text>
                     </View>
-                    <Pressable className="streak-submit-button" onPress={() => submit(text)} accessibilityRole="button">
+                    <PressableScale activeScale={0.98} className="streak-submit-button" onPress={() => submit(text)} accessibilityRole="button">
                         <Text className="streak-submit-text">Valider</Text>
-                    </Pressable>
+                    </PressableScale>
                 </View>
             ) : (
                 <Animated.View entering={FadeInDown.duration(280).delay(80)} className="streak-footer">
-                    <Pressable className="streak-submit-button" onPress={onContinue} accessibilityRole="button">
+                    <PressableScale activeScale={0.98} className="streak-submit-button" onPress={onContinue} accessibilityRole="button">
                         <Text className="streak-submit-text">{isCorrect ? "Question suivante" : "Voir mon score"}</Text>
-                    </Pressable>
+                    </PressableScale>
                 </Animated.View>
             )}
         </View>

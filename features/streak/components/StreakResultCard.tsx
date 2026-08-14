@@ -1,6 +1,6 @@
 import {Pressable, Text, View} from "react-native";
 import React from "react";
-import HardShadowCard from "@/features/joute/components/HardShadowCard";
+import ShadowCard from "@/components/ShadowCard";
 
 export interface StreakResultCardProps {
     finalStreak: number;
@@ -29,11 +29,11 @@ const StreakResultCard = ({finalStreak, bestStreak, xpEarned, onReplay, onBackTo
         </View>
 
         <View className="streak-result-actions">
-            <HardShadowCard borderRadius={20} offsetY={5} className="solo-cta-button">
+            <ShadowCard borderRadius={20} className="solo-cta-button">
                 <Pressable onPress={onReplay} accessibilityRole="button">
                     <Text className="solo-cta-text">Rejouer</Text>
                 </Pressable>
-            </HardShadowCard>
+            </ShadowCard>
             <Pressable className="streak-result-secondary-button" onPress={onBackToHub} accessibilityRole="button">
                 <Text className="streak-result-secondary-text">Retour aux modes</Text>
             </Pressable>

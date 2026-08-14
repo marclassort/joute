@@ -16,7 +16,7 @@ import { Link, useRouter } from "expo-router";
 import clsx from "clsx";
 import { useAuth, useSignUp } from "@clerk/expo";
 import { plateauColors } from "@/constants/theme";
-import HardShadowCard from "@/features/joute/components/HardShadowCard";
+import ShadowCard from "@/components/ShadowCard";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -44,7 +44,7 @@ const VerifyEmail = () => {
     if (!isLoaded || !signUp || !email) {
         return (
             <SafeAreaView className="session-safe-area items-center justify-center">
-                <ActivityIndicator size="large" color={plateauColors.orange} />
+                <ActivityIndicator size="large" color={plateauColors.coral} />
             </SafeAreaView>
         );
     }
@@ -168,11 +168,11 @@ const VerifyEmail = () => {
                                 {error && <Text className="session-error">{error}</Text>}
                             </View>
 
-                            <HardShadowCard borderRadius={16} offsetY={4} className={clsx("solo-cta-button", isSubmitting && "opacity-50")}>
+                            <ShadowCard borderRadius={16} className={clsx("solo-cta-button", isSubmitting && "opacity-50")}>
                                 <Pressable onPress={handleVerify} disabled={isSubmitting} accessibilityRole="button">
                                     <Text className="solo-cta-text">{isSubmitting ? "Vérification…" : "Confirmer"}</Text>
                                 </Pressable>
-                            </HardShadowCard>
+                            </ShadowCard>
                         </View>
                     </View>
 

@@ -16,7 +16,7 @@ import {
 import {pickQuestions} from "@/game/rules";
 import {ALL_QUESTIONS} from "@/data/questions";
 import {CATEGORY_LABELS} from "@/features/joute/constants";
-import HardShadowCard from "@/features/joute/components/HardShadowCard";
+import ShadowCard from "@/components/ShadowCard";
 import CategoryChoiceStep from "@/features/joute/components/CategoryChoiceStep";
 import SoloQuestionCard from "@/features/solo/components/SoloQuestionCard";
 import {plateauColors} from "@/constants/theme";
@@ -25,14 +25,16 @@ import {formatRelativeTime} from "@/lib/utils";
 import clsx from "clsx";
 import {XP_PER_CORRECT_PLATEAU, XP_PLATEAU_WIN_BONUS} from "@/game/gamification";
 import {localGamificationRepository} from "@/services/localGamificationRepository";
+import {localQuestRepository} from "@/services/localQuestRepository";
 import {playSound} from "@/lib/sounds";
 import {useCurrentPlayer} from "@/features/joute/hooks/useCurrentPlayer";
+import InkPattern from "@/components/InkPattern";
 import {usePlateauMatch} from "../hooks/usePlateauMatch";
 import PlateauTrackRow from "../components/PlateauTrackRow";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
-const PLAYER_COLORS = [plateauColors.violet, plateauColors.pink, plateauColors.cyan, plateauColors.gold, plateauColors.orange, plateauColors.lime];
+const PLAYER_COLORS = [plateauColors.iris, plateauColors.rose, plateauColors.teal, plateauColors.brass, plateauColors.coral, plateauColors.inkSurface];
 
 export interface PlateauBoardScreenProps {
     matchId: string;
@@ -107,7 +109,7 @@ const PlateauBoardScreen = ({matchId}: PlateauBoardScreenProps) => {
         if (!currentRound || !question) {
             return (
                 <SafeAreaView className="flex-1 bg-plateau-ink p-5">
-                    <Text className="home-empty-state text-plateau-cream">Impossible de charger cette question.</Text>
+                    <Text className="home-empty-state text-plateau-paper">Impossible de charger cette question.</Text>
                 </SafeAreaView>
             );
         }
@@ -115,6 +117,7 @@ const PlateauBoardScreen = ({matchId}: PlateauBoardScreenProps) => {
         const handleAnswer = async (selectedIndex: number | null, elapsedMs: number) => {
             const updated = submitPlateauAnswer({match, playerId: myId, question, selectedIndex, elapsedMs});
             await saveMatch(updated);
+            localQuestRepository.recordAnswer(selectedIndex === question.correctIndex, elapsedMs);
         };
 
         const handleContinue = () => {
@@ -132,6 +135,7 @@ const PlateauBoardScreen = ({matchId}: PlateauBoardScreenProps) => {
                         question={question}
                         questionNumber={questionIndex + 1}
                         totalQuestions={currentRound.questionIds.length}
+                        score={currentRound.answers.filter((answer) => answer.isCorrect).length}
                         isLastQuestion={questionIndex + 1 === currentRound.questionIds.length}
                         onClose={() => setPhase("board")}
                         onAnswer={handleAnswer}
@@ -159,8 +163,8 @@ const PlateauBoardScreen = ({matchId}: PlateauBoardScreenProps) => {
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="pb-6">
                 {match.status === "completed" && (
-                    <View className="mt-5 items-center rounded-2xl bg-plateau-lime p-4">
-                        <Text className="font-display text-sm text-plateau-ink">
+                    <View className="mt-5 items-center rounded-2xl bg-plateau-teal p-4">
+                        <Text className="text-[13px] font-sans-bold text-plateau-ink">
                             Partie terminée · {standings[0]?.player.displayName} remporte le plateau
                         </Text>
                     </View>
@@ -173,8 +177,9 @@ const PlateauBoardScreen = ({matchId}: PlateauBoardScreenProps) => {
                 )}
 
                 <View className="plateau-track-card">
+                    <InkPattern />
                     <Text className="plateau-track-label">Piste · premier à 24 pts</Text>
-                    <View className="gap-[14px]">
+                    <View className="relative gap-[14px]">
                         {standings.map(({player, score}, index) => (
                             <PlateauTrackRow
                                 key={player.id}
@@ -224,11 +229,11 @@ const PlateauBoardScreen = ({matchId}: PlateauBoardScreenProps) => {
 
             {canPlay && match.status === "active" && (
                 <View className="pt-3">
-                    <HardShadowCard borderRadius={20} offsetY={5} className="plateau-cta-button">
+                    <ShadowCard borderRadius={20} className="plateau-cta-button">
                         <Pressable onPress={handlePressPlay} accessibilityRole="button">
                             <Text className="plateau-cta-text">{hasIncompleteRound ? "Continuer ma manche" : "Jouer ma manche"}</Text>
                         </Pressable>
-                    </HardShadowCard>
+                    </ShadowCard>
                 </View>
             )}
         </SafeAreaView>

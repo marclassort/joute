@@ -7,7 +7,7 @@ import ListHeading from "@/components/ListHeading";
 import {useMatches} from "@/features/joute/hooks/useMatches";
 import {useCurrentPlayer} from "@/features/joute/hooks/useCurrentPlayer";
 import MatchCard from "@/features/joute/components/MatchCard";
-import HardShadowCard from "@/features/joute/components/HardShadowCard";
+import ShadowCard from "@/components/ShadowCard";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -41,17 +41,17 @@ const Duels = () => {
     );
 
     return (
-        <SafeAreaView className="flex-1 bg-plateau-cream p-5">
+        <SafeAreaView className="flex-1 bg-plateau-paper p-5">
             <View className="flex-row items-center justify-between">
                 <Text className="settings-title">Duels</Text>
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="gap-6 pb-10">
-                <HardShadowCard borderRadius={20} offsetY={5} className="solo-cta-button">
+                <ShadowCard borderRadius={20} className="solo-cta-button">
                     <Pressable onPress={() => router.push("/duel/lobby")} accessibilityRole="button">
                         <Text className="solo-cta-text">Nouveau duel</Text>
                     </Pressable>
-                </HardShadowCard>
+                </ShadowCard>
 
                 <View>
                     <ListHeading title="À toi de jouer" />

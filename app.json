@@ -45,13 +45,11 @@
         "expo-font",
         {
           "fonts": [
-            "./assets/fonts/PlusJakartaSans-Regular.ttf",
-            "./assets/fonts/PlusJakartaSans-Bold.ttf",
-            "./assets/fonts/PlusJakartaSans-Medium.ttf",
-            "./assets/fonts/PlusJakartaSans-SemiBold.ttf",
-            "./assets/fonts/PlusJakartaSans-ExtraBold.ttf",
-            "./assets/fonts/PlusJakartaSans-Light.ttf",
-            "./assets/fonts/Archivo-ExtraBold.ttf"
+            "./assets/fonts/InstrumentSans-Regular.ttf",
+            "./assets/fonts/InstrumentSans-Medium.ttf",
+            "./assets/fonts/InstrumentSans-SemiBold.ttf",
+            "./assets/fonts/InstrumentSans-Bold.ttf",
+            "./assets/fonts/BricolageGrotesque-ExtraBold.ttf"
           ]
         }
       ],

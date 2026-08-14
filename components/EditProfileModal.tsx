@@ -15,7 +15,7 @@ import clsx from "clsx";
 import * as ImagePicker from "expo-image-picker";
 import {useUser} from "@clerk/expo";
 import {plateauColors} from "@/constants/theme";
-import HardShadowCard from "@/features/joute/components/HardShadowCard";
+import ShadowCard from "@/components/ShadowCard";
 
 const EditProfileModal = ({visible, onClose}: EditProfileModalProps) => {
     const {user} = useUser();
@@ -98,7 +98,7 @@ const EditProfileModal = ({visible, onClose}: EditProfileModalProps) => {
                                 {avatarUri ? (
                                     <Image source={{uri: avatarUri}} className="settings-avatar" />
                                 ) : (
-                                    <View className="settings-avatar bg-plateau-violet" />
+                                    <View className="settings-avatar bg-plateau-iris" />
                                 )}
                                 <Text className="session-link">Changer la photo</Text>
                             </Pressable>
@@ -131,11 +131,11 @@ const EditProfileModal = ({visible, onClose}: EditProfileModalProps) => {
 
                             {error && <Text className="session-error">{error}</Text>}
 
-                            <HardShadowCard borderRadius={16} offsetY={4} className={clsx("solo-cta-button", isSaving && "opacity-50")}>
+                            <ShadowCard borderRadius={16} className={clsx("solo-cta-button", isSaving && "opacity-50")}>
                                 <Pressable onPress={handleSave} disabled={isSaving} accessibilityRole="button">
                                     <Text className="solo-cta-text">{isSaving ? "Enregistrement…" : "Enregistrer"}</Text>
                                 </Pressable>
-                            </HardShadowCard>
+                            </ShadowCard>
                         </ScrollView>
                     </View>
                 </KeyboardAvoidingView>

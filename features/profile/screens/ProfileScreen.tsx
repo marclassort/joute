@@ -21,10 +21,11 @@ import {useStreakStats} from "@/features/streak/hooks/useStreakStats";
 import {CATEGORY_LABELS} from "@/features/joute/constants";
 import {plateauColors} from "@/constants/theme";
 import {fetchLeaderboard, LeaderboardEntry} from "@/lib/api";
+import InkPattern from "@/components/InkPattern";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
-const MASTERY_COLORS = [plateauColors.ink, plateauColors.pink, plateauColors.cyan, plateauColors.violet, plateauColors.orange];
+const MASTERY_COLORS = [plateauColors.ink, plateauColors.rose, plateauColors.teal, plateauColors.iris, plateauColors.coral];
 
 const ProfileScreen = () => {
     const router = useRouter();
@@ -95,17 +96,10 @@ const ProfileScreen = () => {
     );
 
     return (
-        <SafeAreaView className="flex-1 bg-plateau-cream p-5">
+        <SafeAreaView className="flex-1 bg-plateau-paper p-5">
             <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="gap-6 pb-10">
-                <View className="flex-row items-center justify-between">
-                    <Text className="settings-title">Profil</Text>
-                    <Pressable className="hub-gear-button" onPress={() => router.push("/settings")} accessibilityRole="button" accessibilityLabel="Réglages">
-                        <Text className="hub-gear-icon">⚙️</Text>
-                    </Pressable>
-                </View>
-
                 <View className="profile-header-card">
-                    <View className="profile-header-decoration" />
+                    <InkPattern />
                     <View className="profile-header-content">
                         <View className="profile-header-row">
                             {avatarUrl ? (
@@ -119,29 +113,32 @@ const ProfileScreen = () => {
                                 <Text className="profile-name" numberOfLines={1}>
                                     {displayName}
                                 </Text>
-                                <Text className="profile-level-label">Niveau {level}</Text>
+                                <Text className="profile-level-label">Niv. {level}</Text>
                             </View>
+                            <Pressable className="hub-gear-button" onPress={() => router.push("/settings")} accessibilityRole="button" accessibilityLabel="Réglages">
+                                <Text className="hub-gear-icon">⚙️</Text>
+                            </Pressable>
                         </View>
+                    </View>
 
-                        <View className="profile-stats-row">
-                            <View className="profile-stat-chip">
-                                <Text className="profile-stat-value" style={{color: plateauColors.lime}}>
-                                    {totalXp}
-                                </Text>
-                                <Text className="profile-stat-label">XP</Text>
-                            </View>
-                            <View className="profile-stat-chip">
-                                <Text className="profile-stat-value" style={{color: plateauColors.gold}}>
-                                    {dailyStreak} 🔥
-                                </Text>
-                                <Text className="profile-stat-label">Série</Text>
-                            </View>
-                            <View className="profile-stat-chip">
-                                <Text className="profile-stat-value">
-                                    {duelStats.wins}-{duelStats.losses}
-                                </Text>
-                                <Text className="profile-stat-label">V-D</Text>
-                            </View>
+                    <View className="profile-stats-row">
+                        <View className="profile-stat-chip">
+                            <Text className="profile-stat-value" style={{color: plateauColors.teal}}>
+                                {totalXp}
+                            </Text>
+                            <Text className="profile-stat-label">XP</Text>
+                        </View>
+                        <View className="profile-stat-chip">
+                            <Text className="profile-stat-value" style={{color: plateauColors.brass}}>
+                                {dailyStreak} 🔥
+                            </Text>
+                            <Text className="profile-stat-label">Série</Text>
+                        </View>
+                        <View className="profile-stat-chip">
+                            <Text className="profile-stat-value">
+                                {duelStats.wins}-{duelStats.losses}
+                            </Text>
+                            <Text className="profile-stat-label">V-D</Text>
                         </View>
                     </View>
                 </View>

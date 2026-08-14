@@ -9,7 +9,7 @@ import {Category} from "@/game/types";
 import {DRAWABLE_CATEGORIES} from "@/game/rules";
 import {CATEGORY_LABELS} from "@/features/joute/constants";
 import {masteryPercent, needsWork} from "@/services/localSoloStatsRepository";
-import HardShadowCard from "@/features/joute/components/HardShadowCard";
+import ShadowCard from "@/components/ShadowCard";
 import {SOLO_QUESTIONS_PER_SESSION} from "../constants";
 import {useSoloStats} from "../hooks/useSoloStats";
 import ThemeFilterChip from "../components/ThemeFilterChip";
@@ -36,16 +36,15 @@ const ThemePickerScreen = () => {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-plateau-cream p-5">
+        <SafeAreaView className="flex-1 bg-plateau-paper px-[18px] pt-[18px]">
             <View className="solo-header">
                 <Pressable className="solo-back-button" onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Retour">
-                    <Text className="solo-back-icon">←</Text>
+                    <Text className="solo-back-icon">‹</Text>
                 </Pressable>
-                <Text className="solo-header-title">Partie solo</Text>
+                <Text className="solo-header-title">Solo</Text>
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="pb-4">
-                <Text className="solo-hero-title mt-4">Ton terrain de{"\n"}chasse, champion ?</Text>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="gap-[14px] pb-4 pt-[14px]">
                 <Text className="solo-hero-subtitle">
                     {SOLO_QUESTIONS_PER_SESSION} questions · 15 s par question · 1 point par bonne réponse
                 </Text>
@@ -83,7 +82,7 @@ const ThemePickerScreen = () => {
             </ScrollView>
 
             <View className={clsx("solo-footer", !selected && "solo-cta-button-disabled")}>
-                <HardShadowCard borderRadius={20} offsetY={5} className="solo-cta-button">
+                <ShadowCard borderRadius={20} className="solo-cta-button">
                     <Pressable
                         onPress={handleLaunch}
                         disabled={!selected}
@@ -92,7 +91,7 @@ const ThemePickerScreen = () => {
                     >
                         <Text className="solo-cta-text">{selected ? `Lancer · ${CATEGORY_LABELS[selected]}` : "Choisis un thème"}</Text>
                     </Pressable>
-                </HardShadowCard>
+                </ShadowCard>
             </View>
         </SafeAreaView>
     );

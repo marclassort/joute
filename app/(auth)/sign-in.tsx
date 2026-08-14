@@ -20,7 +20,7 @@ import { useAuth, useSignIn, useSSO } from "@clerk/expo";
 import { plateauColors } from "@/constants/theme";
 import { isValidEmail } from "@/lib/utils";
 import { markOnboardingSeen } from "@/services/guestIdentity";
-import HardShadowCard from "@/features/joute/components/HardShadowCard";
+import ShadowCard from "@/components/ShadowCard";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -46,7 +46,7 @@ const SignIn = () => {
     if (!isLoaded) {
         return (
             <SafeAreaView className="session-safe-area items-center justify-center">
-                <ActivityIndicator size="large" color={plateauColors.orange} />
+                <ActivityIndicator size="large" color={plateauColors.coral} />
             </SafeAreaView>
         );
     }
@@ -176,11 +176,11 @@ const SignIn = () => {
 
                             {formError && <Text className="session-error">{formError}</Text>}
 
-                            <HardShadowCard borderRadius={16} offsetY={4} className={clsx("solo-cta-button", isSubmitting && "opacity-50")}>
+                            <ShadowCard borderRadius={16} className={clsx("solo-cta-button", isSubmitting && "opacity-50")}>
                                 <Pressable onPress={handleSignIn} disabled={isSubmitting} accessibilityRole="button">
                                     <Text className="solo-cta-text">{isSubmitting ? "Connexion…" : "Se connecter"}</Text>
                                 </Pressable>
-                            </HardShadowCard>
+                            </ShadowCard>
                         </View>
                     </View>
 

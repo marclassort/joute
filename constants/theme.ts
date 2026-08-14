@@ -12,17 +12,25 @@ export const colors = {
     subscription: "#8fd1bd",
 } as const;
 
-/** Charte "plateau" (hub des modes et nouveaux écrans) — voir global.css pour les classes NativeWind correspondantes. */
+/** Charte v2 (project-update/) — voir global.css pour les classes NativeWind correspondantes. */
 export const plateauColors = {
-    ink: "#0B1026",
-    inkSurface: "#141B3D",
-    cream: "#FFF6E2",
-    orange: "#FF6A3D",
-    violet: "#6C4DF6",
-    lime: "#C9F24D",
-    cyan: "#35D6E7",
-    gold: "#FFC93C",
-    pink: "#FF4D8D",
+    ink: "#14121F",
+    inkSurface: "#1E1B36",
+    paper: "#F6F0E6",
+    card: "#FFFDF8",
+    coral: "#F4744C",
+    teal: "#2FB8A8",
+    iris: "#7C6BF5",
+    brass: "#E7B24B",
+    rose: "#E75A8E",
+} as const;
+
+export const radii = {
+    pill: 12,
+    card: 20,
+    hero: 26,
+    tabbar: 28,
+    sheet: 30,
 } as const;
 
 export const spacing = {
@@ -49,17 +57,34 @@ export const spacing = {
 
 export const components = {
     tabBar: {
-        height: spacing[18],
-        horizontalInset: spacing[5],
-        radius: spacing[8],
+        height: 76,
+        horizontalInset: 14,
+        radius: radii.tabbar,
         iconFrame: spacing[12],
         itemPaddingVertical: spacing[2],
     },
 } as const;
 
+/** Marges de la charte v2 (project-update/) : 18px de bord d'écran, 14px de gap entre blocs.
+ * Ne pas utiliser `spacing[18]` (72) ni `spacing[14]` (56) pour ces valeurs — indices distincts, collision de nom. */
+export const layout = {
+    screenEdge: 18,
+    blockGap: 14,
+} as const;
+
+/** Cibles tactiles minimales de la charte v2. */
+export const touchTarget = {
+    cta: 56,
+    tabItem: 62,
+    answerTile: 60,
+} as const;
+
 export const theme = {
     colors,
     plateauColors,
+    radii,
     spacing,
     components,
+    layout,
+    touchTarget,
 } as const;

@@ -9,6 +9,7 @@ import {ALL_QUESTIONS} from "@/data/questions";
 import {buildSoloAnswer, computeAverageResponseMs, computeLongestCorrectStreak, computeSoloScore, SoloAnswer} from "@/game/soloEngine";
 import {XP_PER_CORRECT_SOLO} from "@/game/gamification";
 import {localGamificationRepository} from "@/services/localGamificationRepository";
+import {localQuestRepository} from "@/services/localQuestRepository";
 import {generateId} from "@/lib/utils";
 import {playSound} from "@/lib/sounds";
 import {SOLO_QUESTIONS_PER_SESSION} from "../constants";
@@ -47,6 +48,7 @@ const SoloScreen = ({category}: SoloScreenProps) => {
         const question = questions[currentIndex];
         if (!question) return;
         setAnswers((previous) => [...previous, buildSoloAnswer(question, selectedIndex, elapsedMs)]);
+        localQuestRepository.recordAnswer(selectedIndex === question.correctIndex, elapsedMs);
     };
 
     const handleContinue = () => {
@@ -80,7 +82,7 @@ const SoloScreen = ({category}: SoloScreenProps) => {
     if (phase === "results") {
         const score = computeSoloScore(answers);
         return (
-            <SafeAreaView className="flex-1 bg-plateau-cream p-5">
+            <SafeAreaView className="flex-1 bg-plateau-ink p-5">
                 <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="pb-6">
                     <SoloResultCard
                         category={category}
@@ -100,19 +102,20 @@ const SoloScreen = ({category}: SoloScreenProps) => {
 
     if (!question) {
         return (
-            <SafeAreaView className="flex-1 bg-plateau-cream p-5">
-                <Text className="home-empty-state">Impossible de charger cette question.</Text>
+            <SafeAreaView className="flex-1 bg-plateau-ink p-5">
+                <Text className="home-empty-state text-plateau-paper">Impossible de charger cette question.</Text>
             </SafeAreaView>
         );
     }
 
     return (
-        <SafeAreaView className="flex-1 bg-plateau-cream p-5">
+        <SafeAreaView className="flex-1 bg-plateau-ink p-5">
             <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="pb-6 flex-grow">
                 <SoloQuestionCard
                     question={question}
                     questionNumber={currentIndex + 1}
                     totalQuestions={questions.length}
+                    score={computeSoloScore(answers)}
                     isLastQuestion={currentIndex + 1 === questions.length}
                     onClose={handleClose}
                     onAnswer={handleAnswer}

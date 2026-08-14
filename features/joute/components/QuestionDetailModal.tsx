@@ -49,13 +49,13 @@ const QuestionDetailPage = ({entry, me, opponent, width}: PageProps) => {
                                     (me.avatarUrl ? (
                                         <Image source={{uri: me.avatarUrl}} className="joute-mini-avatar" />
                                     ) : (
-                                        <View className="joute-mini-avatar bg-plateau-cream/20" />
+                                        <View className="joute-mini-avatar bg-plateau-paper/20" />
                                     ))}
                                 {opponentHere &&
                                     (opponent.avatarUrl ? (
                                         <Image source={{uri: opponent.avatarUrl}} className="joute-mini-avatar" />
                                     ) : (
-                                        <View className="joute-mini-avatar bg-plateau-cream/20" />
+                                        <View className="joute-mini-avatar bg-plateau-paper/20" />
                                     ))}
                                 <Text className={clsx("duel-choice-text", isCorrectChoice && "duel-choice-text-selected")}>{choice}</Text>
                             </View>
