@@ -35,12 +35,12 @@ const Quests = () => {
     );
 
     return (
-        <SafeAreaView className="flex-1 bg-plateau-paper px-[18px] pt-[8px]">
-            <View className="quest-title-row">
+        <SafeAreaView className="flex-1 bg-plateau-paper pt-[8px]">
+            <View className="quest-title-row px-[18px]">
                 <Text className="text-screen-title text-plateau-ink">Quêtes</Text>
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="gap-[14px] pb-[110px] pt-[14px]">
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="gap-[14px] px-[18px] pb-[110px] pt-[14px]">
                 <View className="quest-chain-card">
                     <InkPattern />
                     <View className="quest-chain-header">

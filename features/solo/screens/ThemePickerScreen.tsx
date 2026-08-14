@@ -36,15 +36,15 @@ const ThemePickerScreen = () => {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-plateau-paper px-[18px] pt-[18px]">
-            <View className="solo-header">
+        <SafeAreaView className="flex-1 bg-plateau-paper pt-[18px]">
+            <View className="solo-header px-[18px]">
                 <Pressable className="solo-back-button" onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Retour">
                     <Text className="solo-back-icon">‹</Text>
                 </Pressable>
                 <Text className="solo-header-title">Solo</Text>
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="gap-[14px] pb-4 pt-[14px]">
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="gap-[14px] px-[18px] pb-4 pt-[14px]">
                 <Text className="solo-hero-subtitle">
                     {SOLO_QUESTIONS_PER_SESSION} questions · 15 s par question · 1 point par bonne réponse
                 </Text>
@@ -81,7 +81,7 @@ const ThemePickerScreen = () => {
                 </View>
             </ScrollView>
 
-            <View className={clsx("solo-footer", !selected && "solo-cta-button-disabled")}>
+            <View className={clsx("solo-footer px-[18px]", !selected && "solo-cta-button-disabled")}>
                 <ShadowCard borderRadius={20} className="solo-cta-button">
                     <Pressable
                         onPress={handleLaunch}

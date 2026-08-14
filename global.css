@@ -1819,7 +1819,7 @@
     }
 
     .leaderboard-empty-card {
-        @apply border border-plateau-ink/[0.1] mt-[14px] gap-2 rounded-[22px] bg-plateau-card p-5;
+        @apply border border-plateau-ink/[0.1] mx-[18px] mt-[14px] gap-2 rounded-[22px] bg-plateau-card p-5;
     }
 
     .leaderboard-podium-row {

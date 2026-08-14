@@ -54,8 +54,8 @@ const Leaderboard = () => {
     const restEntries = top?.slice(3, 10) ?? [];
 
     return (
-        <SafeAreaView className="flex-1 bg-plateau-paper px-[18px] pt-[8px]">
-            <View className="leaderboard-title-row">
+        <SafeAreaView className="flex-1 bg-plateau-paper pt-[8px]">
+            <View className="leaderboard-title-row px-[18px]">
                 <Text className="text-screen-title text-plateau-ink">Classement</Text>
                 <View className="leaderboard-scope-pill">
                     <Text className="leaderboard-scope-pill-text">Monde</Text>
@@ -76,7 +76,7 @@ const Leaderboard = () => {
                     <Text className="home-empty-state">Sois le premier à jouer pour ouvrir le classement !</Text>
                 </View>
             ) : (
-                <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="gap-[14px] pb-[110px]">
+                <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="gap-[14px] px-[18px] pb-[110px]">
                     <View className="leaderboard-podium-row">
                         {PODIUM_DISPLAY_ORDER.map((rankIndex) => {
                             const entry = podiumEntries[rankIndex];

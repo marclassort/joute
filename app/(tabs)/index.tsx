@@ -33,8 +33,8 @@ const Home = () => {
     const resumeMatches = toPlay.slice(1, 4);
 
     return (
-        <SafeAreaView className="flex-1 bg-plateau-paper px-[18px] pt-[8px]">
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="gap-[14px] pb-[110px]">
+        <SafeAreaView className="flex-1 bg-plateau-paper pt-[8px]">
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="gap-[14px] px-[18px] pb-[110px]">
                 <View className="hub-topbar">
                     <View className="hub-logo-badge">
                         <Text className="hub-logo-mark">J</Text>
