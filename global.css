@@ -68,20 +68,8 @@
 }
 
 @layer components {
-    .tabs-icon-pill {
-        @apply size-11 items-center justify-center rounded-full;
-    }
-
-    .tabs-icon-pill-active {
-        @apply bg-plateau-coral;
-    }
-
     .tabs-label {
-        @apply mt-[2px] text-center font-sans-bold text-[10px] uppercase tracking-[0.04em] text-plateau-paper/60;
-    }
-
-    .tabs-label-active {
-        @apply text-plateau-coral;
+        @apply text-center font-sans-bold text-[10px] tracking-[0.01em];
     }
 
     /* Échelle typographique charte v2 (project-update/ · "Typographie & formes") */
@@ -2002,6 +1990,96 @@
 
     .quest-card-done-badge {
         @apply rounded-[10px] bg-plateau-teal/20 px-[9px] py-[5px] text-[12px] font-sans-bold text-plateau-teal;
+    }
+
+    /* Onglet Premium v2 (project-update/) */
+
+    .premium-header-row {
+        @apply relative flex-row items-center gap-[11px];
+    }
+
+    .premium-header-badge {
+        @apply size-11 items-center justify-center rounded-[15px] bg-plateau-brass;
+    }
+
+    .premium-header-copy {
+        @apply gap-[2px];
+    }
+
+    .premium-perks-card {
+        @apply relative gap-3 rounded-[24px] border border-plateau-paper/[0.14] bg-plateau-paper/[0.07] p-4;
+    }
+
+    .premium-perk-row {
+        @apply flex-row items-center gap-[11px];
+    }
+
+    .premium-perk-icon {
+        @apply size-[26px] items-center justify-center rounded-[9px];
+    }
+
+    .premium-perk-label {
+        @apply flex-1 text-[14.5px] font-sans-medium text-plateau-paper/[0.92];
+    }
+
+    .premium-perk-tag {
+        @apply text-[12px] font-sans-bold text-plateau-teal;
+    }
+
+    .premium-plan-row {
+        @apply relative flex-row items-center gap-3 rounded-[22px] p-[15px];
+    }
+
+    .premium-plan-radio {
+        @apply size-[22px] items-center justify-center rounded-full border-2;
+    }
+
+    .premium-plan-radio-dot {
+        @apply size-[11px] rounded-full;
+    }
+
+    .premium-plan-copy {
+        @apply flex-1 gap-[3px];
+    }
+
+    .premium-plan-title-row {
+        @apply flex-row items-center gap-2;
+    }
+
+    .premium-plan-title {
+        @apply text-[16px] font-sans-bold text-plateau-paper;
+    }
+
+    .premium-plan-tag {
+        @apply rounded-[8px] px-[8px] py-[3px] text-[10.5px] font-sans-bold;
+    }
+
+    .premium-plan-sub {
+        @apply text-[12.5px] text-plateau-paper/60;
+    }
+
+    .premium-plan-price {
+        @apply font-display text-[19px] text-plateau-paper;
+    }
+
+    .premium-bonus-banner {
+        @apply relative flex-row items-center gap-[11px] rounded-[22px] border border-plateau-teal/[0.35] bg-plateau-teal/[0.14] p-[14px];
+    }
+
+    .premium-bonus-text {
+        @apply flex-1 text-[13.5px] leading-[1.45] text-plateau-paper/90;
+    }
+
+    .premium-cta-button {
+        @apply h-14 items-center justify-center rounded-[19px] bg-plateau-coral;
+    }
+
+    .premium-cta-text {
+        @apply text-[17px] font-sans-bold text-plateau-ink;
+    }
+
+    .premium-legal-text {
+        @apply relative text-center text-[11.5px] leading-[1.5] text-plateau-paper/45;
     }
 
     /* Accueil / bienvenue v2 (project-update/) */

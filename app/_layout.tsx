@@ -7,7 +7,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import {ClerkProvider, useAuth} from "@clerk/expo";
 import {tokenCache} from "@clerk/expo/token-cache";
 import {frFR} from "@clerk/localizations";
-import {SubscriptionsProvider} from "@/context/SubscriptionsContext";
 import {MatchesProvider} from "@/features/joute/context/MatchesContext";
 import {PlateauMatchesProvider} from "@/features/plateau/context/PlateauMatchesContext";
 import {PENDING_INVITE_STORAGE_KEY} from "@/services/invitations";
@@ -71,13 +70,11 @@ function RootNavigator() {
 export default function RootLayout() {
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache} localization={frFR}>
-      <SubscriptionsProvider>
-        <MatchesProvider>
-          <PlateauMatchesProvider>
-            <RootNavigator />
-          </PlateauMatchesProvider>
-        </MatchesProvider>
-      </SubscriptionsProvider>
+      <MatchesProvider>
+        <PlateauMatchesProvider>
+          <RootNavigator />
+        </PlateauMatchesProvider>
+      </MatchesProvider>
     </ClerkProvider>
   );
 }

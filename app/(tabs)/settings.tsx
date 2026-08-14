@@ -9,6 +9,7 @@ import { useAuth, useUser } from "@clerk/expo";
 import { formatSubscriptionDateTime } from "@/lib/utils";
 import { plateauColors } from "@/constants/theme";
 import { useAppSettings } from "@/hooks/useAppSettings";
+import { usePremium } from "@/hooks/usePremium";
 import EditProfileModal from "@/components/EditProfileModal";
 
 const SafeAreaView = styled(RNSafeAreaView);
@@ -59,6 +60,7 @@ const Settings = () => {
     const [isSigningOut, setIsSigningOut] = useState(false);
     const [isEditProfileVisible, setEditProfileVisible] = useState(false);
     const { soundEnabled, hapticsEnabled, toggleSound, toggleHaptics } = useAppSettings();
+    const { isPremium } = usePremium();
 
     const handleSignOut = async () => {
         setIsSigningOut(true);
@@ -148,11 +150,14 @@ const Settings = () => {
                     <View className="settings-card">
                         <Pressable
                             className="settings-row settings-row-divider"
-                            onPress={() => router.push("/subscriptions")}
+                            onPress={() => router.push("/premium")}
                             accessibilityRole="button"
                         >
                             <Text className="settings-row-icon">👑</Text>
-                            <Text className="settings-row-label flex-1">Abonnements suivis</Text>
+                            <Text className="settings-row-label flex-1">Abonnement</Text>
+                            <Text className="settings-row-value" style={{color: isPremium ? plateauColors.teal : plateauColors.coral}}>
+                                {isPremium ? "Actif" : "Non abonné"}
+                            </Text>
                             <Text className="settings-row-chevron">›</Text>
                         </Pressable>
                         <View className="settings-row">

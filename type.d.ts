@@ -1,4 +1,3 @@
-import type { ImageSourcePropType } from "react-native";
 import type { TabIconName } from "@/components/TabBarIcon";
 
 declare global {
@@ -8,57 +7,10 @@ declare global {
         icon: TabIconName;
     }
 
-    interface TabIconProps {
-        focused: boolean;
-        icon: TabIconName;
-    }
-
-    interface Subscription {
-        id: string;
-        icon: ImageSourcePropType;
-        name: string;
-        plan?: string;
-        category?: string;
-        paymentMethod?: string;
-        status?: string;
-        startDate?: string;
-        price: number;
-        currency?: string;
-        billing: string;
-        renewalDate?: string;
-        color?: string;
-        frequency?: string;
-    }
-
-    interface CreateSubscriptionModalProps {
-        visible: boolean;
-        onClose: () => void;
-        onCreate: (subscription: Subscription) => void;
-    }
-
     interface EditProfileModalProps {
         visible: boolean;
         onClose: () => void;
     }
-
-    interface SubscriptionCardProps extends Omit<Subscription, "id"> {
-        expanded: boolean;
-        onPress: () => void;
-        onCancelPress?: () => void;
-        isCancelling?: boolean;
-    }
-
-    interface UpcomingSubscription {
-        id: string;
-        icon: ImageSourcePropType;
-        name: string;
-        price: number;
-        currency?: string;
-        daysLeft: number;
-    }
-
-    interface UpcomingSubscriptionCardProps
-        extends Omit<UpcomingSubscription, "id"> {}
 
     interface ListHeadingProps {
         title: string;
