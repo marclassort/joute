@@ -5,6 +5,7 @@ import {SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
 import {useFocusEffect} from "@react-navigation/native";
 import {useRouter} from "expo-router";
 import {formatRelativeTime} from "@/lib/utils";
+import {goBackOrHome} from "@/lib/navigation";
 import {findFriend} from "@/game/social";
 import {Conversation, localMessagesRepository} from "@/services/localMessagesRepository";
 import PressableScale from "@/components/PressableScale";
@@ -26,7 +27,7 @@ const MessagesScreen = () => {
     return (
         <SafeAreaView className="flex-1 bg-plateau-paper pt-[18px]">
             <View className="social-header px-[18px]">
-                <Pressable className="solo-back-button" onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Retour">
+                <Pressable className="solo-back-button" onPress={() => goBackOrHome(router)} accessibilityRole="button" accessibilityLabel="Retour">
                     <Text className="solo-back-icon">‹</Text>
                 </Pressable>
                 <Text className="social-header-title">Messages</Text>

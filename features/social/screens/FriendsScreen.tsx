@@ -7,6 +7,7 @@ import {createMatch} from "@/game/engine";
 import {Player} from "@/game/types";
 import {FRIENDS, LEVEL_LABELS} from "@/game/social";
 import {generateId} from "@/lib/utils";
+import {goBackOrHome} from "@/lib/navigation";
 import {useCurrentPlayer} from "@/features/joute/hooks/useCurrentPlayer";
 import {useMatches} from "@/features/joute/hooks/useMatches";
 import PressableScale from "@/components/PressableScale";
@@ -30,7 +31,7 @@ const FriendsScreen = () => {
     return (
         <SafeAreaView className="flex-1 bg-plateau-paper pt-[18px]">
             <View className="social-header px-[18px]">
-                <Pressable className="solo-back-button" onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Retour">
+                <Pressable className="solo-back-button" onPress={() => goBackOrHome(router)} accessibilityRole="button" accessibilityLabel="Retour">
                     <Text className="solo-back-icon">‹</Text>
                 </Pressable>
                 <Text className="social-header-title">Amis</Text>

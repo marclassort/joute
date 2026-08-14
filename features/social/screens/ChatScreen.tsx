@@ -10,6 +10,7 @@ import {createMatch} from "@/game/engine";
 import {Player} from "@/game/types";
 import {findFriend} from "@/game/social";
 import {generateId} from "@/lib/utils";
+import {goBackOrHome} from "@/lib/navigation";
 import {useCurrentPlayer} from "@/features/joute/hooks/useCurrentPlayer";
 import {useMatches} from "@/features/joute/hooks/useMatches";
 import {ChatMessage, Conversation, localMessagesRepository} from "@/services/localMessagesRepository";
@@ -66,7 +67,7 @@ const ChatScreen = ({friendId}: ChatScreenProps) => {
         <SafeAreaView className="flex-1 bg-plateau-paper pt-[18px]">
             <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} className="flex-1">
                 <View className="chat-header px-[14px]">
-                    <Pressable className="solo-back-button" onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Retour">
+                    <Pressable className="solo-back-button" onPress={() => goBackOrHome(router, "/messages")} accessibilityRole="button" accessibilityLabel="Retour">
                         <Text className="solo-back-icon">‹</Text>
                     </Pressable>
                     <View className="chat-header-avatar" style={{backgroundColor: `${friend.tint}29`}}>
