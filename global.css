@@ -791,7 +791,7 @@
     }
 
     .solo-grid {
-        @apply flex-row flex-wrap gap-[10px];
+        @apply flex-row flex-wrap justify-center gap-[10px];
     }
 
     .solo-theme-card {
