@@ -11,7 +11,7 @@ export interface TabBarButtonProps extends BottomTabBarButtonProps {
 
 /** Bouton d'onglet v2 (project-update/) : icône + label dans une seule pastille (pas de rond séparé
  * juste autour de l'icône) — remplace le tabBarIcon/tabBarLabel par défaut de react-navigation. */
-const TabBarButton = ({icon, title, onPress, onLongPress, style, testID, ...rest}: TabBarButtonProps) => {
+const TabBarButton = ({icon, title, onPress, onLongPress, testID, ...rest}: TabBarButtonProps) => {
     const focused = !!rest["aria-selected"];
 
     return (
@@ -22,18 +22,17 @@ const TabBarButton = ({icon, title, onPress, onLongPress, style, testID, ...rest
             accessibilityRole="button"
             accessibilityState={{selected: focused}}
             accessibilityLabel={title}
-            style={[
-                style,
-                {
-                    height: 62,
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 5,
-                    borderRadius: 21,
-                    backgroundColor: focused ? plateauColors.coral : "transparent",
-                },
-            ]}
+            style={{
+                flex: 1,
+                marginVertical: 7,
+                padding: 0,
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 5,
+                borderRadius: 21,
+                backgroundColor: focused ? plateauColors.coral : "transparent",
+            }}
         >
             <TabBarIcon name={icon} color={focused ? plateauColors.ink : "rgba(246,240,230,0.62)"} />
             <Text

@@ -54,7 +54,7 @@ const Leaderboard = () => {
     const restEntries = top?.slice(3, 10) ?? [];
 
     return (
-        <SafeAreaView className="flex-1 bg-plateau-paper px-[18px] pt-[18px]">
+        <SafeAreaView className="flex-1 bg-plateau-paper px-[18px] pt-[8px]">
             <View className="leaderboard-title-row">
                 <Text className="text-screen-title text-plateau-ink">Classement</Text>
                 <View className="leaderboard-scope-pill">
