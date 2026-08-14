@@ -1,3 +1,4 @@
+import {Platform} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const STORAGE_KEY = "joute:premium";
@@ -18,7 +19,10 @@ async function load(): Promise<PremiumState> {
     return cache;
 }
 
-loadPromise = load();
+// Uniquement côté client : AsyncStorage (impl. web) accède à window, absent lors du rendu SSR d'expo-router sur Node.
+if (typeof window !== "undefined" || Platform.OS !== "web") {
+    loadPromise = load();
+}
 
 async function persist(): Promise<void> {
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(cache));
