@@ -675,7 +675,7 @@
     }
 
     .hub-tile {
-        @apply gap-[9px] bg-plateau-card p-[13px];
+        @apply gap-[9px] rounded-[22px] bg-plateau-card p-[13px];
     }
 
     .hub-tile-icon {
@@ -2138,6 +2138,298 @@
 
     .welcome-caption {
         @apply relative text-center text-[11.5px] leading-[1.5] text-plateau-paper/40;
+    }
+
+    /* Messages / Amis / Chat v2 (project-update/) */
+
+    .social-header {
+        @apply flex-row items-center gap-[11px];
+    }
+
+    .social-header-title {
+        @apply flex-1 font-display text-[25px] tracking-[-0.03em] text-plateau-ink;
+    }
+
+    .social-header-link {
+        @apply rounded-[13px] bg-plateau-ink/[0.06] px-3 py-[9px];
+    }
+
+    .social-header-link-text {
+        @apply text-[12.5px] font-sans-bold text-plateau-ink;
+    }
+
+    .conversation-row {
+        @apply border border-plateau-ink/[0.1] flex-row items-center gap-[11px] rounded-[20px] bg-plateau-card p-[13px];
+    }
+
+    .conversation-avatar {
+        @apply size-11 items-center justify-center rounded-[15px];
+    }
+
+    .conversation-avatar-text {
+        @apply text-[20px];
+    }
+
+    .conversation-copy {
+        @apply min-w-0 flex-1 gap-[2px];
+    }
+
+    .conversation-name-row {
+        @apply flex-row items-baseline gap-[7px];
+    }
+
+    .conversation-name {
+        @apply text-[15px] font-sans-bold text-plateau-ink;
+    }
+
+    .conversation-time {
+        @apply text-[11px] text-plateau-ink/45;
+    }
+
+    .conversation-preview {
+        @apply text-[12.5px] text-plateau-ink/55;
+    }
+
+    .conversation-unread-dot {
+        @apply size-[10px] rounded-full bg-plateau-coral;
+    }
+
+    .friend-search-bar {
+        @apply h-[46px] flex-row items-center gap-[9px] rounded-2xl bg-plateau-ink/[0.06] px-[14px];
+    }
+
+    .friend-search-placeholder {
+        @apply text-[14px] text-plateau-ink/45;
+    }
+
+    .friend-row {
+        @apply border border-plateau-ink/[0.1] flex-row items-center gap-[11px] rounded-[20px] bg-plateau-card p-[13px];
+    }
+
+    .friend-avatar {
+        @apply relative size-11 items-center justify-center rounded-[15px];
+    }
+
+    .friend-avatar-text {
+        @apply text-[20px];
+    }
+
+    .friend-online-dot {
+        @apply absolute -bottom-[2px] -right-[2px] size-[13px] rounded-full border-2 border-plateau-card bg-plateau-teal;
+    }
+
+    .friend-copy {
+        @apply min-w-0 flex-1 gap-[2px];
+    }
+
+    .friend-name {
+        @apply text-[15px] font-sans-bold text-plateau-ink;
+    }
+
+    .friend-meta {
+        @apply text-[12px] text-plateau-ink/55;
+    }
+
+    .friend-message-button {
+        @apply size-[38px] items-center justify-center rounded-[13px] bg-plateau-ink/[0.06];
+    }
+
+    .friend-message-icon {
+        @apply text-[15px];
+    }
+
+    .friend-challenge-button {
+        @apply rounded-[13px] bg-plateau-coral px-[13px] py-[10px];
+    }
+
+    .friend-challenge-text {
+        @apply text-[12.5px] font-sans-bold text-plateau-ink;
+    }
+
+    .friend-invite-card {
+        @apply flex-row items-center gap-[11px] rounded-[20px] border border-dashed border-plateau-ink/[0.28] p-[14px];
+    }
+
+    .friend-invite-icon {
+        @apply size-[38px] items-center justify-center rounded-[13px] bg-plateau-iris/[0.16];
+    }
+
+    .friend-invite-title {
+        @apply text-[14.5px] font-sans-bold text-plateau-ink;
+    }
+
+    .friend-invite-subtitle {
+        @apply text-[12px] text-plateau-ink/55;
+    }
+
+    .chat-header {
+        @apply flex-row items-center gap-[11px] px-1;
+    }
+
+    .chat-header-avatar {
+        @apply size-10 items-center justify-center rounded-[14px];
+    }
+
+    .chat-header-copy {
+        @apply min-w-0 flex-1;
+    }
+
+    .chat-header-name {
+        @apply text-[15.5px] font-sans-bold text-plateau-ink;
+    }
+
+    .chat-header-status {
+        @apply text-[11.5px] font-sans-semibold text-plateau-teal;
+    }
+
+    .chat-duel-button {
+        @apply rounded-[13px] bg-plateau-coral px-3 py-[9px];
+    }
+
+    .chat-duel-text {
+        @apply text-[12.5px] font-sans-bold text-plateau-ink;
+    }
+
+    .chat-bubble {
+        @apply max-w-[78%] gap-1 rounded-2xl px-[13px] py-[11px];
+    }
+
+    .chat-bubble-mine {
+        @apply self-end rounded-br-[4px] bg-plateau-ink;
+    }
+
+    .chat-bubble-theirs {
+        @apply self-start rounded-bl-[4px] bg-plateau-card;
+    }
+
+    .chat-bubble-text-mine {
+        @apply text-[14.5px] leading-[1.4] text-plateau-paper;
+    }
+
+    .chat-bubble-text-theirs {
+        @apply text-[14.5px] leading-[1.4] text-plateau-ink;
+    }
+
+    .chat-invite-row {
+        @apply flex-row items-center gap-[9px] pt-[3px];
+    }
+
+    .chat-invite-pill {
+        @apply rounded-[11px] bg-plateau-ink/[0.12] px-[10px] py-[6px];
+    }
+
+    .chat-invite-pill-text {
+        @apply text-[12px] font-sans-bold text-plateau-ink;
+    }
+
+    .chat-invite-accept {
+        @apply rounded-[11px] bg-plateau-ink px-3 py-[7px];
+    }
+
+    .chat-invite-accept-text {
+        @apply text-[12px] font-sans-bold text-plateau-paper;
+    }
+
+    .chat-input-row {
+        @apply flex-row items-center gap-[9px] px-[2px];
+    }
+
+    .chat-input {
+        @apply h-12 flex-1 rounded-2xl border border-plateau-ink/[0.18] bg-plateau-card px-[14px] font-sans-medium text-[14.5px] text-plateau-ink;
+    }
+
+    .chat-send-button {
+        @apply size-12 items-center justify-center rounded-2xl bg-plateau-ink;
+    }
+
+    .chat-send-icon {
+        @apply text-[17px] text-plateau-paper;
+    }
+
+    /* Sheet Profil v2 (project-update/) */
+
+    .profile-sheet-backdrop {
+        @apply absolute inset-0 bg-plateau-ink/45;
+    }
+
+    .profile-sheet {
+        @apply absolute inset-x-0 bottom-0 gap-3 rounded-t-[30px] bg-plateau-paper px-[18px] pb-7 pt-3;
+    }
+
+    .profile-sheet-grabber {
+        @apply h-1 w-[42px] self-center rounded-full bg-plateau-ink/20;
+    }
+
+    .profile-sheet-user-row {
+        @apply flex-row items-center gap-3 py-1;
+    }
+
+    .profile-sheet-avatar {
+        @apply size-[52px] items-center justify-center rounded-[18px];
+    }
+
+    .profile-sheet-avatar-text {
+        @apply text-2xl;
+    }
+
+    .profile-sheet-user-copy {
+        @apply min-w-0 flex-1 gap-[1px];
+    }
+
+    .profile-sheet-name {
+        @apply text-[17px] font-sans-bold text-plateau-ink;
+    }
+
+    .profile-sheet-meta {
+        @apply text-[12.5px] text-plateau-ink/55;
+    }
+
+    .profile-sheet-league {
+        @apply rounded-[11px] bg-plateau-brass/20 px-[10px] py-[6px];
+    }
+
+    .profile-sheet-league-text {
+        @apply text-[12px] font-sans-bold text-plateau-ink;
+    }
+
+    .profile-sheet-item {
+        @apply border border-plateau-ink/[0.1] flex-row items-center gap-3 rounded-[20px] bg-plateau-card p-[14px];
+    }
+
+    .profile-sheet-item-icon {
+        @apply size-[42px] items-center justify-center rounded-[14px];
+    }
+
+    .profile-sheet-item-copy {
+        @apply min-w-0 flex-1 gap-[1px];
+    }
+
+    .profile-sheet-item-label {
+        @apply text-[15.5px] font-sans-bold text-plateau-ink;
+    }
+
+    .profile-sheet-item-sub {
+        @apply text-[12.5px] text-plateau-ink/55;
+    }
+
+    .profile-sheet-item-badge {
+        @apply min-w-[22px] items-center justify-center rounded-[11px] bg-plateau-coral px-[7px] py-[2px];
+    }
+
+    .profile-sheet-item-badge-text {
+        @apply text-[12px] font-sans-bold text-plateau-paper;
+    }
+
+    .profile-sheet-item-chevron {
+        @apply text-[17px] text-plateau-ink/30;
+    }
+
+    .profile-sheet-close {
+        @apply h-[50px] items-center justify-center rounded-[17px] bg-plateau-ink/[0.07];
+    }
+
+    .profile-sheet-close-text {
+        @apply text-[15px] font-sans-bold text-plateau-ink;
     }
 
 }
