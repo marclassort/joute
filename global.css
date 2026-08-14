@@ -802,6 +802,10 @@
         @apply border-plateau-ink;
     }
 
+    .solo-theme-icon-frame {
+        @apply size-[34px] items-center justify-center;
+    }
+
     .solo-theme-icon {
         @apply text-2xl leading-none;
     }

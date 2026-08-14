@@ -22,7 +22,9 @@ const ThemeCard = ({category, masteryPercent, selected, onPress}: ThemeCardProps
         accessibilityLabel={`Thème ${CATEGORY_LABELS[category]}`}
         accessibilityState={{selected}}
     >
-        <Text className="solo-theme-icon">{CATEGORY_ICONS[category]}</Text>
+        <View className="solo-theme-icon-frame">
+            <Text className="solo-theme-icon">{CATEGORY_ICONS[category]}</Text>
+        </View>
         <Text className="solo-theme-label" numberOfLines={2}>
             {CATEGORY_LABELS[category]}
         </Text>
