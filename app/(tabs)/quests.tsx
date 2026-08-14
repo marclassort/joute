@@ -35,7 +35,7 @@ const Quests = () => {
     );
 
     return (
-        <SafeAreaView className="flex-1 bg-plateau-paper px-[18px] pt-[18px]">
+        <SafeAreaView className="flex-1 bg-plateau-paper px-[18px] pt-[8px]">
             <View className="quest-title-row">
                 <Text className="text-screen-title text-plateau-ink">Quêtes</Text>
             </View>

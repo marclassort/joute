@@ -3,7 +3,7 @@ import { Redirect, Tabs, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { hasSeenOnboarding } from "@/services/guestIdentity";
-import {components, plateauColors} from "@/constants/theme";
+import {components, layout, plateauColors} from "@/constants/theme";
 import { tabs } from "@/constants/data";
 import TabBarButton from "@/components/TabBarButton";
 
@@ -32,10 +32,12 @@ const TabLayout = () => {
                         headerShown: false,
                         tabBarStyle: {
                                 position: "absolute",
-                                bottom: Math.max(insets.bottom, tabBar.horizontalInset),
+                                bottom: Math.max(insets.bottom, layout.screenEdge),
                                 height: tabBar.height,
                                 marginHorizontal: tabBar.horizontalInset,
                                 paddingHorizontal: 7,
+                                paddingTop: 0,
+                                paddingBottom: 0,
                                 borderRadius: tabBar.radius,
                                 backgroundColor: plateauColors.ink,
                                 borderWidth: 1,
