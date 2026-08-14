@@ -16,6 +16,7 @@ import { Link, useRouter } from "expo-router";
 import clsx from "clsx";
 import { useAuth, useSignUp } from "@clerk/expo";
 import { plateauColors } from "@/constants/theme";
+import { markNeedsProfileSetup } from "@/services/guestIdentity";
 import ShadowCard from "@/components/ShadowCard";
 
 const SafeAreaView = styled(RNSafeAreaView);
@@ -80,6 +81,10 @@ const VerifyEmail = () => {
                 );
                 return;
             }
+
+            // Posé avant finalize() : dès que Clerk bascule isSignedIn à true, (auth)/_layout doit
+            // rediriger vers le tunnel pseudo/avatar/photo plutôt que directement vers le hub.
+            await markNeedsProfileSetup();
 
             const { error: finalizeError } = await signUp.finalize();
             if (finalizeError) {
