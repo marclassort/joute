@@ -623,7 +623,7 @@
     }
 
     .hub-hero {
-        @apply relative gap-4 overflow-hidden rounded-[26px] bg-plateau-ink p-5;
+        @apply relative gap-4 overflow-hidden rounded-[28px] bg-plateau-ink p-5;
     }
 
     .hub-hero-blob {

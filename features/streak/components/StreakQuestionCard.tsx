@@ -9,6 +9,7 @@ import {computeHint} from "@/game/streakEngine";
 import {CATEGORY_LABELS, QUESTION_ALERT_THRESHOLD_MS, QUESTION_DURATION_MS} from "@/features/joute/constants";
 import {playSound} from "@/lib/sounds";
 import {notifyError, notifySuccess} from "@/lib/haptics";
+import PressableScale from "@/components/PressableScale";
 
 export interface StreakQuestionCardProps {
     question: Question;
@@ -130,12 +131,12 @@ const StreakQuestionCard = ({question, streakCount, onAnswer, onContinue}: Strea
 
             {!isRevealed && (
                 <View className="streak-actions-row">
-                    <Pressable className="streak-action-pill" onPress={handleHint} disabled={!!hint} accessibilityRole="button">
+                    <PressableScale className="streak-action-pill" onPress={handleHint} disabled={!!hint} accessibilityRole="button">
                         <Text className="streak-action-pill-text">💡 Indice</Text>
-                    </Pressable>
-                    <Pressable className="streak-action-pill" onPress={() => submit("")} accessibilityRole="button">
+                    </PressableScale>
+                    <PressableScale className="streak-action-pill" onPress={() => submit("")} accessibilityRole="button">
                         <Text className="streak-action-pill-text">Passer</Text>
-                    </Pressable>
+                    </PressableScale>
                 </View>
             )}
 
@@ -165,15 +166,15 @@ const StreakQuestionCard = ({question, streakCount, onAnswer, onContinue}: Strea
                             {String(secondsLeft).padStart(2, "0")} s
                         </Text>
                     </View>
-                    <Pressable className="streak-submit-button" onPress={() => submit(text)} accessibilityRole="button">
+                    <PressableScale activeScale={0.98} className="streak-submit-button" onPress={() => submit(text)} accessibilityRole="button">
                         <Text className="streak-submit-text">Valider</Text>
-                    </Pressable>
+                    </PressableScale>
                 </View>
             ) : (
                 <Animated.View entering={FadeInDown.duration(280).delay(80)} className="streak-footer">
-                    <Pressable className="streak-submit-button" onPress={onContinue} accessibilityRole="button">
+                    <PressableScale activeScale={0.98} className="streak-submit-button" onPress={onContinue} accessibilityRole="button">
                         <Text className="streak-submit-text">{isCorrect ? "Question suivante" : "Voir mon score"}</Text>
-                    </Pressable>
+                    </PressableScale>
                 </Animated.View>
             )}
         </View>

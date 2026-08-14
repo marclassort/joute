@@ -1,4 +1,5 @@
 import {Image, Pressable, Text, View} from "react-native";
+import PressableScale from "@/components/PressableScale";
 import React, {useEffect, useRef, useState} from "react";
 import {Easing, useReducedMotion, useSharedValue, withTiming} from "react-native-reanimated";
 import {impactLight} from "@/lib/haptics";
@@ -145,8 +146,9 @@ const QuestionStep = ({question, questionNumber, roundNumber, me, opponent, mySc
                 {question.choices.map((choice, index) => {
                     const style = resolveChoiceStyle(index, isAnswered, selectedIndex, question.correctIndex);
                     return (
-                        <Pressable
+                        <PressableScale
                             key={choice}
+                            activeScale={0.98}
                             className="duel-play-choice"
                             style={{backgroundColor: style.backgroundColor, borderColor: style.borderColor}}
                             onPress={() => handleAnswer(index)}
@@ -163,7 +165,7 @@ const QuestionStep = ({question, questionNumber, roundNumber, me, opponent, mySc
                             <Text className="duel-play-choice-label" style={{color: style.textColor}}>
                                 {choice}
                             </Text>
-                        </Pressable>
+                        </PressableScale>
                     );
                 })}
             </View>

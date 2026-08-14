@@ -1,9 +1,10 @@
-import {Pressable, Text, View} from "react-native";
+import {Text, View} from "react-native";
 import React from "react";
 // eslint-disable-next-line import/no-named-as-default
 import clsx from "clsx";
 import {Category} from "@/game/types";
 import {CATEGORY_ICONS, CATEGORY_LABELS, CATEGORY_TINTS} from "@/features/joute/constants";
+import PressableScale from "@/components/PressableScale";
 
 export interface ThemeCardProps {
     category: Category;
@@ -13,7 +14,7 @@ export interface ThemeCardProps {
 }
 
 const ThemeCard = ({category, masteryPercent, selected, onPress}: ThemeCardProps) => (
-    <Pressable
+    <PressableScale
         className={clsx("solo-theme-card", selected && "solo-theme-card-selected")}
         style={{backgroundColor: CATEGORY_TINTS[category]}}
         onPress={onPress}
@@ -26,7 +27,7 @@ const ThemeCard = ({category, masteryPercent, selected, onPress}: ThemeCardProps
             {CATEGORY_LABELS[category]}
         </Text>
         {masteryPercent !== null && <Text className="solo-theme-progress-label">{masteryPercent}%</Text>}
-    </Pressable>
+    </PressableScale>
 );
 
 export default ThemeCard;

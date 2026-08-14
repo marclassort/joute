@@ -62,6 +62,11 @@ function RootNavigator() {
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="onboarding" options={{ animation: "fade" }} />
+      <Stack.Screen name="solo/index" options={{ animation: "fade" }} />
+      <Stack.Screen name="streak/index" options={{ animation: "fade" }} />
+      <Stack.Screen name="plateau/new" options={{ animation: "fade" }} />
+      <Stack.Screen name="duel/lobby" options={{ animation: "fade" }} />
       <Stack.Screen name="profile-modal" options={{ presentation: "modal" }} />
     </Stack>
   );

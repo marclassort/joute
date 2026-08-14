@@ -1,4 +1,5 @@
 import {Image, Pressable, ScrollView, Text, View} from "react-native";
+import PressableScale from "@/components/PressableScale";
 import React, {useMemo} from "react";
 import {styled} from "nativewind";
 import {SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
@@ -51,7 +52,7 @@ const Home = () => {
                     </View>
                 </View>
 
-                <Pressable onPress={() => router.push(heroMatch ? `/joute/${heroMatch.id}` : "/duel/lobby")}>
+                <PressableScale activeScale={0.98} onPress={() => router.push(heroMatch ? `/joute/${heroMatch.id}` : "/duel/lobby")}>
                     <View className="hub-hero">
                         <InkPattern />
                         <View className="hub-hero-blob" />
@@ -107,11 +108,11 @@ const Home = () => {
                             </View>
                         </View>
                     </View>
-                </Pressable>
+                </PressableScale>
 
                 <View className="hub-tile-row">
-                    <ShadowCard borderRadius={20} className="flex-1 hairline rounded-[20px]">
-                        <Pressable className="hub-tile" onPress={() => router.push("/solo")} accessibilityRole="button" accessibilityLabel="Partie solo">
+                    <ShadowCard borderRadius={22} className="flex-1 hairline rounded-[22px]">
+                        <PressableScale className="hub-tile" onPress={() => router.push("/solo")} accessibilityRole="button" accessibilityLabel="Partie solo">
                             <View className="hub-tile-icon bg-plateau-iris/[0.16]">
                                 <Text className="text-[17px]">🎯</Text>
                             </View>
@@ -119,11 +120,11 @@ const Home = () => {
                                 <Text className="hub-tile-title">Solo</Text>
                                 <Text className="hub-tile-subtitle">10 questions</Text>
                             </View>
-                        </Pressable>
+                        </PressableScale>
                     </ShadowCard>
 
-                    <ShadowCard borderRadius={20} className="flex-1 hairline rounded-[20px]">
-                        <Pressable className="hub-tile" onPress={() => router.push("/plateau")} accessibilityRole="button" accessibilityLabel="Plateau">
+                    <ShadowCard borderRadius={22} className="flex-1 hairline rounded-[22px]">
+                        <PressableScale className="hub-tile" onPress={() => router.push("/plateau")} accessibilityRole="button" accessibilityLabel="Plateau">
                             <View className="hub-tile-icon bg-plateau-teal/[0.18]">
                                 <Text className="text-[17px]">🏟️</Text>
                             </View>
@@ -131,11 +132,11 @@ const Home = () => {
                                 <Text className="hub-tile-title">Plateau</Text>
                                 <Text className="hub-tile-subtitle">4 à 6 joueurs</Text>
                             </View>
-                        </Pressable>
+                        </PressableScale>
                     </ShadowCard>
 
-                    <ShadowCard borderRadius={20} className="flex-1 hairline rounded-[20px]">
-                        <Pressable className="hub-tile" onPress={() => router.push("/streak")} accessibilityRole="button" accessibilityLabel="4 à la suite">
+                    <ShadowCard borderRadius={22} className="flex-1 hairline rounded-[22px]">
+                        <PressableScale className="hub-tile" onPress={() => router.push("/streak")} accessibilityRole="button" accessibilityLabel="4 à la suite">
                             <View className="hub-tile-icon bg-plateau-rose/[0.16]">
                                 <Text className="text-[17px]">🔥</Text>
                             </View>
@@ -143,7 +144,7 @@ const Home = () => {
                                 <Text className="hub-tile-title">Série</Text>
                                 <Text className="hub-tile-subtitle">Sans fin</Text>
                             </View>
-                        </Pressable>
+                        </PressableScale>
                     </ShadowCard>
                 </View>
 

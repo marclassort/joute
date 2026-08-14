@@ -1,4 +1,5 @@
 import {Image, Pressable, Text, View} from "react-native";
+import PressableScale from "@/components/PressableScale";
 import React, {useEffect, useRef, useState} from "react";
 import Animated, {Easing, FadeInDown, useReducedMotion, useSharedValue, withTiming} from "react-native-reanimated";
 import {Question} from "@/game/types";
@@ -42,6 +43,7 @@ const SoloQuestionCard = ({
     const [secondsLeft, setSecondsLeft] = useState(QUESTION_DURATION_S);
 
     const startedAtRef = useRef(Date.now());
+    const hasAnsweredRef = useRef(false);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const urgentTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -50,21 +52,19 @@ const SoloQuestionCard = ({
     const reducedMotion = useReducedMotion();
 
     const handleAnswer = (index: number | null) => {
-        setIsRevealed((already) => {
-            if (already) return already;
+        if (hasAnsweredRef.current) return;
+        hasAnsweredRef.current = true;
 
-            if (timeoutRef.current) clearTimeout(timeoutRef.current);
-            if (urgentTimeoutRef.current) clearTimeout(urgentTimeoutRef.current);
-            if (tickRef.current) clearInterval(tickRef.current);
-            if (index !== null) impactLight();
-            playSound(index !== null && index === question.correctIndex ? "correct" : "incorrect");
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        if (urgentTimeoutRef.current) clearTimeout(urgentTimeoutRef.current);
+        if (tickRef.current) clearInterval(tickRef.current);
+        if (index !== null) impactLight();
+        playSound(index !== null && index === question.correctIndex ? "correct" : "incorrect");
 
-            setSelectedIndex(index);
-            const elapsedMs = Math.min(QUESTION_DURATION_MS, Date.now() - startedAtRef.current);
-            onAnswer(index, elapsedMs);
-
-            return true;
-        });
+        setSelectedIndex(index);
+        setIsRevealed(true);
+        const elapsedMs = Math.min(QUESTION_DURATION_MS, Date.now() - startedAtRef.current);
+        onAnswer(index, elapsedMs);
     };
 
     useEffect(() => {
@@ -72,6 +72,7 @@ const SoloQuestionCard = ({
         setIsRevealed(false);
         setIsUrgent(false);
         setSecondsLeft(QUESTION_DURATION_S);
+        hasAnsweredRef.current = false;
         startedAtRef.current = Date.now();
 
         progress.value = 1;
@@ -147,8 +148,9 @@ const SoloQuestionCard = ({
                 {question.choices.map((choice, index) => {
                     const style = resolveChoiceStyle(index, isRevealed, selectedIndex, question.correctIndex);
                     return (
-                        <Pressable
+                        <PressableScale
                             key={choice}
+                            activeScale={0.98}
                             className="solo-choice"
                             style={{backgroundColor: style.backgroundColor, borderColor: style.borderColor}}
                             onPress={() => handleAnswer(index)}
@@ -165,7 +167,7 @@ const SoloQuestionCard = ({
                             <Text className="solo-choice-text" style={{color: style.textColor}}>
                                 {choice}
                             </Text>
-                        </Pressable>
+                        </PressableScale>
                     );
                 })}
             </View>
@@ -178,9 +180,9 @@ const SoloQuestionCard = ({
                     </View>
 
                     <View className="solo-footer">
-                        <Pressable className="solo-cta-button" onPress={onContinue} accessibilityRole="button">
+                        <PressableScale activeScale={0.98} className="solo-cta-button" onPress={onContinue} accessibilityRole="button">
                             <Text className="solo-cta-text">{isLastQuestion ? "Voir les résultats" : "Question suivante"}</Text>
-                        </Pressable>
+                        </PressableScale>
                     </View>
                 </Animated.View>
             )}
