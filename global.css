@@ -2432,4 +2432,110 @@
         @apply text-[15px] font-sans-bold text-plateau-ink;
     }
 
+    /* Inscription · pseudo/avatar/photo v2 (project-update/) */
+
+    .profile-setup-progress-row {
+        @apply flex-row items-baseline justify-between;
+    }
+
+    .profile-setup-progress-pct {
+        @apply text-[12.5px] font-sans-bold text-plateau-coral;
+    }
+
+    .profile-setup-progress-track {
+        @apply h-[9px] overflow-hidden rounded-full bg-plateau-ink/10;
+    }
+
+    .profile-setup-progress-fill {
+        @apply h-full rounded-full bg-plateau-teal;
+    }
+
+    .profile-setup-subtitle {
+        @apply text-[15px] leading-[1.5] text-plateau-ink/62;
+    }
+
+    .profile-setup-nick-card {
+        @apply border border-plateau-ink/[0.1] flex-row items-center gap-3 rounded-[22px] bg-plateau-card p-4;
+    }
+
+    .profile-setup-nick-value {
+        @apply text-[20px] font-sans-bold text-plateau-ink;
+    }
+
+    .profile-setup-nick-available {
+        @apply rounded-[11px] bg-plateau-teal/[0.18] px-[10px] py-[6px];
+    }
+
+    .profile-setup-nick-available-text {
+        @apply text-[11.5px] font-sans-bold text-plateau-ink;
+    }
+
+    .profile-setup-chip-row {
+        @apply flex-row flex-wrap gap-2;
+    }
+
+    .profile-setup-chip {
+        @apply rounded-[14px] border border-plateau-ink/[0.16] px-[14px] py-[11px];
+    }
+
+    .profile-setup-chip-text {
+        @apply text-[14px] font-sans-semibold text-plateau-ink;
+    }
+
+    .profile-setup-avatar-preview {
+        @apply size-[104px] items-center justify-center self-center rounded-[34px] border-2 border-plateau-ink/20;
+    }
+
+    .profile-setup-avatar-preview-glyph {
+        @apply text-[48px];
+    }
+
+    .profile-setup-avatar-grid {
+        @apply flex-row flex-wrap gap-[10px];
+    }
+
+    .profile-setup-avatar-cell {
+        @apply aspect-square basis-[22%] items-center justify-center rounded-[19px];
+    }
+
+    .profile-setup-avatar-cell-glyph {
+        @apply text-[25px];
+    }
+
+    .profile-setup-photo-drop {
+        @apply h-[190px] items-center justify-center gap-[9px] overflow-hidden rounded-[26px] border border-dashed border-plateau-ink/30 bg-plateau-ink/[0.04];
+    }
+
+    .profile-setup-photo-preview {
+        @apply size-full;
+    }
+
+    .profile-setup-photo-plus {
+        @apply size-[52px] items-center justify-center rounded-[18px] bg-plateau-ink;
+    }
+
+    .profile-setup-photo-plus-text {
+        @apply text-[22px] text-plateau-paper;
+    }
+
+    .profile-setup-photo-label {
+        @apply text-[14.5px] font-sans-bold text-plateau-ink;
+    }
+
+    .profile-setup-photo-hint {
+        @apply text-[11px] text-plateau-ink/50;
+    }
+
+    .profile-setup-reward-banner {
+        @apply flex-row items-center gap-[11px] rounded-[20px] border border-plateau-brass/45 bg-plateau-brass/[0.18] p-[14px];
+    }
+
+    .profile-setup-reward-text {
+        @apply flex-1 text-[13.5px] leading-[1.45] text-plateau-ink;
+    }
+
+    .profile-setup-skip {
+        @apply text-center text-[14px] font-sans-semibold text-plateau-ink/50;
+    }
+
 }
