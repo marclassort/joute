@@ -27,6 +27,13 @@ const SafeAreaView = styled(RNSafeAreaView);
 
 const MASTERY_COLORS = [plateauColors.ink, plateauColors.rose, plateauColors.teal, plateauColors.iris, plateauColors.coral];
 
+// Index 0 = rang 1, 1 = rang 2, 2 = rang 3.
+const PODIUM_COLORS = [plateauColors.brass, plateauColors.teal, plateauColors.rose];
+const PODIUM_SIZE = [62, 52, 52];
+const PODIUM_HEIGHT = [106, 78, 60];
+// Ordre d'affichage à l'écran (2e, 1er, 3e) pour mettre le 1er au centre, en avant.
+const PODIUM_DISPLAY_ORDER = [1, 0, 2];
+
 const ProfileScreen = () => {
     const router = useRouter();
     const {displayName, avatarUrl, id: myId} = useCurrentPlayer();
@@ -198,16 +205,52 @@ const ProfileScreen = () => {
                             <Text className="profile-leaderboard-text">Sois le premier à jouer pour ouvrir le classement !</Text>
                         </View>
                     ) : (
-                        <View className="gap-2">
-                            {leaderboardTop.slice(0, 10).map((entry) => (
-                                <LeaderboardRow key={entry.id} entry={entry} isMe={entry.id === myId} />
-                            ))}
-                            {leaderboardMe && leaderboardMe.rank > 10 && (
-                                <>
-                                    <Text className="profile-leaderboard-separator">···</Text>
-                                    <LeaderboardRow entry={leaderboardMe} isMe />
-                                </>
-                            )}
+                        <View className="gap-[14px]">
+                            <View className="leaderboard-podium-row">
+                                {PODIUM_DISPLAY_ORDER.map((rankIndex) => {
+                                    const entry = leaderboardTop[rankIndex];
+                                    if (!entry) return <View key={rankIndex} className="flex-1" />;
+                                    return (
+                                        <View key={entry.id} className="leaderboard-podium-item">
+                                            <View
+                                                className="leaderboard-podium-avatar"
+                                                style={{
+                                                    width: PODIUM_SIZE[rankIndex],
+                                                    height: PODIUM_SIZE[rankIndex],
+                                                    backgroundColor: PODIUM_COLORS[rankIndex],
+                                                }}
+                                            >
+                                                {entry.avatarUrl ? (
+                                                    <Image source={{uri: entry.avatarUrl}} style={{width: "100%", height: "100%"}} />
+                                                ) : (
+                                                    <Text className="leaderboard-podium-avatar-text">
+                                                        {entry.displayName.charAt(0).toUpperCase()}
+                                                    </Text>
+                                                )}
+                                            </View>
+                                            <View className="leaderboard-podium-card" style={{height: PODIUM_HEIGHT[rankIndex]}}>
+                                                <Text className="leaderboard-podium-rank">{entry.rank}</Text>
+                                                <Text className="leaderboard-podium-name" numberOfLines={1}>
+                                                    {entry.id === myId ? "Toi" : entry.displayName}
+                                                </Text>
+                                                <Text className="leaderboard-podium-score">{entry.totalXp}</Text>
+                                            </View>
+                                        </View>
+                                    );
+                                })}
+                            </View>
+
+                            <View className="gap-2">
+                                {leaderboardTop.slice(3, 10).map((entry) => (
+                                    <LeaderboardRow key={entry.id} entry={entry} isMe={entry.id === myId} />
+                                ))}
+                                {leaderboardMe && leaderboardMe.rank > 10 && (
+                                    <>
+                                        <Text className="profile-leaderboard-separator">···</Text>
+                                        <LeaderboardRow entry={leaderboardMe} isMe />
+                                    </>
+                                )}
+                            </View>
                         </View>
                     )}
                 </View>
