@@ -42,12 +42,19 @@ function RootNavigator() {
   // Les effets sonores du jeu doivent s'entendre même quand l'appareil est en mode silencieux (comportement standard des jeux mobiles).
   // Import dynamique : si le module natif ExpoAudio est absent de ce build (certains builds Expo Go),
   // un import statique ferait planter TOUTE l'app au chargement — le dynamique rend l'échec capturable.
+  // Le try/catch autour de l'appel lui-même est nécessaire en plus du .catch() : sous rechargement à
+  // chaud, le shim d'import dynamique de Metro peut parfois lancer de façon synchrone au lieu de
+  // rejeter proprement la promesse.
   useEffect(() => {
-    import("expo-audio")
-      .then(({setAudioModeAsync}) => setAudioModeAsync({playsInSilentMode: true}))
-      .catch(() => {
-        // Ignoré volontairement — un effet sonore n'est jamais un chemin critique.
-      });
+    try {
+      import("expo-audio")
+        .then(({setAudioModeAsync}) => setAudioModeAsync({playsInSilentMode: true}))
+        .catch(() => {
+          // Ignoré volontairement — un effet sonore n'est jamais un chemin critique.
+        });
+    } catch {
+      // Ignoré volontairement — voir le commentaire ci-dessus.
+    }
   }, []);
 
   // Reprend une invitation mémorisée avant le passage par la connexion (§4.2 : le code doit survivre à l'authentification).

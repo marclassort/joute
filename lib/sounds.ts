@@ -16,7 +16,14 @@ type AudioPlayer = import("expo-audio").AudioPlayer;
 let modulePromise: Promise<ExpoAudioModule | null> | null = null;
 function loadExpoAudio(): Promise<ExpoAudioModule | null> {
     if (!modulePromise) {
-        modulePromise = import("expo-audio").catch(() => null);
+        // Le try/catch autour de l'appel lui-même est nécessaire en plus du .catch() : sous rechargement
+        // à chaud, le shim d'import dynamique de Metro peut parfois lancer de façon synchrone au lieu de
+        // rejeter proprement la promesse (voir app/_layout.tsx pour la même précaution).
+        try {
+            modulePromise = import("expo-audio").catch(() => null);
+        } catch {
+            modulePromise = Promise.resolve(null);
+        }
     }
     return modulePromise;
 }
