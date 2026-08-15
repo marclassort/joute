@@ -11,6 +11,7 @@ import {formatTimeRemaining} from "@/lib/utils";
 import {useGamification} from "@/hooks/useGamification";
 import ShadowCard from "@/components/ShadowCard";
 import InkPattern from "@/components/InkPattern";
+import {plateauColors} from "@/constants/theme";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -147,6 +148,19 @@ const Home = () => {
                         </PressableScale>
                     </ShadowCard>
                 </View>
+
+                <Pressable onPress={() => router.push("/one-winner/new")} accessibilityRole="button" accessibilityLabel="Un seul gagnant">
+                    <View className="hub-quest-teaser" style={{backgroundColor: plateauColors.coral}}>
+                        <View className="hub-quest-teaser-icon">
+                            <Text className="text-[20px]">🏆</Text>
+                        </View>
+                        <View className="hub-quest-teaser-copy">
+                            <Text className="hub-quest-teaser-title">Un seul gagnant</Text>
+                            <Text className="hub-quest-teaser-subtitle">4 à 6 joueurs · éliminations en direct</Text>
+                        </View>
+                        <Text className="text-[17px] text-plateau-paper">›</Text>
+                    </View>
+                </Pressable>
 
                 {resumeMatches.length > 0 && (
                     <>

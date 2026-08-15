@@ -2542,4 +2542,48 @@
         @apply text-center text-[14px] font-sans-semibold text-plateau-ink/50;
     }
 
+    .one-winner-count-pill {
+        @apply self-start rounded-full bg-plateau-paper/10 px-3 py-[6px];
+    }
+
+    .one-winner-count-pill-text {
+        @apply text-[12.5px] font-sans-semibold text-plateau-paper;
+    }
+
+    .one-winner-player-row {
+        @apply flex-row items-center gap-3 rounded-[18px] border border-plateau-paper/[0.1] bg-plateau-paper/[0.05] p-[13px];
+    }
+
+    .one-winner-player-avatar {
+        @apply size-11 items-center justify-center rounded-2xl bg-plateau-iris;
+    }
+
+    .one-winner-player-avatar-text {
+        @apply font-display text-sm text-plateau-paper;
+    }
+
+    .one-winner-player-name {
+        @apply flex-1 text-[15px] font-sans-bold text-plateau-paper;
+    }
+
+    .one-winner-host-badge {
+        @apply rounded-full bg-plateau-brass/[0.18] px-[10px] py-[4px];
+    }
+
+    .one-winner-host-badge-text {
+        @apply text-[11px] font-sans-bold text-plateau-brass;
+    }
+
+    .one-winner-slot-empty {
+        @apply flex-row items-center gap-3 rounded-[18px] border border-dashed border-plateau-paper/[0.15] p-[13px];
+    }
+
+    .one-winner-slot-empty-avatar {
+        @apply size-11 items-center justify-center rounded-2xl border border-dashed border-plateau-paper/20;
+    }
+
+    .one-winner-slot-empty-text {
+        @apply flex-1 text-[14px] font-sans-medium text-plateau-paper/45;
+    }
+
 }
