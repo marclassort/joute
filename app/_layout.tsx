@@ -9,6 +9,7 @@ import {frFR} from "@clerk/localizations";
 import {MatchesProvider} from "@/features/joute/context/MatchesContext";
 import {PlateauMatchesProvider} from "@/features/plateau/context/PlateauMatchesContext";
 import {PENDING_INVITE_STORAGE_KEY} from "@/services/invitations";
+import {isAudioModuleAvailable} from "@/lib/audioAvailability";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -40,21 +41,16 @@ function RootNavigator() {
   }, [ready])
 
   // Les effets sonores du jeu doivent s'entendre même quand l'appareil est en mode silencieux (comportement standard des jeux mobiles).
-  // Import dynamique : si le module natif ExpoAudio est absent de ce build (certains builds Expo Go),
-  // un import statique ferait planter TOUTE l'app au chargement — le dynamique rend l'échec capturable.
-  // Le try/catch autour de l'appel lui-même est nécessaire en plus du .catch() : sous rechargement à
-  // chaud, le shim d'import dynamique de Metro peut parfois lancer de façon synchrone au lieu de
-  // rejeter proprement la promesse.
+  // isAudioModuleAvailable() vérifié AVANT tout import de "expo-audio" : évaluer ce module quand le
+  // natif est absent (certains builds Expo Go) lance de façon synchrone et incontournable, y compris
+  // à travers un import() dynamique — mieux vaut ne jamais l'importer que d'essayer de rattraper l'échec.
   useEffect(() => {
-    try {
-      import("expo-audio")
-        .then(({setAudioModeAsync}) => setAudioModeAsync({playsInSilentMode: true}))
-        .catch(() => {
-          // Ignoré volontairement — un effet sonore n'est jamais un chemin critique.
-        });
-    } catch {
-      // Ignoré volontairement — voir le commentaire ci-dessus.
-    }
+    if (!isAudioModuleAvailable()) return;
+    import("expo-audio")
+      .then(({setAudioModeAsync}) => setAudioModeAsync({playsInSilentMode: true}))
+      .catch(() => {
+        // Ignoré volontairement — un effet sonore n'est jamais un chemin critique.
+      });
   }, []);
 
   // Reprend une invitation mémorisée avant le passage par la connexion (§4.2 : le code doit survivre à l'authentification).
