@@ -19,7 +19,7 @@ export interface SubmitScoreInput {
     avatarUrl?: string | null;
 }
 
-async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
+export async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
     if (!API_BASE_URL) {
         throw new Error("EXPO_PUBLIC_API_BASE_URL n'est pas configuré");
     }

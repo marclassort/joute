@@ -2542,4 +2542,116 @@
         @apply text-center text-[14px] font-sans-semibold text-plateau-ink/50;
     }
 
+    .one-winner-count-pill {
+        @apply self-start rounded-full bg-plateau-paper/10 px-3 py-[6px];
+    }
+
+    .one-winner-count-pill-text {
+        @apply text-[12.5px] font-sans-semibold text-plateau-paper;
+    }
+
+    .one-winner-player-row {
+        @apply flex-row items-center gap-3 rounded-[18px] border border-plateau-paper/[0.1] bg-plateau-paper/[0.05] p-[13px];
+    }
+
+    .one-winner-player-avatar {
+        @apply size-11 items-center justify-center rounded-2xl bg-plateau-iris;
+    }
+
+    .one-winner-player-avatar-text {
+        @apply font-display text-sm text-plateau-paper;
+    }
+
+    .one-winner-player-name {
+        @apply flex-1 text-[15px] font-sans-bold text-plateau-paper;
+    }
+
+    .one-winner-host-badge {
+        @apply rounded-full bg-plateau-brass/[0.18] px-[10px] py-[4px];
+    }
+
+    .one-winner-host-badge-text {
+        @apply text-[11px] font-sans-bold text-plateau-brass;
+    }
+
+    .one-winner-slot-empty {
+        @apply flex-row items-center gap-3 rounded-[18px] border border-dashed border-plateau-paper/[0.15] p-[13px];
+    }
+
+    .one-winner-slot-empty-avatar {
+        @apply size-11 items-center justify-center rounded-2xl border border-dashed border-plateau-paper/20;
+    }
+
+    .one-winner-slot-empty-text {
+        @apply flex-1 text-[14px] font-sans-medium text-plateau-paper/45;
+    }
+
+    .one-winner-buzz-button {
+        @apply size-[190px] items-center justify-center self-center rounded-full bg-plateau-coral;
+    }
+
+    .one-winner-buzz-button-text {
+        @apply font-display text-[28px] tracking-[0.04em] text-plateau-ink;
+    }
+
+    .one-winner-feedback-banner {
+        @apply items-center gap-1 self-center rounded-[16px] px-5 py-3;
+    }
+
+    .one-winner-feedback-banner-text {
+        @apply font-sans-bold text-[15px] text-plateau-paper;
+    }
+
+    .one-winner-wager-row {
+        @apply flex-row flex-wrap justify-center gap-3;
+    }
+
+    .one-winner-wager-chip {
+        @apply items-center justify-center rounded-[16px] border border-plateau-paper/[0.14] bg-plateau-paper/[0.06] px-5 py-3;
+    }
+
+    .one-winner-wager-chip-selected {
+        @apply border-plateau-brass bg-plateau-brass;
+    }
+
+    .one-winner-wager-chip-text {
+        @apply font-sans-bold text-[15px] text-plateau-paper;
+    }
+
+    .one-winner-wager-chip-text-selected {
+        @apply text-plateau-ink;
+    }
+
+    .one-winner-standing-row {
+        @apply flex-row items-center gap-3 rounded-[18px] border border-plateau-paper/[0.1] bg-plateau-paper/[0.05] p-[13px];
+    }
+
+    .one-winner-standing-rank {
+        @apply w-6 text-center font-display text-[15px] text-plateau-paper/60;
+    }
+
+    .one-winner-standing-name {
+        @apply flex-1 text-[15px] font-sans-bold text-plateau-paper;
+    }
+
+    .one-winner-standing-score {
+        @apply font-display text-[17px] text-plateau-paper;
+    }
+
+    .one-winner-standing-eliminated {
+        @apply opacity-40;
+    }
+
+    .one-winner-elimination-badge {
+        @apply rounded-full bg-plateau-rose/[0.18] px-[10px] py-[4px];
+    }
+
+    .one-winner-elimination-badge-text {
+        @apply text-[11px] font-sans-bold text-plateau-rose;
+    }
+
+    .one-winner-victory-trophy {
+        @apply size-24 items-center justify-center self-center rounded-full bg-plateau-brass;
+    }
+
 }
