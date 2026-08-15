@@ -1,4 +1,3 @@
-import {createAudioPlayer, type AudioPlayer} from "expo-audio";
 import {isSoundEnabled} from "./preferences";
 
 const SOUND_SOURCES = {
@@ -9,12 +8,28 @@ const SOUND_SOURCES = {
 
 export type SoundName = keyof typeof SOUND_SOURCES;
 
+type ExpoAudioModule = typeof import("expo-audio");
+type AudioPlayer = import("expo-audio").AudioPlayer;
+
+// Chargé paresseusement, une seule fois : un import statique ferait planter TOUTE l'app au chargement si
+// le module natif ExpoAudio est absent de ce build (certains builds Expo Go) — voir app/_layout.tsx.
+let modulePromise: Promise<ExpoAudioModule | null> | null = null;
+function loadExpoAudio(): Promise<ExpoAudioModule | null> {
+    if (!modulePromise) {
+        modulePromise = import("expo-audio").catch(() => null);
+    }
+    return modulePromise;
+}
+
 const players = new Map<SoundName, AudioPlayer>();
 
-function getPlayer(name: SoundName): AudioPlayer {
+async function getPlayer(name: SoundName): Promise<AudioPlayer | null> {
+    const expoAudio = await loadExpoAudio();
+    if (!expoAudio) return null;
+
     let player = players.get(name);
     if (!player) {
-        player = createAudioPlayer(SOUND_SOURCES[name]);
+        player = expoAudio.createAudioPlayer(SOUND_SOURCES[name]);
         players.set(name, player);
     }
     return player;
@@ -23,11 +38,13 @@ function getPlayer(name: SoundName): AudioPlayer {
 /** Joue un effet sonore court (bonne/mauvaise réponse, victoire). Best-effort : un son ne doit jamais faire planter l'app (permissions, mode silencieux, module indisponible). */
 export function playSound(name: SoundName): void {
     if (!isSoundEnabled()) return;
-    try {
-        const player = getPlayer(name);
-        player.seekTo(0).catch(() => {});
-        player.play();
-    } catch {
-        // Ignoré volontairement — voir le commentaire ci-dessus.
-    }
+    getPlayer(name)
+        .then((player) => {
+            if (!player) return;
+            player.seekTo(0).catch(() => {});
+            player.play();
+        })
+        .catch(() => {
+            // Ignoré volontairement — voir le commentaire ci-dessus.
+        });
 }

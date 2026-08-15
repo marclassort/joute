@@ -2,7 +2,6 @@ import {SplashScreen, Stack, useRouter} from "expo-router";
 import "@/global.css"
 import {useFonts} from "expo-font";
 import {useEffect} from "react";
-import {setAudioModeAsync} from "expo-audio";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {ClerkProvider, useAuth} from "@clerk/expo";
 import {tokenCache} from "@clerk/expo/token-cache";
@@ -41,10 +40,14 @@ function RootNavigator() {
   }, [ready])
 
   // Les effets sonores du jeu doivent s'entendre même quand l'appareil est en mode silencieux (comportement standard des jeux mobiles).
+  // Import dynamique : si le module natif ExpoAudio est absent de ce build (certains builds Expo Go),
+  // un import statique ferait planter TOUTE l'app au chargement — le dynamique rend l'échec capturable.
   useEffect(() => {
-    setAudioModeAsync({playsInSilentMode: true}).catch(() => {
-      // Ignoré volontairement — un effet sonore n'est jamais un chemin critique.
-    });
+    import("expo-audio")
+      .then(({setAudioModeAsync}) => setAudioModeAsync({playsInSilentMode: true}))
+      .catch(() => {
+        // Ignoré volontairement — un effet sonore n'est jamais un chemin critique.
+      });
   }, []);
 
   // Reprend une invitation mémorisée avant le passage par la connexion (§4.2 : le code doit survivre à l'authentification).
