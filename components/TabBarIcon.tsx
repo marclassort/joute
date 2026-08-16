@@ -1,7 +1,7 @@
 import React from "react";
 import Svg, {Circle, Path, Rect} from "react-native-svg";
 
-export type TabIconName = "play" | "quests" | "leaderboard" | "premium" | "profile";
+export type TabIconName = "play" | "quests" | "one-winner" | "premium" | "profile";
 
 export interface TabBarIconProps {
     name: TabIconName;
@@ -25,12 +25,12 @@ const TabBarIcon = ({name, color, size = 22}: TabBarIconProps) => {
                     <Path d="M13.2 2.8 5.6 13.2h5.2l-.8 8 7.6-10.4h-5.2l.8-8Z" fill={color} />
                 </Svg>
             );
-        case "leaderboard":
+        case "one-winner":
             return (
                 <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-                    <Rect x={3.5} y={12} width={4.6} height={8.5} rx={1.6} fill={color} />
-                    <Rect x={9.7} y={4.5} width={4.6} height={16} rx={1.6} fill={color} />
-                    <Rect x={15.9} y={9} width={4.6} height={11.5} rx={1.6} fill={color} />
+                    <Path d="M7 4h10v5a5 5 0 0 1-10 0V4Z" fill={color} />
+                    <Rect x={11} y={13.6} width={2} height={3.2} rx={0.6} fill={color} />
+                    <Rect x={8.3} y={17.6} width={7.4} height={2} rx={1} fill={color} />
                 </Svg>
             );
         case "premium":

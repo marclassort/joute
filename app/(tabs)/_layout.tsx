@@ -1,5 +1,5 @@
 import { useAuth } from "@clerk/expo";
-import { Redirect, Tabs } from "expo-router";
+import { Redirect, Tabs, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -15,6 +15,7 @@ const tabBar = components.tabBar;
 
 const TabLayout = () => {
         const insets = useSafeAreaInsets();
+        const router = useRouter();
         const { isLoaded } = useAuth();
         const { id: myId } = useCurrentPlayer();
         const { matches } = useMatches();
@@ -77,12 +78,23 @@ const TabLayout = () => {
                                             />
                                         ),
                                 }}
-                                listeners={tab.name === "profile" ? {
-                                    tabPress: (e) => {
-                                        e.preventDefault();
-                                        setSheetVisible((visible) => !visible);
-                                    },
-                                } : undefined}
+                                listeners={
+                                    tab.name === "profile"
+                                        ? {
+                                              tabPress: (e) => {
+                                                  e.preventDefault();
+                                                  setSheetVisible((visible) => !visible);
+                                              },
+                                          }
+                                        : tab.name === "one-winner"
+                                          ? {
+                                                tabPress: (e) => {
+                                                    e.preventDefault();
+                                                    router.push("/one-winner/new");
+                                                },
+                                            }
+                                          : undefined
+                                }
                             />
                         ))}
                         <Tabs.Screen name="settings" options={{ href: null }} />

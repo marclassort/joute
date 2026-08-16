@@ -182,7 +182,7 @@ const ResultScreen = ({matchId}: {matchId: string}) => {
                     </Pressable>
 
                     <View className="duel-result-secondary-row">
-                        <Pressable className="duel-result-secondary-button" onPress={() => router.push("/leaderboard")} accessibilityRole="button">
+                        <Pressable className="duel-result-secondary-button" onPress={() => router.push("/profile-modal")} accessibilityRole="button">
                             <Text className="duel-result-secondary-text">Classement</Text>
                         </Pressable>
                         <Pressable className="duel-result-secondary-button" onPress={() => router.replace("/(tabs)")} accessibilityRole="button">

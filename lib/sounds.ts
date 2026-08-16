@@ -1,4 +1,5 @@
 import {isSoundEnabled} from "./preferences";
+import {isAudioModuleAvailable} from "./audioAvailability";
 
 const SOUND_SOURCES = {
     correct: require("@/assets/sounds/correct.mp3"),
@@ -11,12 +12,13 @@ export type SoundName = keyof typeof SOUND_SOURCES;
 type ExpoAudioModule = typeof import("expo-audio");
 type AudioPlayer = import("expo-audio").AudioPlayer;
 
-// Chargé paresseusement, une seule fois : un import statique ferait planter TOUTE l'app au chargement si
-// le module natif ExpoAudio est absent de ce build (certains builds Expo Go) — voir app/_layout.tsx.
+// Chargé paresseusement, une seule fois. isAudioModuleAvailable() est vérifié AVANT tout import de
+// "expo-audio" : évaluer ce module quand le natif est absent (certains builds Expo Go) lance de façon
+// synchrone et incontournable, y compris à travers un import() dynamique — voir lib/audioAvailability.ts.
 let modulePromise: Promise<ExpoAudioModule | null> | null = null;
 function loadExpoAudio(): Promise<ExpoAudioModule | null> {
     if (!modulePromise) {
-        modulePromise = import("expo-audio").catch(() => null);
+        modulePromise = isAudioModuleAvailable() ? import("expo-audio").catch(() => null) : Promise.resolve(null);
     }
     return modulePromise;
 }
