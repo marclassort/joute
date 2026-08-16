@@ -3,6 +3,7 @@ import React, {useEffect, useRef} from "react";
 import {SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
 import {styled} from "nativewind";
 import {useRouter} from "expo-router";
+import {goBackOrHome} from "@/lib/navigation";
 import {useOneWinnerGame} from "../hooks/useOneWinnerGame";
 import {useDevGhostAutoplay} from "../hooks/useDevGhostAutoplay";
 import OneWinnerWaitingRoomScreen from "./OneWinnerWaitingRoomScreen";
@@ -114,7 +115,7 @@ const OneWinnerGameScreen = ({gameId}: OneWinnerGameScreenProps) => {
         return (
             <SafeAreaView className="flex-1 bg-plateau-ink p-5">
                 <View className="duel-header">
-                    <Pressable className="duel-close-button" onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Retour">
+                    <Pressable className="duel-close-button" onPress={() => goBackOrHome(router)} accessibilityRole="button" accessibilityLabel="Retour">
                         <Text className="duel-close-icon">←</Text>
                     </Pressable>
                     <Text className="duel-header-title">Un seul gagnant</Text>
@@ -129,7 +130,7 @@ const OneWinnerGameScreen = ({gameId}: OneWinnerGameScreenProps) => {
         <SafeAreaView className="flex-1 bg-plateau-ink p-5">
             {game.phase !== "termine" && (
                 <View className="duel-header">
-                    <Pressable className="duel-close-button" onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Retour">
+                    <Pressable className="duel-close-button" onPress={() => goBackOrHome(router)} accessibilityRole="button" accessibilityLabel="Retour">
                         <Text className="duel-close-icon">←</Text>
                     </Pressable>
                     <Text className="duel-header-title">{game.phase === "lobby" ? "Salle d'attente" : "Un seul gagnant"}</Text>
@@ -158,7 +159,7 @@ const OneWinnerGameScreen = ({gameId}: OneWinnerGameScreenProps) => {
                     onAnswer={(input) => {
                         answer(input).catch(() => {});
                     }}
-                    onClose={() => router.back()}
+                    onClose={() => goBackOrHome(router)}
                 />
             )}
             {game.phase === "epreuve" && game.currentEpreuve?.kind === "buzzer" && (

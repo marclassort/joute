@@ -4,6 +4,7 @@ import {SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
 import {styled} from "nativewind";
 import {useRouter} from "expo-router";
 import {useAuth} from "@clerk/expo";
+import {goBackOrHome} from "@/lib/navigation";
 import {createOneWinnerGame, OneWinnerAuth} from "@/lib/oneWinnerApi";
 import {useCurrentPlayer} from "@/features/joute/hooks/useCurrentPlayer";
 import ShadowCard from "@/components/ShadowCard";
@@ -43,7 +44,7 @@ const OneWinnerIntroScreen = () => {
     return (
         <SafeAreaView className="flex-1 bg-plateau-ink p-5">
             <View className="duel-header">
-                <Pressable className="duel-close-button" onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Retour">
+                <Pressable className="duel-close-button" onPress={() => goBackOrHome(router)} accessibilityRole="button" accessibilityLabel="Retour">
                     <Text className="duel-close-icon">←</Text>
                 </Pressable>
                 <Text className="duel-header-title">Un seul gagnant</Text>
