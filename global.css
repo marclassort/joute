@@ -2658,4 +2658,36 @@
         @apply text-[11px] font-sans-semibold text-plateau-rose;
     }
 
+    .one-winner-rating-tier {
+        @apply text-[11.5px] font-sans-medium text-plateau-paper/50;
+    }
+
+    .one-winner-rating-delta-positive {
+        @apply font-display text-[15px] text-plateau-teal;
+    }
+
+    .one-winner-rating-delta-negative {
+        @apply font-display text-[15px] text-plateau-rose;
+    }
+
+    .one-winner-league-card {
+        @apply flex-row items-center gap-[13px] rounded-[20px] bg-plateau-card p-[14px];
+    }
+
+    .one-winner-league-badge {
+        @apply size-12 items-center justify-center rounded-full bg-plateau-brass;
+    }
+
+    .one-winner-league-copy {
+        @apply min-w-0 flex-1 gap-[2px];
+    }
+
+    .one-winner-league-tier {
+        @apply text-[15px] font-sans-bold text-plateau-ink;
+    }
+
+    .one-winner-league-meta {
+        @apply text-[12px] text-plateau-ink/[0.55];
+    }
+
 }

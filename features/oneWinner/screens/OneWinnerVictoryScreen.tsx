@@ -6,6 +6,7 @@ import {useRouter} from "expo-router";
 import ShadowCard from "@/components/ShadowCard";
 import PressableScale from "@/components/PressableScale";
 import {OneWinnerGameSummary} from "@/lib/oneWinnerApi";
+import {formatLeagueRank} from "../constants";
 
 export interface OneWinnerVictoryScreenProps {
     game: OneWinnerGameSummary;
@@ -30,15 +31,30 @@ const OneWinnerVictoryScreen = ({game, myId}: OneWinnerVictoryScreenProps) => {
             </View>
 
             <View className="gap-3">
-                {ranked.map((player) => (
-                    <View key={player.id} className={clsx("one-winner-standing-row", player.id === game.winnerId && "border-plateau-brass")}>
-                        <Text className="one-winner-standing-rank">{player.finalRank ?? "—"}</Text>
-                        <Text className="one-winner-standing-name" numberOfLines={1}>
-                            {player.displayName}
-                        </Text>
-                        {player.id === game.winnerId && <Text className="text-[16px]">🏆</Text>}
-                    </View>
-                ))}
+                {ranked.map((player) => {
+                    const ratingChange = game.ratingChanges?.find((change) => change.playerId === player.id) ?? null;
+                    return (
+                        <View key={player.id} className={clsx("one-winner-standing-row", player.id === game.winnerId && "border-plateau-brass")}>
+                            <Text className="one-winner-standing-rank">{player.finalRank ?? "—"}</Text>
+                            <View className="min-w-0 flex-1">
+                                <Text className="one-winner-standing-name" numberOfLines={1}>
+                                    {player.displayName}
+                                </Text>
+                                {ratingChange && (
+                                    <Text className="one-winner-rating-tier" numberOfLines={1}>
+                                        {formatLeagueRank(ratingChange.tier, ratingChange.division)}
+                                    </Text>
+                                )}
+                            </View>
+                            {ratingChange && (
+                                <Text className={ratingChange.delta >= 0 ? "one-winner-rating-delta-positive" : "one-winner-rating-delta-negative"}>
+                                    {ratingChange.delta >= 0 ? `+${ratingChange.delta}` : ratingChange.delta}
+                                </Text>
+                            )}
+                            {player.id === game.winnerId && <Text className="text-[16px]">🏆</Text>}
+                        </View>
+                    );
+                })}
             </View>
 
             <View className="mt-auto">
