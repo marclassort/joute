@@ -21,6 +21,8 @@ import {useStreakStats} from "@/features/streak/hooks/useStreakStats";
 import {CATEGORY_LABELS} from "@/features/joute/constants";
 import {plateauColors} from "@/constants/theme";
 import {fetchLeaderboard, LeaderboardEntry} from "@/lib/api";
+import {fetchMyRating, OneWinnerMyRating} from "@/lib/oneWinnerApi";
+import {formatLeagueRank} from "@/features/oneWinner/constants";
 import InkPattern from "@/components/InkPattern";
 
 const SafeAreaView = styled(RNSafeAreaView);
@@ -46,6 +48,7 @@ const ProfileScreen = () => {
     const [leaderboardTop, setLeaderboardTop] = useState<LeaderboardEntry[] | null>(null);
     const [leaderboardMe, setLeaderboardMe] = useState<LeaderboardEntry | null>(null);
     const [leaderboardUnavailable, setLeaderboardUnavailable] = useState(false);
+    const [myRating, setMyRating] = useState<OneWinnerMyRating | null>(null);
 
     useFocusEffect(
         useCallback(() => {
@@ -55,11 +58,15 @@ const ProfileScreen = () => {
             (async () => {
                 try {
                     const token = await getToken();
-                    const data = await fetchLeaderboard(token);
+                    const [leaderboard, rating] = await Promise.all([
+                        fetchLeaderboard(token),
+                        token ? fetchMyRating(token).catch(() => null) : Promise.resolve(null),
+                    ]);
                     if (cancelled) return;
-                    setLeaderboardTop(data.top);
-                    setLeaderboardMe(data.me);
+                    setLeaderboardTop(leaderboard.top);
+                    setLeaderboardMe(leaderboard.me);
                     setLeaderboardUnavailable(false);
+                    setMyRating(rating);
                 } catch {
                     if (!cancelled) setLeaderboardUnavailable(true);
                 }
@@ -148,6 +155,32 @@ const ProfileScreen = () => {
                             <Text className="profile-stat-label">V-D</Text>
                         </View>
                     </View>
+                </View>
+
+                <View>
+                    <Text className="hub-modes-label">Ligue</Text>
+                    {!isSignedIn ? (
+                        <View className="profile-leaderboard-card">
+                            <Text className="profile-leaderboard-text">Crée un compte et joue une partie "Un seul gagnant" pour intégrer une ligue.</Text>
+                        </View>
+                    ) : !myRating ? (
+                        <View className="profile-leaderboard-card">
+                            <Text className="profile-leaderboard-text">Ligue indisponible pour le moment.</Text>
+                        </View>
+                    ) : (
+                        <View className="one-winner-league-card">
+                            <View className="one-winner-league-badge">
+                                <Text className="text-[22px]">🏆</Text>
+                            </View>
+                            <View className="one-winner-league-copy">
+                                <Text className="one-winner-league-tier">{formatLeagueRank(myRating.tier, myRating.division)}</Text>
+                                <Text className="one-winner-league-meta">
+                                    {myRating.rating} pts · {myRating.gamesPlayed} partie{myRating.gamesPlayed > 1 ? "s" : ""} jouée
+                                    {myRating.gamesPlayed > 1 ? "s" : ""}
+                                </Text>
+                            </View>
+                        </View>
+                    )}
                 </View>
 
                 {badges.length > 0 && (

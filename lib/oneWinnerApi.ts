@@ -1,4 +1,5 @@
 import {EpreuveKind, OneWinnerPhase, OneWinnerStageId} from "@/game/oneWinnerTypes";
+import {LeagueTier} from "@/game/oneWinnerRankingTypes";
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
@@ -31,6 +32,15 @@ export interface OneWinnerElimination {
     decidedAt: number;
 }
 
+export interface OneWinnerRatingChange {
+    playerId: string;
+    ratingBefore: number;
+    ratingAfter: number;
+    delta: number;
+    tier: LeagueTier;
+    division: number;
+}
+
 export interface OneWinnerGameSummary {
     id: string;
     status: "active" | "completed" | "abandoned";
@@ -49,6 +59,8 @@ export interface OneWinnerGameSummary {
     } | null;
     liveStandings: OneWinnerStanding[];
     latestElimination: OneWinnerElimination | null;
+    /** Non nul une fois la partie terminée : variation de Rating/palier de chaque joueur. */
+    ratingChanges: OneWinnerRatingChange[] | null;
 }
 
 export interface AblyTokenRequest {
@@ -140,6 +152,18 @@ export async function advanceOneWinnerStage(
  * POST /api/games/[id]/connection côté backend. */
 export async function setOneWinnerConnection(token: string, gameId: string, isConnected: boolean): Promise<void> {
     await gameFetch(token, `/api/games/${gameId}/connection`, {method: "POST", body: JSON.stringify({isConnected})});
+}
+
+export interface OneWinnerMyRating {
+    rating: number;
+    tier: LeagueTier;
+    division: number;
+    gamesPlayed: number;
+}
+
+/** Palier/Rating du joueur connecté, hors contexte d'une partie précise (ex. modale Profil). */
+export async function fetchMyRating(token: string): Promise<OneWinnerMyRating> {
+    return gameFetch(token, "/api/rating");
 }
 
 export function buildOneWinnerLink(gameId: string): string {
