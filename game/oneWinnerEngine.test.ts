@@ -152,6 +152,63 @@ describe("Le Buzzer : l'ordre serveur fait foi, jamais le timestamp client", () 
     });
 });
 
+describe("ordre des questions : impossible de sauter une question non répondue", () => {
+    it("refuse de buzzer sur une question plus loin dans la liste tant que la précédente n'est pas résolue", () => {
+        let match = createOneWinnerMatch({id: "m1", players: makePlayers(4)});
+        match = startMatch(match);
+        match = startNextEpreuve({match, questionIds: ["q1"]});
+        match = endCurrentEpreuve(match);
+        match = startNextEpreuve({match, questionIds: ["q2a", "q2b"]});
+
+        expect(() => recordBuzz({match, playerId: "p1", questionId: "q2b"})).toThrow();
+        // La question courante reste jouable normalement.
+        expect(() => recordBuzz({match, playerId: "p1", questionId: "q2a"})).not.toThrow();
+    });
+
+    it("la question suivante devient jouable une fois la précédente correctement répondue", () => {
+        let match = createOneWinnerMatch({id: "m1", players: makePlayers(4)});
+        match = startMatch(match);
+        match = startNextEpreuve({match, questionIds: ["q1"]});
+        match = endCurrentEpreuve(match);
+        match = startNextEpreuve({match, questionIds: ["q2a", "q2b"]});
+
+        match = recordBuzz({match, playerId: "p1", questionId: "q2a", now: 100});
+        match = submitOneWinnerAnswer({match, playerId: "p1", question: makeQuestion("q2a", 0), selectedIndex: 0, elapsedMs: 500});
+
+        expect(() => recordBuzz({match, playerId: "p1", questionId: "q2b"})).not.toThrow();
+    });
+
+    it("un joueur ne peut pas sauter une question du Défi avant d'avoir répondu à la précédente", () => {
+        let match = createOneWinnerMatch({id: "m1", players: makePlayers(4)});
+        match = startMatch(match);
+        match = startNextEpreuve({match, questionIds: ["q1a", "q1b"]});
+
+        expect(() =>
+            submitOneWinnerAnswer({match, playerId: "p1", question: makeQuestion("q1b", 0), selectedIndex: 0, elapsedMs: 500}),
+        ).toThrow();
+
+        match = submitOneWinnerAnswer({match, playerId: "p1", question: makeQuestion("q1a", 0), selectedIndex: 0, elapsedMs: 500});
+        expect(() =>
+            submitOneWinnerAnswer({match, playerId: "p1", question: makeQuestion("q1b", 0), selectedIndex: 0, elapsedMs: 500}),
+        ).not.toThrow();
+    });
+
+    it("chaque joueur avance à son propre rythme au Défi, sans attendre les autres", () => {
+        let match = createOneWinnerMatch({id: "m1", players: makePlayers(4)});
+        match = startMatch(match);
+        match = startNextEpreuve({match, questionIds: ["q1a", "q1b"]});
+
+        // p1 répond aux deux questions sans que p2 n'ait encore répondu à la première.
+        match = submitOneWinnerAnswer({match, playerId: "p1", question: makeQuestion("q1a", 0), selectedIndex: 0, elapsedMs: 500});
+        expect(() =>
+            submitOneWinnerAnswer({match, playerId: "p1", question: makeQuestion("q1b", 0), selectedIndex: 0, elapsedMs: 500}),
+        ).not.toThrow();
+        expect(() =>
+            submitOneWinnerAnswer({match, playerId: "p2", question: makeQuestion("q1a", 0), selectedIndex: 0, elapsedMs: 500}),
+        ).not.toThrow();
+    });
+});
+
 describe("La Conquête : risque/récompense", () => {
     it("exige une mise et l'applique en positif ou négatif selon la réponse", () => {
         let match = createOneWinnerMatch({id: "m1", players: makePlayers(4)});
