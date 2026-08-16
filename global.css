@@ -2654,4 +2654,8 @@
         @apply size-24 items-center justify-center self-center rounded-full bg-plateau-brass;
     }
 
+    .one-winner-offline-text {
+        @apply text-[11px] font-sans-semibold text-plateau-rose;
+    }
+
 }

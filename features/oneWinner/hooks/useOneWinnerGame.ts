@@ -10,6 +10,7 @@ import {
     OneWinnerAnswerSummary,
     OneWinnerGameSummary,
     recordOneWinnerBuzz,
+    setOneWinnerConnection,
     startOneWinnerEpreuve,
     startOneWinnerGame,
     SubmitOneWinnerAnswerInput,
@@ -32,7 +33,13 @@ const REALTIME_EVENTS = [
     "elimination",
     "stage-advanced",
     "player-forfeited",
+    "connection-changed",
 ];
+
+// Confirme périodiquement "je suis toujours là" — déclenche aussi côté serveur le balayage des
+// forfaits par déconnexion pour TOUS les joueurs (voir POST /api/games/[id]/connection), donc même un
+// joueur qui ne change jamais d'état bénéficie du balayage tant qu'au moins un autre envoie un battement.
+const CONNECTION_HEARTBEAT_MS = 20_000;
 
 export interface UseOneWinnerGame {
     game: OneWinnerGameSummary | null;
@@ -80,12 +87,25 @@ export function useOneWinnerGame(gameId: string): UseOneWinnerGame {
     useEffect(() => {
         let cancelled = false;
         let ably: Ably.Realtime | null = null;
+        let heartbeat: ReturnType<typeof setInterval> | null = null;
+        // Évite de renvoyer le même état en boucle à chaque changement transitoire ("connecting", etc.).
+        let lastReportedConnected: boolean | null = null;
+        let currentToken: string | null = null;
+
+        const reportConnection = (isConnected: boolean) => {
+            if (!currentToken || lastReportedConnected === isConnected) return;
+            lastReportedConnected = isConnected;
+            setOneWinnerConnection(currentToken, gameId, isConnected).catch(() => {
+                // Ignoré volontairement — un battement manqué n'est jamais bloquant, le suivant rattrape.
+            });
+        };
 
         (async () => {
             setIsLoading(true);
             setError(null);
             try {
                 const token = await getFreshToken();
+                currentToken = token;
 
                 try {
                     await joinOneWinnerGame(token, gameId);
@@ -103,6 +123,18 @@ export function useOneWinnerGame(gameId: string): UseOneWinnerGame {
                 channel.subscribe(REALTIME_EVENTS, () => {
                     if (!cancelled) refresh();
                 });
+
+                // L'état de connexion Ably reflète directement si CET appareil peut recevoir/envoyer les
+                // mises à jour temps réel — signal plus fiable qu'un simple événement de premier/arrière-plan.
+                ably.connection.on((stateChange) => {
+                    if (cancelled) return;
+                    if (stateChange.current === "connected") reportConnection(true);
+                    else if (["disconnected", "suspended", "failed", "closed"].includes(stateChange.current)) reportConnection(false);
+                });
+
+                heartbeat = setInterval(() => {
+                    if (!cancelled) reportConnection(true);
+                }, CONNECTION_HEARTBEAT_MS);
             } catch (caughtError) {
                 if (!cancelled) setError((caughtError as Error).message);
             } finally {
@@ -112,7 +144,11 @@ export function useOneWinnerGame(gameId: string): UseOneWinnerGame {
 
         return () => {
             cancelled = true;
+            if (heartbeat) clearInterval(heartbeat);
             ably?.close();
+            if (currentToken) {
+                setOneWinnerConnection(currentToken, gameId, false).catch(() => {});
+            }
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [gameId]);
