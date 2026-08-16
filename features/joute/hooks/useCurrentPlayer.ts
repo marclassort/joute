@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {useUser} from "@clerk/expo";
-import {getOrCreateGuestId} from "@/services/guestIdentity";
+import {getOrCreateGuestId, getOrCreateGuestName} from "@/services/guestIdentity";
 
 export interface CurrentPlayer {
     id: string;
@@ -15,10 +15,12 @@ export interface CurrentPlayer {
 export function useCurrentPlayer(): CurrentPlayer {
     const {user, isLoaded} = useUser();
     const [guestId, setGuestId] = useState<string | null>(null);
+    const [guestName, setGuestName] = useState<string | null>(null);
 
     useEffect(() => {
         if (user) return;
         getOrCreateGuestId().then(setGuestId);
+        getOrCreateGuestName().then(setGuestName);
     }, [user]);
 
     if (user) {
@@ -33,9 +35,11 @@ export function useCurrentPlayer(): CurrentPlayer {
 
     return {
         id: guestId ?? "",
-        displayName: "Invité",
+        // Un nom distinctif (pas juste "Invité") pour rester reconnaissable au milieu d'autres invités
+        // dans une même partie multijoueur temps réel — voir services/guestIdentity.ts.
+        displayName: guestName ?? "Invité",
         avatarUrl: null,
         isGuest: true,
-        isReady: isLoaded && guestId !== null,
+        isReady: isLoaded && guestId !== null && guestName !== null,
     };
 }

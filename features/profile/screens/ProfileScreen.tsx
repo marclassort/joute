@@ -60,7 +60,7 @@ const ProfileScreen = () => {
                     const token = await getToken();
                     const [leaderboard, rating] = await Promise.all([
                         fetchLeaderboard(token),
-                        token ? fetchMyRating(token).catch(() => null) : Promise.resolve(null),
+                        token ? fetchMyRating({kind: "clerk", token}).catch(() => null) : Promise.resolve(null),
                     ]);
                     if (cancelled) return;
                     setLeaderboardTop(leaderboard.top);
