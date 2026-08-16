@@ -142,6 +142,27 @@ function currentEpreuve(match: OneWinnerMatch): EpreuveState {
     return epreuve;
 }
 
+/**
+ * Question actuellement contestée au Buzzer (partagée par tous les joueurs) : la première de la liste
+ * sans encore de bonne réponse enregistrée. Sert à rejeter tout buzz/réponse hors séquence — sans ça,
+ * un client pourrait buzzer directement sur une question plus loin dans la liste pendant qu'une
+ * question antérieure reste sans réponse, perturbant l'ordre prévu de l'épreuve.
+ */
+function currentBuzzerQuestionId(epreuve: EpreuveState): string | null {
+    const resolvedIds = new Set(epreuve.answers.filter((answer) => answer.isCorrect).map((answer) => answer.questionId));
+    return epreuve.questionIds.find((id) => !resolvedIds.has(id)) ?? null;
+}
+
+/**
+ * Question actuellement jouable par CE joueur au Défi/à la Conquête : chaque joueur avance à son
+ * propre rythme dans la liste (pas besoin d'attendre les autres), mais ne peut pas sauter à une
+ * question plus loin tant qu'il n'a pas répondu aux précédentes.
+ */
+function currentQuestionIdForPlayer(epreuve: EpreuveState, playerId: string): string | null {
+    const answeredIds = new Set(epreuve.answers.filter((answer) => answer.playerId === playerId).map((answer) => answer.questionId));
+    return epreuve.questionIds.find((id) => !answeredIds.has(id)) ?? null;
+}
+
 export interface RecordBuzzInput {
     match: OneWinnerMatch;
     playerId: string;
@@ -163,6 +184,9 @@ export function recordBuzz({match, playerId, questionId, clientReportedAt = null
     }
     if (!epreuve.questionIds.includes(questionId)) {
         throw new Error("cette question n'appartient pas à l'épreuve en cours");
+    }
+    if (questionId !== currentBuzzerQuestionId(epreuve)) {
+        throw new Error("ce n'est pas la question en cours");
     }
     if (match.players.find((entry) => entry.player.id === playerId)?.isEliminated) {
         throw new Error("un joueur éliminé ne peut pas buzzer");
@@ -233,8 +257,15 @@ export function submitOneWinnerAnswer({
         throw new Error("cette question n'appartient pas à l'épreuve en cours");
     }
 
-    if (epreuve.kind === "buzzer" && currentBuzzHolder(match) !== playerId) {
-        throw new Error("ce joueur n'a pas la main pour répondre");
+    if (epreuve.kind === "buzzer") {
+        if (question.id !== currentBuzzerQuestionId(epreuve)) {
+            throw new Error("ce n'est pas la question en cours");
+        }
+        if (currentBuzzHolder(match) !== playerId) {
+            throw new Error("ce joueur n'a pas la main pour répondre");
+        }
+    } else if (question.id !== currentQuestionIdForPlayer(epreuve, playerId)) {
+        throw new Error("ce joueur doit répondre aux questions précédentes de cette épreuve avant celle-ci");
     }
     if (epreuve.kind === "conquete" && wager === null) {
         throw new Error("une mise est requise pour l'épreuve de la conquête");
