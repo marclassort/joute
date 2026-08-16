@@ -73,16 +73,27 @@ export interface AblyTokenRequest {
     mac: string;
 }
 
+/**
+ * "UN SEUL GAGNANT" est jouable sans compte : un joueur connecté envoie un jeton Clerk, un invité
+ * envoie l'identité locale persistée par services/guestIdentity.ts — voir joute-api/src/lib/playerAuth.ts
+ * côté serveur pour la résolution correspondante.
+ */
+export type OneWinnerAuth = {kind: "clerk"; token: string} | {kind: "guest"; guestId: string; displayName: string};
+
 class OneWinnerApiError extends Error {}
 
-async function gameFetch<T>(token: string, path: string, options: RequestInit = {}): Promise<T> {
+function authHeaders(auth: OneWinnerAuth): Record<string, string> {
+    return auth.kind === "clerk" ? {Authorization: `Bearer ${auth.token}`} : {"X-Guest-Id": auth.guestId, "X-Guest-Name": auth.displayName};
+}
+
+async function gameFetch<T>(auth: OneWinnerAuth, path: string, options: RequestInit = {}): Promise<T> {
     if (!API_BASE_URL) {
         throw new OneWinnerApiError("EXPO_PUBLIC_API_BASE_URL n'est pas configuré");
     }
 
     const response = await fetch(`${API_BASE_URL}${path}`, {
         ...options,
-        headers: {"Content-Type": "application/json", Authorization: `Bearer ${token}`, ...options.headers},
+        headers: {"Content-Type": "application/json", ...authHeaders(auth), ...options.headers},
     });
     const body = await response.json().catch(() => null);
     if (!response.ok) {
@@ -91,36 +102,36 @@ async function gameFetch<T>(token: string, path: string, options: RequestInit = 
     return body as T;
 }
 
-export async function createOneWinnerGame(token: string): Promise<{id: string}> {
-    return gameFetch(token, "/api/games", {method: "POST"});
+export async function createOneWinnerGame(auth: OneWinnerAuth): Promise<{id: string}> {
+    return gameFetch(auth, "/api/games", {method: "POST"});
 }
 
-export async function joinOneWinnerGame(token: string, gameId: string): Promise<void> {
-    await gameFetch(token, `/api/games/${gameId}/join`, {method: "POST"});
+export async function joinOneWinnerGame(auth: OneWinnerAuth, gameId: string): Promise<void> {
+    await gameFetch(auth, `/api/games/${gameId}/join`, {method: "POST"});
 }
 
-export async function startOneWinnerGame(token: string, gameId: string): Promise<{phase: string}> {
-    return gameFetch(token, `/api/games/${gameId}/start`, {method: "POST"});
+export async function startOneWinnerGame(auth: OneWinnerAuth, gameId: string): Promise<{phase: string}> {
+    return gameFetch(auth, `/api/games/${gameId}/start`, {method: "POST"});
 }
 
-export async function fetchOneWinnerGame(token: string, gameId: string): Promise<OneWinnerGameSummary> {
-    return gameFetch(token, `/api/games/${gameId}`);
+export async function fetchOneWinnerGame(auth: OneWinnerAuth, gameId: string): Promise<OneWinnerGameSummary> {
+    return gameFetch(auth, `/api/games/${gameId}`);
 }
 
-export async function fetchOneWinnerAblyToken(token: string, gameId: string): Promise<AblyTokenRequest> {
-    return gameFetch(token, `/api/games/${gameId}/token`);
+export async function fetchOneWinnerAblyToken(auth: OneWinnerAuth, gameId: string): Promise<AblyTokenRequest> {
+    return gameFetch(auth, `/api/games/${gameId}/token`);
 }
 
-export async function startOneWinnerEpreuve(token: string, gameId: string, questionIds: string[]): Promise<{epreuveId: number; kind: EpreuveKind}> {
-    return gameFetch(token, `/api/games/${gameId}/epreuve`, {method: "POST", body: JSON.stringify({questionIds})});
+export async function startOneWinnerEpreuve(auth: OneWinnerAuth, gameId: string, questionIds: string[]): Promise<{epreuveId: number; kind: EpreuveKind}> {
+    return gameFetch(auth, `/api/games/${gameId}/epreuve`, {method: "POST", body: JSON.stringify({questionIds})});
 }
 
-export async function endOneWinnerEpreuve(token: string, gameId: string): Promise<{phase: string}> {
-    return gameFetch(token, `/api/games/${gameId}/end-epreuve`, {method: "POST"});
+export async function endOneWinnerEpreuve(auth: OneWinnerAuth, gameId: string): Promise<{phase: string}> {
+    return gameFetch(auth, `/api/games/${gameId}/end-epreuve`, {method: "POST"});
 }
 
-export async function recordOneWinnerBuzz(token: string, gameId: string, questionId: string): Promise<void> {
-    await gameFetch(token, `/api/games/${gameId}/buzz`, {
+export async function recordOneWinnerBuzz(auth: OneWinnerAuth, gameId: string, questionId: string): Promise<void> {
+    await gameFetch(auth, `/api/games/${gameId}/buzz`, {
         method: "POST",
         body: JSON.stringify({questionId, clientReportedAt: Date.now()}),
     });
@@ -133,25 +144,25 @@ export interface SubmitOneWinnerAnswerInput {
     wager?: number | null;
 }
 
-export async function submitOneWinnerAnswer(token: string, gameId: string, input: SubmitOneWinnerAnswerInput): Promise<OneWinnerAnswerSummary> {
-    return gameFetch(token, `/api/games/${gameId}/answer`, {method: "POST", body: JSON.stringify(input)});
+export async function submitOneWinnerAnswer(auth: OneWinnerAuth, gameId: string, input: SubmitOneWinnerAnswerInput): Promise<OneWinnerAnswerSummary> {
+    return gameFetch(auth, `/api/games/${gameId}/answer`, {method: "POST", body: JSON.stringify(input)});
 }
 
-export async function eliminateOneWinnerStage(token: string, gameId: string): Promise<OneWinnerElimination> {
-    return gameFetch(token, `/api/games/${gameId}/eliminate`, {method: "POST"});
+export async function eliminateOneWinnerStage(auth: OneWinnerAuth, gameId: string): Promise<OneWinnerElimination> {
+    return gameFetch(auth, `/api/games/${gameId}/eliminate`, {method: "POST"});
 }
 
 export async function advanceOneWinnerStage(
-    token: string,
+    auth: OneWinnerAuth,
     gameId: string,
 ): Promise<{phase: string; stageId: OneWinnerStageId; status: string; winnerId: string | null}> {
-    return gameFetch(token, `/api/games/${gameId}/advance`, {method: "POST"});
+    return gameFetch(auth, `/api/games/${gameId}/advance`, {method: "POST"});
 }
 
-/** Un joueur ne peut reporter que SA PROPRE connexion (le userId vient du jeton, jamais du body) — voir
- * POST /api/games/[id]/connection côté backend. */
-export async function setOneWinnerConnection(token: string, gameId: string, isConnected: boolean): Promise<void> {
-    await gameFetch(token, `/api/games/${gameId}/connection`, {method: "POST", body: JSON.stringify({isConnected})});
+/** Un joueur ne peut reporter que SA PROPRE connexion (l'identité vient de `auth`, jamais du body) —
+ * voir POST /api/games/[id]/connection côté backend. */
+export async function setOneWinnerConnection(auth: OneWinnerAuth, gameId: string, isConnected: boolean): Promise<void> {
+    await gameFetch(auth, `/api/games/${gameId}/connection`, {method: "POST", body: JSON.stringify({isConnected})});
 }
 
 export interface OneWinnerMyRating {
@@ -161,9 +172,10 @@ export interface OneWinnerMyRating {
     gamesPlayed: number;
 }
 
-/** Palier/Rating du joueur connecté, hors contexte d'une partie précise (ex. modale Profil). */
-export async function fetchMyRating(token: string): Promise<OneWinnerMyRating> {
-    return gameFetch(token, "/api/rating");
+/** Palier/Rating du joueur connecté, hors contexte d'une partie précise (ex. modale Profil) — réservé
+ * aux comptes (voir game/oneWinnerRankingTypes.ts), jamais appelé pour un invité. */
+export async function fetchMyRating(auth: OneWinnerAuth): Promise<OneWinnerMyRating> {
+    return gameFetch(auth, "/api/rating");
 }
 
 export function buildOneWinnerLink(gameId: string): string {

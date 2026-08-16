@@ -4,7 +4,8 @@ import {SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
 import {styled} from "nativewind";
 import {useRouter} from "expo-router";
 import {useAuth} from "@clerk/expo";
-import {createOneWinnerGame} from "@/lib/oneWinnerApi";
+import {createOneWinnerGame, OneWinnerAuth} from "@/lib/oneWinnerApi";
+import {useCurrentPlayer} from "@/features/joute/hooks/useCurrentPlayer";
 import ShadowCard from "@/components/ShadowCard";
 import PressableScale from "@/components/PressableScale";
 
@@ -12,7 +13,8 @@ const SafeAreaView = styled(RNSafeAreaView);
 
 const OneWinnerIntroScreen = () => {
     const router = useRouter();
-    const {isSignedIn, getToken} = useAuth();
+    const {getToken} = useAuth();
+    const player = useCurrentPlayer();
     const [isCreating, setIsCreating] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -20,9 +22,16 @@ const OneWinnerIntroScreen = () => {
         setError(null);
         setIsCreating(true);
         try {
-            const token = await getToken();
-            if (!token) throw new Error("Non connecté");
-            const {id} = await createOneWinnerGame(token);
+            let auth: OneWinnerAuth;
+            if (player.isGuest) {
+                if (!player.id) throw new Error("Identité invité non prête");
+                auth = {kind: "guest", guestId: player.id, displayName: player.displayName};
+            } else {
+                const token = await getToken();
+                if (!token) throw new Error("Non connecté");
+                auth = {kind: "clerk", token};
+            }
+            const {id} = await createOneWinnerGame(auth);
             router.replace(`/one-winner/${id}`);
         } catch (caughtError) {
             setError((caughtError as Error).message);
@@ -65,24 +74,11 @@ const OneWinnerIntroScreen = () => {
 
             <View className="mt-auto gap-3">
                 {error && <Text className="session-error text-center">{error}</Text>}
-                {isSignedIn ? (
-                    <ShadowCard borderRadius={20} className={isCreating ? "solo-cta-button opacity-50" : "solo-cta-button"}>
-                        <PressableScale activeScale={0.98} onPress={handleCreate} disabled={isCreating} accessibilityRole="button">
-                            <Text className="solo-cta-text">{isCreating ? "Création…" : "Créer une partie"}</Text>
-                        </PressableScale>
-                    </ShadowCard>
-                ) : (
-                    <>
-                        <Text className="home-empty-state text-plateau-paper/60 text-center">
-                            Un compte est nécessaire pour jouer en multijoueur temps réel.
-                        </Text>
-                        <ShadowCard borderRadius={20} className="solo-cta-button">
-                            <PressableScale activeScale={0.98} onPress={() => router.push("/(auth)/sign-up")} accessibilityRole="button">
-                                <Text className="solo-cta-text">Créer un compte</Text>
-                            </PressableScale>
-                        </ShadowCard>
-                    </>
-                )}
+                <ShadowCard borderRadius={20} className={isCreating || !player.isReady ? "solo-cta-button opacity-50" : "solo-cta-button"}>
+                    <PressableScale activeScale={0.98} onPress={handleCreate} disabled={isCreating || !player.isReady} accessibilityRole="button">
+                        <Text className="solo-cta-text">{isCreating ? "Création…" : "Créer une partie"}</Text>
+                    </PressableScale>
+                </ShadowCard>
             </View>
         </SafeAreaView>
     );

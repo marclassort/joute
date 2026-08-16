@@ -8,6 +8,7 @@ import {
     fetchOneWinnerGame,
     joinOneWinnerGame,
     OneWinnerAnswerSummary,
+    OneWinnerAuth,
     OneWinnerGameSummary,
     recordOneWinnerBuzz,
     setOneWinnerConnection,
@@ -19,6 +20,7 @@ import {
 import {createOneWinnerAblyClient, oneWinnerChannelName} from "@/lib/oneWinnerAbly";
 import {ALL_QUESTIONS} from "@/data/questions";
 import {nextEpreuveKind, pickEpreuveQuestions} from "@/game/oneWinnerQuestionPicker";
+import {useCurrentPlayer} from "@/features/joute/hooks/useCurrentPlayer";
 
 export const ONE_WINNER_MIN_PLAYERS = 4;
 export const ONE_WINNER_MAX_PLAYERS = 6;
@@ -58,44 +60,57 @@ export interface UseOneWinnerGame {
     answer: (input: SubmitOneWinnerAnswerInput) => Promise<OneWinnerAnswerSummary>;
 }
 
-/** Rejoint la partie (idempotent) puis maintient son état à jour en direct via Ably jusqu'à la fin. */
+/** Rejoint la partie (idempotent) puis maintient son état à jour en direct via Ably jusqu'à la fin.
+ * Jouable sans compte : un invité s'authentifie via son identité locale (services/guestIdentity.ts)
+ * plutôt qu'un jeton Clerk — voir OneWinnerAuth dans lib/oneWinnerApi.ts. */
 export function useOneWinnerGame(gameId: string): UseOneWinnerGame {
-    const {userId, getToken} = useAuth();
+    const {getToken} = useAuth();
+    const player = useCurrentPlayer();
     const [game, setGame] = useState<OneWinnerGameSummary | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isStarting, setIsStarting] = useState(false);
-    const tokenRef = useRef<string | null>(null);
+    const authRef = useRef<OneWinnerAuth | null>(null);
     // Questions déjà utilisées dans CETTE partie, côté hôte uniquement — évite les répétitions tant que
     // l'appareil hôte reste monté ; pas de suivi côté serveur pour cette version.
     const usedQuestionIdsRef = useRef<Set<string>>(new Set());
 
-    const getFreshToken = useCallback(async () => {
-        const token = tokenRef.current ?? (await getToken());
+    const getFreshAuth = useCallback(async (): Promise<OneWinnerAuth> => {
+        if (player.isGuest) {
+            if (!player.id) throw new Error("Identité invité non prête");
+            const auth: OneWinnerAuth = {kind: "guest", guestId: player.id, displayName: player.displayName};
+            authRef.current = auth;
+            return auth;
+        }
+        const cached = authRef.current?.kind === "clerk" ? authRef.current.token : null;
+        const token = cached ?? (await getToken());
         if (!token) throw new Error("Non connecté");
-        tokenRef.current = token;
-        return token;
-    }, [getToken]);
+        const auth: OneWinnerAuth = {kind: "clerk", token};
+        authRef.current = auth;
+        return auth;
+    }, [player.isGuest, player.id, player.displayName, getToken]);
 
     const refresh = useCallback(async () => {
-        const token = await getFreshToken();
-        const data = await fetchOneWinnerGame(token, gameId);
+        const auth = await getFreshAuth();
+        const data = await fetchOneWinnerGame(auth, gameId);
         setGame(data);
         return data;
-    }, [getFreshToken, gameId]);
+    }, [getFreshAuth, gameId]);
 
     useEffect(() => {
+        if (!player.isReady) return;
+
         let cancelled = false;
         let ably: Ably.Realtime | null = null;
         let heartbeat: ReturnType<typeof setInterval> | null = null;
         // Évite de renvoyer le même état en boucle à chaque changement transitoire ("connecting", etc.).
         let lastReportedConnected: boolean | null = null;
-        let currentToken: string | null = null;
+        let currentAuth: OneWinnerAuth | null = null;
 
         const reportConnection = (isConnected: boolean) => {
-            if (!currentToken || lastReportedConnected === isConnected) return;
+            if (!currentAuth || lastReportedConnected === isConnected) return;
             lastReportedConnected = isConnected;
-            setOneWinnerConnection(currentToken, gameId, isConnected).catch(() => {
+            setOneWinnerConnection(currentAuth, gameId, isConnected).catch(() => {
                 // Ignoré volontairement — un battement manqué n'est jamais bloquant, le suivant rattrape.
             });
         };
@@ -104,21 +119,21 @@ export function useOneWinnerGame(gameId: string): UseOneWinnerGame {
             setIsLoading(true);
             setError(null);
             try {
-                const token = await getFreshToken();
-                currentToken = token;
+                const auth = await getFreshAuth();
+                currentAuth = auth;
 
                 try {
-                    await joinOneWinnerGame(token, gameId);
+                    await joinOneWinnerGame(auth, gameId);
                 } catch {
                     // Échoue silencieusement si la partie a déjà démarré : on tente quand même de
                     // charger l'état, ce qui réussira si l'appelant en faisait déjà partie.
                 }
 
-                const data = await fetchOneWinnerGame(token, gameId);
+                const data = await fetchOneWinnerGame(auth, gameId);
                 if (cancelled) return;
                 setGame(data);
 
-                ably = createOneWinnerAblyClient(token, gameId);
+                ably = createOneWinnerAblyClient(auth, gameId);
                 const channel = ably.channels.get(oneWinnerChannelName(gameId));
                 channel.subscribe(REALTIME_EVENTS, () => {
                     if (!cancelled) refresh();
@@ -146,26 +161,26 @@ export function useOneWinnerGame(gameId: string): UseOneWinnerGame {
             cancelled = true;
             if (heartbeat) clearInterval(heartbeat);
             ably?.close();
-            if (currentToken) {
-                setOneWinnerConnection(currentToken, gameId, false).catch(() => {});
+            if (currentAuth) {
+                setOneWinnerConnection(currentAuth, gameId, false).catch(() => {});
             }
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [gameId]);
+    }, [gameId, player.isReady]);
 
-    const isHost = !!userId && game?.players[0]?.id === userId;
+    const isHost = !!player.id && game?.players[0]?.id === player.id;
     const canStart = isHost && game?.phase === "lobby" && (game?.players.length ?? 0) >= ONE_WINNER_MIN_PLAYERS;
 
     const start = useCallback(async () => {
-        const token = await getFreshToken();
+        const auth = await getFreshAuth();
         setIsStarting(true);
         try {
-            await startOneWinnerGame(token, gameId);
+            await startOneWinnerGame(auth, gameId);
             await refresh();
         } finally {
             setIsStarting(false);
         }
-    }, [getFreshToken, gameId, refresh]);
+    }, [getFreshAuth, gameId, refresh]);
 
     const startNextEpreuve = useCallback(async () => {
         if (!game) return;
@@ -175,53 +190,53 @@ export function useOneWinnerGame(gameId: string): UseOneWinnerGame {
         const questionIds = pickEpreuveQuestions(ALL_QUESTIONS, kind, [...usedQuestionIdsRef.current]);
         questionIds.forEach((id) => usedQuestionIdsRef.current.add(id));
 
-        const token = await getFreshToken();
-        await startOneWinnerEpreuve(token, gameId, questionIds);
+        const auth = await getFreshAuth();
+        await startOneWinnerEpreuve(auth, gameId, questionIds);
         await refresh();
-    }, [game, getFreshToken, gameId, refresh]);
+    }, [game, getFreshAuth, gameId, refresh]);
 
     const endEpreuve = useCallback(async () => {
-        const token = await getFreshToken();
-        await endOneWinnerEpreuve(token, gameId);
+        const auth = await getFreshAuth();
+        await endOneWinnerEpreuve(auth, gameId);
         await refresh();
-    }, [getFreshToken, gameId, refresh]);
+    }, [getFreshAuth, gameId, refresh]);
 
     const eliminate = useCallback(async () => {
-        const token = await getFreshToken();
-        await eliminateOneWinnerStage(token, gameId);
+        const auth = await getFreshAuth();
+        await eliminateOneWinnerStage(auth, gameId);
         await refresh();
-    }, [getFreshToken, gameId, refresh]);
+    }, [getFreshAuth, gameId, refresh]);
 
     const advance = useCallback(async () => {
-        const token = await getFreshToken();
-        await advanceOneWinnerStage(token, gameId);
+        const auth = await getFreshAuth();
+        await advanceOneWinnerStage(auth, gameId);
         await refresh();
-    }, [getFreshToken, gameId, refresh]);
+    }, [getFreshAuth, gameId, refresh]);
 
     const buzz = useCallback(
         async (questionId: string) => {
-            const token = await getFreshToken();
-            await recordOneWinnerBuzz(token, gameId, questionId);
+            const auth = await getFreshAuth();
+            await recordOneWinnerBuzz(auth, gameId, questionId);
             await refresh();
         },
-        [getFreshToken, gameId, refresh],
+        [getFreshAuth, gameId, refresh],
     );
 
     const answer = useCallback(
         async (input: SubmitOneWinnerAnswerInput) => {
-            const token = await getFreshToken();
-            const result = await submitOneWinnerAnswerRequest(token, gameId, input);
+            const auth = await getFreshAuth();
+            const result = await submitOneWinnerAnswerRequest(auth, gameId, input);
             await refresh();
             return result;
         },
-        [getFreshToken, gameId, refresh],
+        [getFreshAuth, gameId, refresh],
     );
 
     return {
         game,
         isLoading,
         error,
-        myId: userId ?? null,
+        myId: player.id || null,
         isHost,
         canStart: !!canStart,
         isStarting,
