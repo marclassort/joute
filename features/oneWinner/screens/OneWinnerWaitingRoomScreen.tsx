@@ -1,5 +1,5 @@
 import {Image, Pressable, ScrollView, Share, Text, View} from "react-native";
-import React from "react";
+import React, {useState} from "react";
 // eslint-disable-next-line import/no-named-as-default
 import clsx from "clsx";
 import ShadowCard from "@/components/ShadowCard";
@@ -14,9 +14,14 @@ export interface OneWinnerWaitingRoomScreenProps {
     canStart: boolean;
     isStarting: boolean;
     onStart: () => void;
+    /** Dev uniquement (npx expo start -c) : remplit les places restantes avec des invités fantômes qui
+     * jouent tout seuls, pour tester l'UI/UX sans piloter plusieurs appareils. Absent en production. */
+    onSpawnGhosts?: (count: number) => Promise<void>;
 }
 
-const OneWinnerWaitingRoomScreen = ({gameId, game, isHost, canStart, isStarting, onStart}: OneWinnerWaitingRoomScreenProps) => {
+const OneWinnerWaitingRoomScreen = ({gameId, game, isHost, canStart, isStarting, onStart, onSpawnGhosts}: OneWinnerWaitingRoomScreenProps) => {
+    const [isSpawningGhosts, setIsSpawningGhosts] = useState(false);
+
     const handleInvite = async () => {
         try {
             await Share.share({message: `Rejoins ma partie "Un seul gagnant" sur Joute ! ${buildOneWinnerLink(gameId)}`});
@@ -26,6 +31,17 @@ const OneWinnerWaitingRoomScreen = ({gameId, game, isHost, canStart, isStarting,
     };
 
     const emptySlots = Math.max(0, ONE_WINNER_MIN_PLAYERS - game.players.length);
+    const ghostSlotsAvailable = Math.max(0, ONE_WINNER_MAX_PLAYERS - game.players.length);
+
+    const handleSpawnGhosts = async () => {
+        if (!onSpawnGhosts || ghostSlotsAvailable === 0) return;
+        setIsSpawningGhosts(true);
+        try {
+            await onSpawnGhosts(ghostSlotsAvailable);
+        } finally {
+            setIsSpawningGhosts(false);
+        }
+    };
 
     return (
         <>
@@ -72,6 +88,18 @@ const OneWinnerWaitingRoomScreen = ({gameId, game, isHost, canStart, isStarting,
                 <Pressable className="duel-lobby-secondary-button" onPress={handleInvite} accessibilityRole="button">
                     <Text className="duel-lobby-secondary-text">Inviter des joueurs</Text>
                 </Pressable>
+                {__DEV__ && onSpawnGhosts && ghostSlotsAvailable > 0 && (
+                    <Pressable
+                        className="duel-lobby-secondary-button"
+                        onPress={handleSpawnGhosts}
+                        disabled={isSpawningGhosts}
+                        accessibilityRole="button"
+                    >
+                        <Text className="duel-lobby-secondary-text">
+                            {isSpawningGhosts ? "Ajout…" : `👻 Ajouter ${ghostSlotsAvailable} invité(s) fantôme(s) (dev)`}
+                        </Text>
+                    </Pressable>
+                )}
                 {isHost && (
                     <ShadowCard borderRadius={20} className={!canStart || isStarting ? "solo-cta-button opacity-50" : "solo-cta-button"}>
                         <PressableScale activeScale={0.98} onPress={onStart} disabled={!canStart || isStarting} accessibilityRole="button">

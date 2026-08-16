@@ -4,6 +4,7 @@ import {SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
 import {styled} from "nativewind";
 import {useRouter} from "expo-router";
 import {useOneWinnerGame} from "../hooks/useOneWinnerGame";
+import {useDevGhostAutoplay} from "../hooks/useDevGhostAutoplay";
 import OneWinnerWaitingRoomScreen from "./OneWinnerWaitingRoomScreen";
 import OneWinnerIntroStageScreen from "./OneWinnerIntroStageScreen";
 import OneWinnerDefiScreen from "./OneWinnerDefiScreen";
@@ -30,6 +31,7 @@ const OneWinnerGameScreen = ({gameId}: OneWinnerGameScreenProps) => {
     const router = useRouter();
     const {game, isLoading, error, myId, isHost, canStart, isStarting, start, startNextEpreuve, endEpreuve, eliminate, advance, buzz, answer} =
         useOneWinnerGame(gameId);
+    const {spawnGhosts} = useDevGhostAutoplay(gameId, game);
 
     const inFlightRef = useRef(false);
 
@@ -136,7 +138,15 @@ const OneWinnerGameScreen = ({gameId}: OneWinnerGameScreenProps) => {
             )}
 
             {game.phase === "lobby" && (
-                <OneWinnerWaitingRoomScreen gameId={gameId} game={game} isHost={isHost} canStart={canStart} isStarting={isStarting} onStart={start} />
+                <OneWinnerWaitingRoomScreen
+                    gameId={gameId}
+                    game={game}
+                    isHost={isHost}
+                    canStart={canStart}
+                    isStarting={isStarting}
+                    onStart={start}
+                    onSpawnGhosts={isHost ? spawnGhosts : undefined}
+                />
             )}
 
             {(game.phase === "intro" || (game.phase === "epreuve" && !game.currentEpreuve)) && <OneWinnerIntroStageScreen game={game} />}

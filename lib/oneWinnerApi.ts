@@ -83,7 +83,12 @@ export type OneWinnerAuth = {kind: "clerk"; token: string} | {kind: "guest"; gue
 class OneWinnerApiError extends Error {}
 
 function authHeaders(auth: OneWinnerAuth): Record<string, string> {
-    return auth.kind === "clerk" ? {Authorization: `Bearer ${auth.token}`} : {"X-Guest-Id": auth.guestId, "X-Guest-Name": auth.displayName};
+    // Les en-têtes HTTP ne supportent que l'ASCII : un pseudo accentué ("Espiègle"...) envoyé tel quel
+    // est corrompu en transit. On le passe donc en URI-encodé ; le backend le décode symétriquement
+    // (voir joute-api/src/lib/playerAuth.ts).
+    return auth.kind === "clerk"
+        ? {Authorization: `Bearer ${auth.token}`}
+        : {"X-Guest-Id": auth.guestId, "X-Guest-Name": encodeURIComponent(auth.displayName)};
 }
 
 async function gameFetch<T>(auth: OneWinnerAuth, path: string, options: RequestInit = {}): Promise<T> {
