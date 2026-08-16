@@ -1,5 +1,7 @@
 import {Image, Pressable, ScrollView, Share, Text, View} from "react-native";
 import React from "react";
+// eslint-disable-next-line import/no-named-as-default
+import clsx from "clsx";
 import ShadowCard from "@/components/ShadowCard";
 import PressableScale from "@/components/PressableScale";
 import {buildOneWinnerLink, OneWinnerGameSummary} from "@/lib/oneWinnerApi";
@@ -39,7 +41,7 @@ const OneWinnerWaitingRoomScreen = ({gameId, game, isHost, canStart, isStarting,
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="mt-5 gap-3 pb-6">
                 {game.players.map((player, index) => (
-                    <View key={player.id} className="one-winner-player-row">
+                    <View key={player.id} className={clsx("one-winner-player-row", !player.isConnected && "one-winner-standing-eliminated")}>
                         {player.avatarUrl ? (
                             <Image source={{uri: player.avatarUrl}} className="one-winner-player-avatar" />
                         ) : (
@@ -50,6 +52,7 @@ const OneWinnerWaitingRoomScreen = ({gameId, game, isHost, canStart, isStarting,
                         <Text className="one-winner-player-name" numberOfLines={1}>
                             {player.displayName}
                         </Text>
+                        {!player.isConnected && <Text className="one-winner-offline-text">hors ligne</Text>}
                         {index === 0 && (
                             <View className="one-winner-host-badge">
                                 <Text className="one-winner-host-badge-text">HÔTE</Text>

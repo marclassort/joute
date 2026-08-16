@@ -136,6 +136,12 @@ export async function advanceOneWinnerStage(
     return gameFetch(token, `/api/games/${gameId}/advance`, {method: "POST"});
 }
 
+/** Un joueur ne peut reporter que SA PROPRE connexion (le userId vient du jeton, jamais du body) — voir
+ * POST /api/games/[id]/connection côté backend. */
+export async function setOneWinnerConnection(token: string, gameId: string, isConnected: boolean): Promise<void> {
+    await gameFetch(token, `/api/games/${gameId}/connection`, {method: "POST", body: JSON.stringify({isConnected})});
+}
+
 export function buildOneWinnerLink(gameId: string): string {
     return `joute://one-winner/${gameId}`;
 }

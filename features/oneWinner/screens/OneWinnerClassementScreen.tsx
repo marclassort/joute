@@ -19,6 +19,7 @@ const OneWinnerClassementScreen = ({game}: OneWinnerClassementScreenProps) => (
                         <Text className="one-winner-standing-name" numberOfLines={1}>
                             {player.displayName}
                         </Text>
+                        {!player.isConnected && <Text className="one-winner-offline-text">hors ligne</Text>}
                         <Text className="one-winner-standing-score">{standing.score}</Text>
                     </View>
                 );
