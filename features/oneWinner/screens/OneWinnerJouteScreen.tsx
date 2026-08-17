@@ -4,6 +4,7 @@ import PressableScale from "@/components/PressableScale";
 import {ALL_RIDDLES} from "@/data/riddles";
 import {JOUTE_FILET_THRESHOLD, JOUTE_MAX_QUESTIONS, JOUTE_VALUE_TIERS, jouteValueForElapsed} from "@/game/oneWinnerConfig";
 import {plateauColors} from "@/constants/theme";
+import {playSound} from "@/lib/sounds";
 import {OneWinnerGameSummary} from "@/lib/oneWinnerApi";
 
 export interface OneWinnerJouteScreenProps {
@@ -60,13 +61,15 @@ const OneWinnerJouteScreen = ({game, myId, onAnswer, onFiletAnswer}: OneWinnerJo
         const text = typed.trim();
         setTyped("");
         const result = await onAnswer(text);
+        playSound(result.isCorrect ? "correct" : "incorrect");
         if (!result.isCorrect) setBlockedUntil(Date.now() + 3_000);
     };
 
     const submitFilet = async (index: number) => {
         if (filetUsedOnThisRiddle) return;
         setFiletOpen(false);
-        await onFiletAnswer(index);
+        const result = await onFiletAnswer(index);
+        playSound(result.isCorrect ? "correct" : "incorrect");
     };
 
     return (

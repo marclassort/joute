@@ -5,6 +5,7 @@ import {ALL_QUESTIONS} from "@/data/questions";
 import {resolveChoiceStyle} from "@/game/choiceStyle";
 import {MELEE_SPEED_POINTS, MELEE_TIME_LIMIT_MS} from "@/game/oneWinnerConfig";
 import {plateauColors} from "@/constants/theme";
+import {playSound} from "@/lib/sounds";
 import {OneWinnerGameSummary, SubmitMeleeAnswerInput} from "@/lib/oneWinnerApi";
 
 export interface OneWinnerMeleeScreenProps {
@@ -55,6 +56,7 @@ const OneWinnerMeleeScreen = ({game, myId, onAnswer}: OneWinnerMeleeScreenProps)
         const elapsedMs = Date.now() - startedAtRef.current;
         const result = await onAnswer({questionId: question.id, selectedIndex: index, elapsedMs});
         setFeedback(result);
+        playSound(result.isCorrect ? "correct" : "incorrect");
     };
 
     return (

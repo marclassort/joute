@@ -6,6 +6,7 @@ import {useRouter} from "expo-router";
 import {goBackOrHome} from "@/lib/navigation";
 import {useOneWinnerGame} from "../hooks/useOneWinnerGame";
 import {useDevGhostAutoplay} from "../hooks/useDevGhostAutoplay";
+import OneWinnerHatchBackground from "../components/OneWinnerHatchBackground";
 import OneWinnerWaitingRoomScreen from "./OneWinnerWaitingRoomScreen";
 import OneWinnerIntroStageScreen from "./OneWinnerIntroStageScreen";
 import OneWinnerMeleeScreen from "./OneWinnerMeleeScreen";
@@ -153,6 +154,7 @@ const OneWinnerGameScreen = ({gameId}: OneWinnerGameScreenProps) => {
 
     return (
         <SafeAreaView className="flex-1 bg-plateau-ink p-5">
+            <OneWinnerHatchBackground />
             {game.phase !== "termine" && (
                 <View className="duel-header">
                     <Pressable className="duel-close-button" onPress={() => goBackOrHome(router)} accessibilityRole="button" accessibilityLabel="Retour">

@@ -1,14 +1,16 @@
-import {Pressable, Text, View} from "react-native";
+import {Pressable, ScrollView, Text, View} from "react-native";
 import React, {useState} from "react";
 import {SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
 import {styled} from "nativewind";
 import {useRouter} from "expo-router";
 import {useAuth} from "@clerk/expo";
-import {goBackOrHome} from "@/lib/navigation";
 import {createOneWinnerGame, OneWinnerAuth} from "@/lib/oneWinnerApi";
 import {useCurrentPlayer} from "@/features/joute/hooks/useCurrentPlayer";
+import {goBackOrHome} from "@/lib/navigation";
+import {plateauColors} from "@/constants/theme";
 import ShadowCard from "@/components/ShadowCard";
 import PressableScale from "@/components/PressableScale";
+import {ROUND_LABELS, ROUND_ORDER} from "../constants";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -51,29 +53,45 @@ const OneWinnerIntroScreen = () => {
                 <View className="size-9" />
             </View>
 
-            <View className="mt-5">
-                <Text className="solo-hero-title text-plateau-paper">Un seul{"\n"}gagnant</Text>
-                <Text className="solo-hero-subtitle text-plateau-paper/60">
-                    4 candidats, 3 manches, une élimination à chaque fin de manche — un seul survivant remporte la partie.
-                </Text>
-            </View>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="mt-5 gap-4 pb-4">
+                <View className="gap-2 rounded-[22px] border border-plateau-brass/40 bg-plateau-brass/[0.14] p-4">
+                    <Text className="text-eyebrow text-plateau-brass">Table complète</Text>
+                    <Text className="solo-hero-title text-plateau-paper">Trois manches,{"\n"}un seul gagnant</Text>
+                    <Text className="solo-hero-subtitle text-plateau-paper/60">
+                        À la fin de chaque manche, le dernier du classement cumulé quitte la table.
+                    </Text>
+                </View>
 
-            <View className="mt-6 gap-3">
-                <ShadowCard borderRadius={18} className="duel-category-card">
-                    <Text className="duel-category-icon">⚡</Text>
-                    <Text className="duel-category-label">La Mêlée · QCM simultané, la vitesse paie</Text>
-                </ShadowCard>
-                <ShadowCard borderRadius={18} className="duel-category-card">
-                    <Text className="duel-category-icon">✍️</Text>
-                    <Text className="duel-category-label">La Charge · ton thème, ta série, au clavier</Text>
-                </ShadowCard>
-                <ShadowCard borderRadius={18} className="duel-category-card">
-                    <Text className="duel-category-icon">🏆</Text>
-                    <Text className="duel-category-label">La Joute · énigme qui se dévoile, premier à 200</Text>
-                </ShadowCard>
-            </View>
+                {ROUND_ORDER.map((roundId) => {
+                    const round = ROUND_LABELS[roundId];
+                    const tint = plateauColors[round.tint];
+                    return (
+                        <View key={roundId} className="one-winner-rule-card">
+                            <View className="one-winner-rule-card-header">
+                                <View className="one-winner-rule-step" style={{backgroundColor: tint}}>
+                                    <Text className="one-winner-rule-step-text">{round.step}</Text>
+                                </View>
+                                <View className="min-w-0 flex-1">
+                                    <Text className="one-winner-rule-title">{round.title}</Text>
+                                    <Text className="one-winner-rule-sub">{round.sub}</Text>
+                                </View>
+                                <View className="one-winner-rule-players-pill">
+                                    <Text className="one-winner-rule-players-text">{round.players}</Text>
+                                </View>
+                            </View>
+                            <View className="flex-row flex-wrap gap-[6px]">
+                                {round.chips.map((chip) => (
+                                    <View key={chip} className="one-winner-rule-chip">
+                                        <Text className="one-winner-rule-chip-text">{chip}</Text>
+                                    </View>
+                                ))}
+                            </View>
+                        </View>
+                    );
+                })}
+            </ScrollView>
 
-            <View className="mt-auto gap-3">
+            <View className="mt-auto gap-3 pt-3">
                 {error && <Text className="session-error text-center">{error}</Text>}
                 <ShadowCard borderRadius={20} className={isCreating || !player.isReady ? "solo-cta-button opacity-50" : "solo-cta-button"}>
                     <PressableScale activeScale={0.98} onPress={handleCreate} disabled={isCreating || !player.isReady} accessibilityRole="button">
