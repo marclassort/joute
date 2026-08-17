@@ -8,7 +8,7 @@ export interface OneWinnerClassementScreenProps {
 
 const OneWinnerClassementScreen = ({game}: OneWinnerClassementScreenProps) => (
     <View className="flex-1 gap-4">
-        <Text className="solo-hero-title text-center text-plateau-paper">Classement</Text>
+        <Text className="one-winner-hero-title text-center">Classement</Text>
         <View className="mt-2 gap-3">
             {game.liveStandings.map((standing) => {
                 const player = game.players.find((entry) => entry.id === standing.playerId);

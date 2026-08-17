@@ -10,6 +10,7 @@ import {goBackOrHome} from "@/lib/navigation";
 import {plateauColors} from "@/constants/theme";
 import ShadowCard from "@/components/ShadowCard";
 import PressableScale from "@/components/PressableScale";
+import OneWinnerHatchBackground from "../components/OneWinnerHatchBackground";
 import {ROUND_LABELS, ROUND_ORDER} from "../constants";
 
 const SafeAreaView = styled(RNSafeAreaView);
@@ -45,6 +46,8 @@ const OneWinnerIntroScreen = () => {
 
     return (
         <SafeAreaView className="flex-1 bg-plateau-ink p-5">
+            <OneWinnerHatchBackground />
+
             <View className="duel-header">
                 <Pressable className="duel-close-button" onPress={() => goBackOrHome(router)} accessibilityRole="button" accessibilityLabel="Retour">
                     <Text className="duel-close-icon">←</Text>
@@ -53,11 +56,30 @@ const OneWinnerIntroScreen = () => {
                 <View className="size-9" />
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="mt-5 gap-4 pb-4">
+            <View className="mt-4 flex-row gap-[7px]">
+                <View className="flex-1 items-center gap-1">
+                    <View className="one-winner-player-avatar" style={{backgroundColor: plateauColors.coral}}>
+                        <Text className="one-winner-player-avatar-text">{(player.displayName || "?").charAt(0).toUpperCase()}</Text>
+                    </View>
+                    <Text className="text-[10.5px] font-sans-bold text-plateau-paper" numberOfLines={1}>
+                        {player.displayName || "Toi"}
+                    </Text>
+                </View>
+                {Array.from({length: 3}).map((_, index) => (
+                    <View key={index} className="flex-1 items-center gap-1 opacity-40">
+                        <View className="one-winner-slot-empty-avatar" />
+                        <Text className="text-[10.5px] font-sans-medium text-plateau-paper/50">En attente</Text>
+                    </View>
+                ))}
+            </View>
+
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="mt-4 gap-4 pb-4">
                 <View className="gap-2 rounded-[22px] border border-plateau-brass/40 bg-plateau-brass/[0.14] p-4">
                     <Text className="text-eyebrow text-plateau-brass">Table complète</Text>
-                    <Text className="solo-hero-title text-plateau-paper">Trois manches,{"\n"}un seul gagnant</Text>
-                    <Text className="solo-hero-subtitle text-plateau-paper/60">
+                    <Text className="font-display text-[26px] leading-[1.12] tracking-[-0.03em]" style={{color: plateauColors.paper}}>
+                        Trois manches,{"\n"}un seul gagnant
+                    </Text>
+                    <Text className="text-[13px] leading-[1.45] font-sans-medium" style={{color: "rgba(246,240,230,0.6)"}}>
                         À la fin de chaque manche, le dernier du classement cumulé quitte la table.
                     </Text>
                 </View>

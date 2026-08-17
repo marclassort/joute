@@ -32,8 +32,8 @@ const OneWinnerVictoryScreen = ({game, myId}: OneWinnerVictoryScreenProps) => {
                 <View className="one-winner-victory-trophy">
                     <Text className="text-[40px]">🏆</Text>
                 </View>
-                <Text className="solo-hero-title text-center text-plateau-paper">{iWon ? "Vous avez gagné !" : `${winner?.displayName ?? "Un joueur"} a gagné !`}</Text>
-                <Text className="solo-hero-subtitle text-center text-plateau-paper/60">Un seul gagnant — partie terminée</Text>
+                <Text className="one-winner-hero-title text-center">{iWon ? "Vous avez gagné !" : `${winner?.displayName ?? "Un joueur"} a gagné !`}</Text>
+                <Text className="one-winner-hero-subtitle text-center">Un seul gagnant — partie terminée</Text>
             </View>
 
             <View className="gap-3">

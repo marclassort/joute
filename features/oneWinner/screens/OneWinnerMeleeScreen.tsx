@@ -43,7 +43,7 @@ const OneWinnerMeleeScreen = ({game, myId, onAnswer}: OneWinnerMeleeScreenProps)
     if (!question || !current) {
         return (
             <View className="flex-1 items-center justify-center">
-                <Text className="solo-hero-subtitle text-plateau-paper/60">En attente des autres joueurs…</Text>
+                <Text className="one-winner-hero-subtitle">En attente des autres joueurs…</Text>
             </View>
         );
     }
@@ -113,7 +113,7 @@ const OneWinnerMeleeScreen = ({game, myId, onAnswer}: OneWinnerMeleeScreenProps)
                 </View>
             )}
 
-            {answered && <Text className="solo-hero-subtitle text-center text-plateau-paper/60">En attente des autres joueurs…</Text>}
+            {answered && <Text className="one-winner-hero-subtitle text-center">En attente des autres joueurs…</Text>}
         </View>
     );
 };

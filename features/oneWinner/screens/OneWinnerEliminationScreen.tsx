@@ -16,7 +16,7 @@ const OneWinnerEliminationScreen = ({game}: OneWinnerEliminationScreenProps) => 
     return (
         <View className="flex-1 gap-4">
             <Text className="text-eyebrow text-center text-plateau-rose">Élimination</Text>
-            <Text className="solo-hero-title text-center text-plateau-paper">
+            <Text className="one-winner-hero-title text-center">
                 {eliminatedIds.size > 1 ? "Ils quittent l'aventure" : "Il quitte l'aventure"}
             </Text>
 

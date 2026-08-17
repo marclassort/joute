@@ -14,7 +14,7 @@ const OneWinnerIntroStageScreen = ({game}: OneWinnerIntroStageScreenProps) => {
     return (
         <View className="flex-1 items-center justify-center gap-6 px-2">
             <Text className="text-eyebrow text-plateau-paper/50">{remaining} joueurs en lice</Text>
-            <Text className="solo-hero-title text-center text-plateau-paper">{round.title}</Text>
+            <Text className="one-winner-hero-title text-center">{round.title}</Text>
 
             <View className="w-full gap-2">
                 {round.chips.map((chip) => (

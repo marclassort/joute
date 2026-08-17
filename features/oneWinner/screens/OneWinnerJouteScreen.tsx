@@ -41,7 +41,7 @@ const OneWinnerJouteScreen = ({game, myId, onAnswer, onFiletAnswer}: OneWinnerJo
     if (!riddle || !current) {
         return (
             <View className="flex-1 items-center justify-center">
-                <Text className="solo-hero-subtitle text-center text-plateau-paper/60">En attente de la manche…</Text>
+                <Text className="one-winner-hero-subtitle text-center">En attente de la manche…</Text>
             </View>
         );
     }
