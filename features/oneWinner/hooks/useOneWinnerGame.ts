@@ -2,38 +2,37 @@ import {useCallback, useEffect, useRef, useState} from "react";
 import {useAuth} from "@clerk/expo";
 import type Ably from "ably";
 import {
-    advanceOneWinnerStage,
-    eliminateOneWinnerStage,
-    endOneWinnerEpreuve,
+    advanceOneWinnerGame,
+    chooseChargeTheme as chooseChargeThemeRequest,
     fetchOneWinnerGame,
     joinOneWinnerGame,
-    OneWinnerAnswerSummary,
     OneWinnerAuth,
     OneWinnerGameSummary,
-    recordOneWinnerBuzz,
     setOneWinnerConnection,
-    startOneWinnerEpreuve,
     startOneWinnerGame,
-    SubmitOneWinnerAnswerInput,
-    submitOneWinnerAnswer as submitOneWinnerAnswerRequest,
+    startOneWinnerRound,
+    submitChargeAnswer as submitChargeAnswerRequest,
+    submitJouteAnswer as submitJouteAnswerRequest,
+    submitMeleeAnswer as submitMeleeAnswerRequest,
+    SubmitChargeAnswerInput,
+    SubmitJouteAnswerInput,
+    SubmitMeleeAnswerInput,
 } from "@/lib/oneWinnerApi";
 import {createOneWinnerAblyClient, oneWinnerChannelName} from "@/lib/oneWinnerAbly";
-import {ALL_QUESTIONS} from "@/data/questions";
-import {nextEpreuveKind, pickEpreuveQuestions} from "@/game/oneWinnerQuestionPicker";
 import {useCurrentPlayer} from "@/features/joute/hooks/useCurrentPlayer";
 
-export const ONE_WINNER_MIN_PLAYERS = 4;
-export const ONE_WINNER_MAX_PLAYERS = 6;
+export const ONE_WINNER_PLAYERS = 4;
 
 const REALTIME_EVENTS = [
     "player-joined",
     "match-started",
-    "epreuve-started",
-    "epreuve-ended",
-    "buzz",
-    "answer",
-    "elimination",
-    "stage-advanced",
+    "round-started",
+    "melee-answer",
+    "charge-theme-chosen",
+    "charge-answer",
+    "joute-answer",
+    "match-completed",
+    "advanced",
     "player-forfeited",
     "connection-changed",
 ];
@@ -52,12 +51,14 @@ export interface UseOneWinnerGame {
     canStart: boolean;
     isStarting: boolean;
     start: () => Promise<void>;
-    startNextEpreuve: () => Promise<void>;
-    endEpreuve: () => Promise<void>;
-    eliminate: () => Promise<void>;
+    /** Démarre la manche courante — questionIds requis pour la Mêlée/la Joute, absent pour la Charge. */
+    startRound: (questionIds?: string[]) => Promise<void>;
+    /** Fait avancer la partie d'un cran depuis là où elle en est (voir POST .../advance côté backend). */
     advance: () => Promise<void>;
-    buzz: (questionId: string) => Promise<void>;
-    answer: (input: SubmitOneWinnerAnswerInput) => Promise<OneWinnerAnswerSummary>;
+    answerMelee: (input: SubmitMeleeAnswerInput) => Promise<{isCorrect: boolean; pointsAwarded: number}>;
+    chooseChargeTheme: (theme: string) => Promise<void>;
+    answerCharge: (input: SubmitChargeAnswerInput) => Promise<{isCorrect: boolean; pointsAwarded: number}>;
+    answerJoute: (input: SubmitJouteAnswerInput) => Promise<{isCorrect: boolean; pointsAwarded: number}>;
 }
 
 /** Rejoint la partie (idempotent) puis maintient son état à jour en direct via Ably jusqu'à la fin.
@@ -71,9 +72,6 @@ export function useOneWinnerGame(gameId: string): UseOneWinnerGame {
     const [error, setError] = useState<string | null>(null);
     const [isStarting, setIsStarting] = useState(false);
     const authRef = useRef<OneWinnerAuth | null>(null);
-    // Questions déjà utilisées dans CETTE partie, côté hôte uniquement — évite les répétitions tant que
-    // l'appareil hôte reste monté ; pas de suivi côté serveur pour cette version.
-    const usedQuestionIdsRef = useRef<Set<string>>(new Set());
 
     const getFreshAuth = useCallback(async (): Promise<OneWinnerAuth> => {
         if (player.isGuest) {
@@ -169,7 +167,7 @@ export function useOneWinnerGame(gameId: string): UseOneWinnerGame {
     }, [gameId, player.isReady]);
 
     const isHost = !!player.id && game?.players[0]?.id === player.id;
-    const canStart = isHost && game?.phase === "lobby" && (game?.players.length ?? 0) >= ONE_WINNER_MIN_PLAYERS;
+    const canStart = isHost && game?.phase === "lobby" && game?.players.length === ONE_WINNER_PLAYERS;
 
     const start = useCallback(async () => {
         const auth = await getFreshAuth();
@@ -182,50 +180,54 @@ export function useOneWinnerGame(gameId: string): UseOneWinnerGame {
         }
     }, [getFreshAuth, gameId, refresh]);
 
-    const startNextEpreuve = useCallback(async () => {
-        if (!game) return;
-        const kind = nextEpreuveKind(game.stageId, game.epreuvesPlayedInStage);
-        if (!kind) return;
-
-        const questionIds = pickEpreuveQuestions(ALL_QUESTIONS, kind, [...usedQuestionIdsRef.current]);
-        questionIds.forEach((id) => usedQuestionIdsRef.current.add(id));
-
-        const auth = await getFreshAuth();
-        await startOneWinnerEpreuve(auth, gameId, questionIds);
-        await refresh();
-    }, [game, getFreshAuth, gameId, refresh]);
-
-    const endEpreuve = useCallback(async () => {
-        const auth = await getFreshAuth();
-        await endOneWinnerEpreuve(auth, gameId);
-        await refresh();
-    }, [getFreshAuth, gameId, refresh]);
-
-    const eliminate = useCallback(async () => {
-        const auth = await getFreshAuth();
-        await eliminateOneWinnerStage(auth, gameId);
-        await refresh();
-    }, [getFreshAuth, gameId, refresh]);
-
-    const advance = useCallback(async () => {
-        const auth = await getFreshAuth();
-        await advanceOneWinnerStage(auth, gameId);
-        await refresh();
-    }, [getFreshAuth, gameId, refresh]);
-
-    const buzz = useCallback(
-        async (questionId: string) => {
+    const startRound = useCallback(
+        async (questionIds?: string[]) => {
             const auth = await getFreshAuth();
-            await recordOneWinnerBuzz(auth, gameId, questionId);
+            await startOneWinnerRound(auth, gameId, questionIds);
             await refresh();
         },
         [getFreshAuth, gameId, refresh],
     );
 
-    const answer = useCallback(
-        async (input: SubmitOneWinnerAnswerInput) => {
+    const advance = useCallback(async () => {
+        const auth = await getFreshAuth();
+        await advanceOneWinnerGame(auth, gameId);
+        await refresh();
+    }, [getFreshAuth, gameId, refresh]);
+
+    const answerMelee = useCallback(
+        async (input: SubmitMeleeAnswerInput) => {
             const auth = await getFreshAuth();
-            const result = await submitOneWinnerAnswerRequest(auth, gameId, input);
+            const result = await submitMeleeAnswerRequest(auth, gameId, input);
+            await refresh();
+            return result;
+        },
+        [getFreshAuth, gameId, refresh],
+    );
+
+    const chooseChargeTheme = useCallback(
+        async (theme: string) => {
+            const auth = await getFreshAuth();
+            await chooseChargeThemeRequest(auth, gameId, theme);
+            await refresh();
+        },
+        [getFreshAuth, gameId, refresh],
+    );
+
+    const answerCharge = useCallback(
+        async (input: SubmitChargeAnswerInput) => {
+            const auth = await getFreshAuth();
+            const result = await submitChargeAnswerRequest(auth, gameId, input);
+            await refresh();
+            return result;
+        },
+        [getFreshAuth, gameId, refresh],
+    );
+
+    const answerJoute = useCallback(
+        async (input: SubmitJouteAnswerInput) => {
+            const auth = await getFreshAuth();
+            const result = await submitJouteAnswerRequest(auth, gameId, input);
             await refresh();
             return result;
         },
@@ -241,11 +243,11 @@ export function useOneWinnerGame(gameId: string): UseOneWinnerGame {
         canStart: !!canStart,
         isStarting,
         start,
-        startNextEpreuve,
-        endEpreuve,
-        eliminate,
+        startRound,
         advance,
-        buzz,
-        answer,
+        answerMelee,
+        chooseChargeTheme,
+        answerCharge,
+        answerJoute,
     };
 }

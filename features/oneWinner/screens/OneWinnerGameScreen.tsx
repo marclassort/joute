@@ -8,12 +8,17 @@ import {useOneWinnerGame} from "../hooks/useOneWinnerGame";
 import {useDevGhostAutoplay} from "../hooks/useDevGhostAutoplay";
 import OneWinnerWaitingRoomScreen from "./OneWinnerWaitingRoomScreen";
 import OneWinnerIntroStageScreen from "./OneWinnerIntroStageScreen";
-import OneWinnerDefiScreen from "./OneWinnerDefiScreen";
-import OneWinnerBuzzerScreen from "./OneWinnerBuzzerScreen";
-import OneWinnerConqueteScreen from "./OneWinnerConqueteScreen";
+import OneWinnerMeleeScreen from "./OneWinnerMeleeScreen";
+import OneWinnerChargeThemeScreen from "./OneWinnerChargeThemeScreen";
+import OneWinnerChargeScreen from "./OneWinnerChargeScreen";
+import OneWinnerJouteScreen from "./OneWinnerJouteScreen";
 import OneWinnerClassementScreen from "./OneWinnerClassementScreen";
 import OneWinnerEliminationScreen from "./OneWinnerEliminationScreen";
 import OneWinnerVictoryScreen from "./OneWinnerVictoryScreen";
+import {ALL_QUESTIONS} from "@/data/questions";
+import {ALL_RIDDLES} from "@/data/riddles";
+import {pickJouteQuestions, pickMeleeQuestions} from "@/game/oneWinnerQuestionPicker";
+import {CHARGE_TIME_LIMIT_MS, JOUTE_QUESTION_TIME_MS, MELEE_TIME_LIMIT_MS} from "@/game/oneWinnerConfig";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -24,84 +29,102 @@ export interface OneWinnerGameScreenProps {
 const INTRO_DELAY_MS = 2600;
 const CLASSEMENT_DELAY_MS = 3200;
 const ELIMINATION_DELAY_MS = 3200;
-// Filet de sécurité si tous les joueurs actifs ne terminent jamais l'épreuve (déconnexion, blocage) :
-// l'hôte force la fin plutôt que de bloquer la partie indéfiniment.
-const EPREUVE_END_SAFETY_MS = 45_000;
+// Marge après une échéance serveur (openedAt/startedAt + délai) avant que l'hôte force l'avancée — le
+// temps que la dernière réponse d'un joueur arrive et soit prise en compte côté serveur.
+const ADVANCE_BUFFER_MS = 300;
 
 const OneWinnerGameScreen = ({gameId}: OneWinnerGameScreenProps) => {
     const router = useRouter();
-    const {game, isLoading, error, myId, isHost, canStart, isStarting, start, startNextEpreuve, endEpreuve, eliminate, advance, buzz, answer} =
+    const {game, isLoading, error, myId, isHost, canStart, isStarting, start, startRound, advance, answerMelee, chooseChargeTheme, answerCharge, answerJoute} =
         useOneWinnerGame(gameId);
     const {spawnGhosts} = useDevGhostAutoplay(gameId, game);
 
     const inFlightRef = useRef(false);
+    const usedMeleeIdsRef = useRef<Set<string>>(new Set());
+    const usedJouteIdsRef = useRef<Set<string>>(new Set());
 
-    // Hôte : fait avancer la partie automatiquement d'une phase à l'autre (intro -> épreuves -> classement -> élimination -> étape suivante).
+    // Hôte : lance la manche courante après une courte intro, puis l'avance/la conclut selon des
+    // échéances fixées côté SERVEUR (openedAt/startedAt), jamais un délai client arbitraire — pour
+    // rester fidèle aux temps impartis (10 s Mêlée, 60 s Charge, 20 s Joute).
     useEffect(() => {
         if (!isHost || !game || inFlightRef.current) return undefined;
 
+        const runOnce = (action: () => Promise<void>) => {
+            inFlightRef.current = true;
+            action().finally(() => {
+                inFlightRef.current = false;
+            });
+        };
+
         if (game.phase === "intro") {
             const timeout = setTimeout(() => {
-                inFlightRef.current = true;
-                startNextEpreuve().finally(() => {
-                    inFlightRef.current = false;
-                });
+                if (game.roundId === "melee") {
+                    const ids = pickMeleeQuestions(ALL_QUESTIONS, [...usedMeleeIdsRef.current]);
+                    ids.forEach((id) => usedMeleeIdsRef.current.add(id));
+                    runOnce(() => startRound(ids));
+                } else if (game.roundId === "charge") {
+                    runOnce(() => startRound());
+                } else {
+                    const ids = pickJouteQuestions(ALL_RIDDLES, [...usedJouteIdsRef.current]);
+                    ids.forEach((id) => usedJouteIdsRef.current.add(id));
+                    runOnce(() => startRound(ids));
+                }
             }, INTRO_DELAY_MS);
             return () => clearTimeout(timeout);
         }
 
-        if (game.phase === "epreuve" && !game.currentEpreuve) {
-            inFlightRef.current = true;
-            startNextEpreuve().finally(() => {
-                inFlightRef.current = false;
-            });
+        if (game.phase === "melee" && game.currentRound) {
+            const current = game.currentRound.openedQuestions[game.currentRound.openedQuestions.length - 1];
+            if (!current) return undefined;
+            const activeIds = game.players.filter((player) => !player.isEliminated).map((player) => player.id);
+            const answeredIds = new Set(game.currentRound.answers.filter((answer) => answer.questionId === current.questionId).map((answer) => answer.playerId));
+            if (activeIds.every((id) => answeredIds.has(id))) {
+                runOnce(() => advance());
+                return undefined;
+            }
+            const timeout = setTimeout(() => runOnce(() => advance()), Math.max(0, current.openedAt + MELEE_TIME_LIMIT_MS - Date.now()) + ADVANCE_BUFFER_MS);
+            return () => clearTimeout(timeout);
+        }
+
+        if (game.phase === "charge-theme") {
+            const activePlayers = game.players.filter((player) => !player.isEliminated);
+            if (activePlayers.every((player) => player.chargeTheme !== null)) {
+                runOnce(() => advance());
+            }
             return undefined;
         }
 
+        if (game.phase === "charge" && game.currentRound) {
+            const deadline = game.currentRound.startedAt + CHARGE_TIME_LIMIT_MS;
+            const timeout = setTimeout(() => runOnce(() => advance()), Math.max(0, deadline - Date.now()) + ADVANCE_BUFFER_MS);
+            return () => clearTimeout(timeout);
+        }
+
+        if (game.phase === "joute" && game.currentRound) {
+            const current = game.currentRound.openedQuestions[game.currentRound.openedQuestions.length - 1];
+            if (!current) return undefined;
+            const alreadyResolved = game.currentRound.answers.some((answer) => answer.questionId === current.questionId && answer.isCorrect);
+            if (alreadyResolved) return undefined;
+            const timeout = setTimeout(
+                () => runOnce(() => advance()),
+                Math.max(0, current.openedAt + JOUTE_QUESTION_TIME_MS - Date.now()) + ADVANCE_BUFFER_MS,
+            );
+            return () => clearTimeout(timeout);
+        }
+
         if (game.phase === "classement") {
-            const timeout = setTimeout(() => {
-                inFlightRef.current = true;
-                eliminate().finally(() => {
-                    inFlightRef.current = false;
-                });
-            }, CLASSEMENT_DELAY_MS);
+            const timeout = setTimeout(() => runOnce(() => advance()), CLASSEMENT_DELAY_MS);
             return () => clearTimeout(timeout);
         }
 
         if (game.phase === "elimination") {
-            const timeout = setTimeout(() => {
-                inFlightRef.current = true;
-                advance().finally(() => {
-                    inFlightRef.current = false;
-                });
-            }, ELIMINATION_DELAY_MS);
+            const timeout = setTimeout(() => runOnce(() => advance()), ELIMINATION_DELAY_MS);
             return () => clearTimeout(timeout);
         }
 
         return undefined;
-    }, [isHost, game, startNextEpreuve, eliminate, advance]);
-
-    // Hôte : termine l'épreuve dès que tous les joueurs actifs ont fini, sinon après le filet de sécurité.
-    useEffect(() => {
-        if (!isHost || !game || game.phase !== "epreuve" || !game.currentEpreuve) return undefined;
-
-        const epreuve = game.currentEpreuve;
-        const activePlayers = game.players.filter((player) => !player.isEliminated);
-        const isComplete =
-            epreuve.kind === "buzzer"
-                ? epreuve.questionIds.every((id) => epreuve.answers.some((answerEntry) => answerEntry.questionId === id && answerEntry.isCorrect))
-                : activePlayers.every(
-                      (player) => epreuve.answers.filter((answerEntry) => answerEntry.playerId === player.id).length >= epreuve.questionIds.length,
-                  );
-
-        if (isComplete) {
-            endEpreuve();
-            return undefined;
-        }
-
-        const timeout = setTimeout(() => endEpreuve(), EPREUVE_END_SAFETY_MS);
-        return () => clearTimeout(timeout);
-    }, [isHost, game, endEpreuve]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isHost, game]);
 
     if (isLoading) {
         return (
@@ -125,6 +148,8 @@ const OneWinnerGameScreen = ({gameId}: OneWinnerGameScreenProps) => {
             </SafeAreaView>
         );
     }
+
+    const currentQuestionId = game.currentRound?.openedQuestions[game.currentRound.openedQuestions.length - 1]?.questionId ?? null;
 
     return (
         <SafeAreaView className="flex-1 bg-plateau-ink p-5">
@@ -150,22 +175,19 @@ const OneWinnerGameScreen = ({gameId}: OneWinnerGameScreenProps) => {
                 />
             )}
 
-            {(game.phase === "intro" || (game.phase === "epreuve" && !game.currentEpreuve)) && <OneWinnerIntroStageScreen game={game} />}
+            {game.phase === "intro" && <OneWinnerIntroStageScreen game={game} />}
 
-            {game.phase === "epreuve" && game.currentEpreuve?.kind === "defi" && (
-                <OneWinnerDefiScreen
+            {game.phase === "melee" && <OneWinnerMeleeScreen game={game} myId={myId} onAnswer={answerMelee} />}
+            {game.phase === "charge-theme" && <OneWinnerChargeThemeScreen game={game} myId={myId} onChooseTheme={chooseChargeTheme} />}
+            {game.phase === "charge" && <OneWinnerChargeScreen game={game} myId={myId} onAnswer={answerCharge} />}
+            {game.phase === "joute" && currentQuestionId && (
+                <OneWinnerJouteScreen
                     game={game}
                     myId={myId}
-                    onAnswer={(input) => {
-                        answer(input).catch(() => {});
-                    }}
-                    onClose={() => goBackOrHome(router)}
+                    onAnswer={(submittedText) => answerJoute({riddleId: currentQuestionId, submittedText})}
+                    onFiletAnswer={(selectedIndex) => answerJoute({riddleId: currentQuestionId, selectedIndex})}
                 />
             )}
-            {game.phase === "epreuve" && game.currentEpreuve?.kind === "buzzer" && (
-                <OneWinnerBuzzerScreen game={game} myId={myId} onBuzz={buzz} onAnswer={answer} />
-            )}
-            {game.phase === "epreuve" && game.currentEpreuve?.kind === "conquete" && <OneWinnerConqueteScreen game={game} myId={myId} onAnswer={answer} />}
 
             {game.phase === "classement" && <OneWinnerClassementScreen game={game} />}
             {game.phase === "elimination" && <OneWinnerEliminationScreen game={game} />}

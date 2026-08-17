@@ -1,17 +1,25 @@
-import {EpreuveKind, OneWinnerStageId} from "@/game/oneWinnerTypes";
+import {OneWinnerRoundId} from "@/game/oneWinnerTypes";
 import {LeagueTier} from "@/game/oneWinnerRankingTypes";
 
-export const EPREUVE_LABELS: Record<EpreuveKind, {label: string; icon: string; instructions: string}> = {
-    defi: {label: "Le Défi", icon: "⚡", instructions: "Tout le monde répond en même temps — plus vite, plus de points."},
-    buzzer: {label: "Le Buzzer", icon: "🔔", instructions: "Premier à buzzer, premier à répondre — une erreur passe la main."},
-    conquete: {label: "La Conquête", icon: "🎲", instructions: "Misez une partie de votre score avant de répondre."},
+export const ROUND_LABELS: Record<OneWinnerRoundId, {title: string; players: string; chips: string[]}> = {
+    melee: {
+        title: "La Mêlée",
+        players: "4 joueurs",
+        chips: ["10 s par question", "100 · 70 · 40 · 20 selon la vitesse", "Le dernier cumulé sort"],
+    },
+    charge: {
+        title: "La Charge",
+        players: "3 joueurs",
+        chips: ["60 s en parallèle", "50 pts × multiplicateur", "Erreur ou passe : retour à ×1"],
+    },
+    joute: {
+        title: "La Joute",
+        players: "2 joueurs",
+        chips: ["50 → 10 pts en 20 s", "Filet QCM dès 30 pts", "Premier à 200 gagne"],
+    },
 };
 
-export const STAGE_TITLES: Record<OneWinnerStageId, string> = {
-    main: "Étape principale",
-    semifinal: "Demi-finale",
-    final: "Finale",
-};
+export const ROUND_ORDER: readonly OneWinnerRoundId[] = ["melee", "charge", "joute"];
 
 export const LEAGUE_TIER_LABELS: Record<LeagueTier, string> = {
     initie: "Initié",
