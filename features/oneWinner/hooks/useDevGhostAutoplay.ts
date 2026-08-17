@@ -1,19 +1,27 @@
 import {useCallback, useEffect, useRef} from "react";
-import {joinOneWinnerGame, OneWinnerGameSummary, recordOneWinnerBuzz, submitOneWinnerAnswer} from "@/lib/oneWinnerApi";
+import {
+    chooseChargeTheme,
+    joinOneWinnerGame,
+    OneWinnerGameSummary,
+    submitChargeAnswer,
+    submitJouteAnswer,
+    submitMeleeAnswer,
+} from "@/lib/oneWinnerApi";
 import {createGhostGuest, GhostGuest} from "@/lib/devGhostGuests";
+import {ALL_QUESTIONS} from "@/data/questions";
+import {ALL_OPEN_QUESTIONS, OPEN_QUESTION_THEMES} from "@/data/openQuestions";
+import {ALL_RIDDLES} from "@/data/riddles";
+import {pickNextChargeQuestion} from "@/game/oneWinnerQuestionPicker";
+import {JOUTE_FILET_THRESHOLD, jouteValueForElapsed} from "@/game/oneWinnerConfig";
 
 const MIN_DELAY_MS = 900;
 const MAX_DELAY_MS = 3200;
-// Un fantôme ne se rue pas systématiquement sur le buzz : ça garde la course réaliste plutôt qu'un
-// verrouillage instantané et permet aussi de voir l'état "personne n'a encore buzzé" à l'écran.
-const BUZZ_ATTEMPT_CHANCE = 0.7;
+// Un fantôme trouve parfois la bonne réponse, parfois non — course réaliste plutôt qu'un groupe qui
+// répond toujours juste ou toujours faux.
+const CORRECT_CHANCE = 0.45;
 
 function randomDelay(): number {
     return MIN_DELAY_MS + Math.random() * (MAX_DELAY_MS - MIN_DELAY_MS);
-}
-
-function randomChoiceIndex(): number {
-    return Math.floor(Math.random() * 4);
 }
 
 function scheduleOnce(scheduled: Set<string>, key: string, action: () => void): void {
@@ -24,16 +32,13 @@ function scheduleOnce(scheduled: Set<string>, key: string, action: () => void): 
 
 /**
  * Fait jouer automatiquement des invités fantômes (dev uniquement, voir lib/devGhostGuests.ts) : ils
- * rejoignent la partie comme de vrais invités, puis buzzent/répondent tout seuls avec un délai
- * aléatoire dès qu'une épreuve s'ouvre, pour qu'un développeur seul puisse observer l'UI/UX complète
- * (course au buzz, classement, élimination...) sans piloter plusieurs appareils.
- *
- * Ne fait rien hors développement (__DEV__ false) : spawnGhosts est un no-op en production.
+ * rejoignent la partie comme de vrais invités, choisissent un thème pour la Charge, puis
+ * buzzent/répondent tout seuls avec un délai aléatoire à chaque manche, pour qu'un développeur seul
+ * puisse observer l'UI/UX complète (Mêlée, Charge, Joute, élimination, victoire) sans piloter plusieurs
+ * appareils. Ne fait rien hors développement (__DEV__ false) : spawnGhosts est un no-op en production.
  */
 export function useDevGhostAutoplay(gameId: string, game: OneWinnerGameSummary | null) {
     const ghostsRef = useRef<GhostGuest[]>([]);
-    // Clé "action:questionId:guestId" déjà planifiée, pour ne pas programmer deux fois le même setTimeout
-    // à chaque rafraîchissement de `game` tant que l'action n'a pas encore été confirmée par le serveur.
     const scheduledRef = useRef<Set<string>>(new Set());
 
     const spawnGhosts = useCallback(
@@ -47,54 +52,69 @@ export function useDevGhostAutoplay(gameId: string, game: OneWinnerGameSummary |
     );
 
     useEffect(() => {
-        if (!__DEV__ || !game?.currentEpreuve || ghostsRef.current.length === 0) return;
-        const epreuve = game.currentEpreuve;
+        if (!__DEV__ || !game || ghostsRef.current.length === 0) return;
 
         for (const ghost of ghostsRef.current) {
             const ghostId = ghost.auth.guestId;
             const playerEntry = game.players.find((player) => player.id === ghostId);
             if (!playerEntry || playerEntry.isEliminated) continue;
 
-            if (epreuve.kind === "buzzer") {
-                const resolvedIds = new Set(epreuve.answers.filter((answer) => answer.isCorrect).map((answer) => answer.questionId));
-                const currentQuestionId = epreuve.questionIds.find((id) => !resolvedIds.has(id));
-                if (!currentQuestionId) continue;
-
-                if (epreuve.buzzHolder === ghostId) {
-                    scheduleOnce(scheduledRef.current, `answer:${currentQuestionId}:${ghostId}`, () => {
-                        submitOneWinnerAnswer(ghost.auth, gameId, {
-                            questionId: currentQuestionId,
-                            selectedIndex: randomChoiceIndex(),
-                            elapsedMs: Math.round(randomDelay()),
-                        }).catch(() => {});
-                    });
-                } else if (!epreuve.buzzHolder) {
-                    const alreadyWrong = epreuve.answers.some(
-                        (answer) => answer.playerId === ghostId && answer.questionId === currentQuestionId && !answer.isCorrect,
-                    );
-                    if (alreadyWrong) continue;
-                    scheduleOnce(scheduledRef.current, `buzz:${currentQuestionId}:${ghostId}`, () => {
-                        if (Math.random() > BUZZ_ATTEMPT_CHANCE) return;
-                        recordOneWinnerBuzz(ghost.auth, gameId, currentQuestionId).catch(() => {});
-                    });
-                }
+            if (game.phase === "melee" && game.currentRound) {
+                const current = game.currentRound.openedQuestions[game.currentRound.openedQuestions.length - 1];
+                if (!current) continue;
+                const alreadyAnswered = game.currentRound.answers.some((answer) => answer.playerId === ghostId && answer.questionId === current.questionId);
+                if (alreadyAnswered) continue;
+                const question = ALL_QUESTIONS.find((entry) => entry.id === current.questionId);
+                if (!question) continue;
+                scheduleOnce(scheduledRef.current, `melee:${current.questionId}:${ghostId}`, () => {
+                    const selectedIndex = Math.random() < CORRECT_CHANCE ? question.correctIndex : Math.floor(Math.random() * 4);
+                    submitMeleeAnswer(ghost.auth, gameId, {questionId: question.id, selectedIndex, elapsedMs: Math.round(randomDelay())}).catch(() => {});
+                });
                 continue;
             }
 
-            // Défi / Conquête : pas de course au buzz, chaque fantôme répond à son rythme à chaque question.
-            const myScore = game.liveStandings.find((standing) => standing.playerId === ghostId)?.score ?? 0;
-            for (const questionId of epreuve.questionIds) {
-                const alreadyAnswered = epreuve.answers.some((answer) => answer.playerId === ghostId && answer.questionId === questionId);
-                if (alreadyAnswered) continue;
+            if (game.phase === "charge-theme") {
+                if (playerEntry.chargeTheme) continue;
+                scheduleOnce(scheduledRef.current, `charge-theme:${ghostId}`, () => {
+                    const theme = OPEN_QUESTION_THEMES[Math.floor(Math.random() * OPEN_QUESTION_THEMES.length)];
+                    chooseChargeTheme(ghost.auth, gameId, theme).catch(() => {});
+                });
+                continue;
+            }
 
-                scheduleOnce(scheduledRef.current, `answer:${questionId}:${ghostId}`, () => {
-                    const wager = epreuve.kind === "conquete" ? Math.max(10, Math.round(myScore * (0.1 + Math.random() * 0.4))) : undefined;
-                    submitOneWinnerAnswer(ghost.auth, gameId, {
-                        questionId,
-                        selectedIndex: randomChoiceIndex(),
-                        elapsedMs: Math.round(randomDelay()),
-                        wager,
-                    }).catch(() => {});
+            if (game.phase === "charge" && game.currentRound && playerEntry.chargeTheme) {
+                const answeredIds = game.currentRound.answers.filter((answer) => answer.playerId === ghostId).map((answer) => answer.questionId);
+                const question = pickNextChargeQuestion(ALL_OPEN_QUESTIONS, playerEntry.chargeTheme, answeredIds);
+                if (!question) continue;
+                scheduleOnce(scheduledRef.current, `charge:${question.id}:${ghostId}`, () => {
+                    const submittedText = Math.random() < CORRECT_CHANCE ? question.answer : "je ne sais pas";
+                    submitChargeAnswer(ghost.auth, gameId, {questionId: question.id, submittedText, elapsedMs: Math.round(randomDelay())}).catch(() => {});
+                });
+                continue;
+            }
+
+            if (game.phase === "joute" && game.currentRound) {
+                const current = game.currentRound.openedQuestions[game.currentRound.openedQuestions.length - 1];
+                if (!current) continue;
+                const riddle = ALL_RIDDLES.find((entry) => entry.id === current.questionId);
+                if (!riddle) continue;
+                const lastWrong = [...game.currentRound.answers]
+                    .reverse()
+                    .find((answer) => answer.playerId === ghostId && answer.questionId === current.questionId && !answer.isCorrect && !answer.usedFilet);
+                // Pas d'horodatage exposé côté client pour la dernière tentative — un fantôme respecte le
+                // même délai de blocage en se contentant simplement de ne pas retenter dans les 3 secondes
+                // qui suivent sa propre programmation précédente (voir la clé incluant un compteur ci-dessous).
+                if (lastWrong) continue;
+                const value = jouteValueForElapsed(Date.now() - current.openedAt);
+                const attempt = game.currentRound.answers.filter((answer) => answer.playerId === ghostId && answer.questionId === current.questionId).length;
+                scheduleOnce(scheduledRef.current, `joute:${current.questionId}:${ghostId}:${attempt}`, () => {
+                    if (value > 0 && value <= JOUTE_FILET_THRESHOLD && Math.random() < 0.5) {
+                        const selectedIndex = Math.random() < CORRECT_CHANCE ? riddle.correctIndex : Math.floor(Math.random() * 4);
+                        submitJouteAnswer(ghost.auth, gameId, {riddleId: riddle.id, selectedIndex}).catch(() => {});
+                        return;
+                    }
+                    const submittedText = Math.random() < CORRECT_CHANCE ? riddle.answer : "aucune idee";
+                    submitJouteAnswer(ghost.auth, gameId, {riddleId: riddle.id, submittedText}).catch(() => {});
                 });
             }
         }

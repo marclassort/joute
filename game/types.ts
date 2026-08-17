@@ -79,7 +79,7 @@ export interface Match {
 export interface Question {
     id: string;
     category: Category;
-    difficulty: 1 | 2 | 3;
+    difficulty: 1 | 2 | 3 | 4 | 5;
     statement: string;
     choices: [string, string, string, string];
     correctIndex: number;
@@ -116,6 +116,30 @@ export interface PlateauMatch {
     createdAt: number;
     updatedAt: number;
     expiresAt: number;
+}
+
+/** Question à réponse libre (clavier) — La Charge, voir game/textMatch.ts pour la comparaison tolérante aux fautes. */
+export interface OpenQuestion {
+    id: string;
+    theme: string;
+    statement: string;
+    answer: string;
+    /** Autres formulations acceptées en plus de `answer` (ex. synonymes), comparées avec la même tolérance. */
+    acceptableAnswers?: string[];
+}
+
+/**
+ * Énigme à indices progressifs — La Joute. Porte à la fois une réponse libre (mode principal, au
+ * clavier) et un QCM (le "filet" de secours, activable en dessous d'un certain seuil de points) : les
+ * deux doivent désigner la même réponse.
+ */
+export interface RiddleQuestion {
+    id: string;
+    /** Indices révélés un par un, du plus vague au plus précis. */
+    clues: [string, string, string, string];
+    answer: string;
+    choices: [string, string, string, string];
+    correctIndex: number;
 }
 
 export type GhostLevel = "débutant" | "intermédiaire" | "expert";

@@ -5,7 +5,7 @@ import clsx from "clsx";
 import ShadowCard from "@/components/ShadowCard";
 import PressableScale from "@/components/PressableScale";
 import {buildOneWinnerLink, OneWinnerGameSummary} from "@/lib/oneWinnerApi";
-import {ONE_WINNER_MAX_PLAYERS, ONE_WINNER_MIN_PLAYERS} from "../hooks/useOneWinnerGame";
+import {ONE_WINNER_PLAYERS} from "../hooks/useOneWinnerGame";
 
 export interface OneWinnerWaitingRoomScreenProps {
     gameId: string;
@@ -30,8 +30,8 @@ const OneWinnerWaitingRoomScreen = ({gameId, game, isHost, canStart, isStarting,
         }
     };
 
-    const emptySlots = Math.max(0, ONE_WINNER_MIN_PLAYERS - game.players.length);
-    const ghostSlotsAvailable = Math.max(0, ONE_WINNER_MAX_PLAYERS - game.players.length);
+    const emptySlots = Math.max(0, ONE_WINNER_PLAYERS - game.players.length);
+    const ghostSlotsAvailable = emptySlots;
 
     const handleSpawnGhosts = async () => {
         if (!onSpawnGhosts || ghostSlotsAvailable === 0) return;
@@ -49,11 +49,11 @@ const OneWinnerWaitingRoomScreen = ({gameId, game, isHost, canStart, isStarting,
                 <Text className="solo-hero-title text-plateau-paper">En attente…</Text>
                 <View className="one-winner-count-pill">
                     <Text className="one-winner-count-pill-text">
-                        {game.players.length}/{ONE_WINNER_MAX_PLAYERS}
+                        {game.players.length}/{ONE_WINNER_PLAYERS}
                     </Text>
                 </View>
             </View>
-            <Text className="solo-hero-subtitle text-plateau-paper/60">{ONE_WINNER_MIN_PLAYERS} joueurs minimum pour démarrer.</Text>
+            <Text className="solo-hero-subtitle text-plateau-paper/60">{ONE_WINNER_PLAYERS} joueurs pour démarrer.</Text>
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="mt-5 gap-3 pb-6">
                 {game.players.map((player, index) => (

@@ -1,4 +1,4 @@
-import {EpreuveKind, OneWinnerPhase, OneWinnerStageId} from "@/game/oneWinnerTypes";
+import {OneWinnerPhase, OneWinnerRoundId} from "@/game/oneWinnerTypes";
 import {LeagueTier} from "@/game/oneWinnerRankingTypes";
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
@@ -10,6 +10,7 @@ export interface OneWinnerPlayerSummary {
     isEliminated: boolean;
     isConnected: boolean;
     finalRank: number | null;
+    chargeTheme: string | null;
 }
 
 export interface OneWinnerAnswerSummary {
@@ -17,6 +18,22 @@ export interface OneWinnerAnswerSummary {
     questionId: string;
     isCorrect: boolean;
     pointsAwarded: number;
+    usedFilet: boolean;
+    elapsedMs: number;
+}
+
+export interface OneWinnerOpenedQuestion {
+    questionId: string;
+    openedAt: number;
+}
+
+export interface OneWinnerRoundSummary {
+    id: OneWinnerRoundId;
+    questionIds: string[];
+    openedQuestions: OneWinnerOpenedQuestion[];
+    startedAt: number;
+    endedAt: number | null;
+    answers: OneWinnerAnswerSummary[];
 }
 
 export interface OneWinnerStanding {
@@ -26,7 +43,7 @@ export interface OneWinnerStanding {
 }
 
 export interface OneWinnerElimination {
-    stageId: OneWinnerStageId;
+    roundId: OneWinnerRoundId;
     standings: OneWinnerStanding[];
     eliminatedPlayerIds: string[];
     decidedAt: number;
@@ -45,19 +62,12 @@ export interface OneWinnerGameSummary {
     id: string;
     status: "active" | "completed" | "abandoned";
     phase: OneWinnerPhase;
-    stageId: OneWinnerStageId;
+    roundId: OneWinnerRoundId;
     winnerId: string | null;
-    epreuvesPlayedInStage: number;
-    stageEpreuveCount: number;
     players: OneWinnerPlayerSummary[];
-    currentEpreuve: {
-        kind: EpreuveKind;
-        questionIds: string[];
-        startedAt: number;
-        answers: OneWinnerAnswerSummary[];
-        buzzHolder: string | null;
-    } | null;
+    currentRound: OneWinnerRoundSummary | null;
     liveStandings: OneWinnerStanding[];
+    /** Non nul juste après une élimination (fin de la Mêlée ou de la Charge) — pas utilisé pour la Joute, qui termine la partie directement. */
     latestElimination: OneWinnerElimination | null;
     /** Non nul une fois la partie terminée : variation de Rating/palier de chaque joueur. */
     ratingChanges: OneWinnerRatingChange[] | null;
@@ -107,7 +117,7 @@ async function gameFetch<T>(auth: OneWinnerAuth, path: string, options: RequestI
     return body as T;
 }
 
-export async function createOneWinnerGame(auth: OneWinnerAuth): Promise<{id: string}> {
+export async function createOneWinnerGame(auth: OneWinnerAuth): Promise<{id: string; players: number}> {
     return gameFetch(auth, "/api/games", {method: "POST"});
 }
 
@@ -127,41 +137,53 @@ export async function fetchOneWinnerAblyToken(auth: OneWinnerAuth, gameId: strin
     return gameFetch(auth, `/api/games/${gameId}/token`);
 }
 
-export async function startOneWinnerEpreuve(auth: OneWinnerAuth, gameId: string, questionIds: string[]): Promise<{epreuveId: number; kind: EpreuveKind}> {
-    return gameFetch(auth, `/api/games/${gameId}/epreuve`, {method: "POST", body: JSON.stringify({questionIds})});
+/** Démarre la manche courante (match.roundId) — questionIds requis pour la Mêlée/la Joute (piochage
+ * côté hôte, voir game/oneWinnerQuestionPicker.ts), pas pour la Charge (ouvre juste le choix de thème). */
+export async function startOneWinnerRound(auth: OneWinnerAuth, gameId: string, questionIds?: string[]): Promise<{phase: string; roundId: OneWinnerRoundId}> {
+    return gameFetch(auth, `/api/games/${gameId}/start-round`, {method: "POST", body: JSON.stringify({questionIds})});
 }
 
-export async function endOneWinnerEpreuve(auth: OneWinnerAuth, gameId: string): Promise<{phase: string}> {
-    return gameFetch(auth, `/api/games/${gameId}/end-epreuve`, {method: "POST"});
+/** Fait avancer la partie d'un cran depuis là où elle en est — la transition exacte dépend de la phase courante côté serveur. */
+export async function advanceOneWinnerGame(
+    auth: OneWinnerAuth,
+    gameId: string,
+): Promise<{phase: string; roundId: OneWinnerRoundId; status: string; winnerId: string | null}> {
+    return gameFetch(auth, `/api/games/${gameId}/advance`, {method: "POST"});
 }
 
-export async function recordOneWinnerBuzz(auth: OneWinnerAuth, gameId: string, questionId: string): Promise<void> {
-    await gameFetch(auth, `/api/games/${gameId}/buzz`, {
-        method: "POST",
-        body: JSON.stringify({questionId, clientReportedAt: Date.now()}),
-    });
-}
-
-export interface SubmitOneWinnerAnswerInput {
+export interface SubmitMeleeAnswerInput {
     questionId: string;
     selectedIndex: number | null;
     elapsedMs: number;
-    wager?: number | null;
 }
 
-export async function submitOneWinnerAnswer(auth: OneWinnerAuth, gameId: string, input: SubmitOneWinnerAnswerInput): Promise<OneWinnerAnswerSummary> {
-    return gameFetch(auth, `/api/games/${gameId}/answer`, {method: "POST", body: JSON.stringify(input)});
+export async function submitMeleeAnswer(auth: OneWinnerAuth, gameId: string, input: SubmitMeleeAnswerInput): Promise<{isCorrect: boolean; pointsAwarded: number}> {
+    return gameFetch(auth, `/api/games/${gameId}/melee/answer`, {method: "POST", body: JSON.stringify(input)});
 }
 
-export async function eliminateOneWinnerStage(auth: OneWinnerAuth, gameId: string): Promise<OneWinnerElimination> {
-    return gameFetch(auth, `/api/games/${gameId}/eliminate`, {method: "POST"});
+export async function chooseChargeTheme(auth: OneWinnerAuth, gameId: string, theme: string): Promise<void> {
+    await gameFetch(auth, `/api/games/${gameId}/charge/theme`, {method: "POST", body: JSON.stringify({theme})});
 }
 
-export async function advanceOneWinnerStage(
+export interface SubmitChargeAnswerInput {
+    questionId: string;
+    /** null = passer (même effet qu'une erreur : série remise à zéro, aucune perte). */
+    submittedText: string | null;
+    elapsedMs: number;
+}
+
+export async function submitChargeAnswer(
     auth: OneWinnerAuth,
     gameId: string,
-): Promise<{phase: string; stageId: OneWinnerStageId; status: string; winnerId: string | null}> {
-    return gameFetch(auth, `/api/games/${gameId}/advance`, {method: "POST"});
+    input: SubmitChargeAnswerInput,
+): Promise<{isCorrect: boolean; pointsAwarded: number}> {
+    return gameFetch(auth, `/api/games/${gameId}/charge/answer`, {method: "POST", body: JSON.stringify(input)});
+}
+
+export type SubmitJouteAnswerInput = {riddleId: string; submittedText: string} | {riddleId: string; selectedIndex: number};
+
+export async function submitJouteAnswer(auth: OneWinnerAuth, gameId: string, input: SubmitJouteAnswerInput): Promise<{isCorrect: boolean; pointsAwarded: number}> {
+    return gameFetch(auth, `/api/games/${gameId}/joute/answer`, {method: "POST", body: JSON.stringify(input)});
 }
 
 /** Un joueur ne peut reporter que SA PROPRE connexion (l'identité vient de `auth`, jamais du body) —

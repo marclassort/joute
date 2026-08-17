@@ -1,83 +1,86 @@
 import {Category, Player} from "./types";
 
-/** "UN SEUL GAGNANT" : partie à élimination à 4-6 joueurs, en temps réel, jusqu'à un dernier survivant. */
-export const ONE_WINNER_MIN_PLAYERS = 4;
-export const ONE_WINNER_MAX_PLAYERS = 6;
+/** "UN SEUL GAGNANT" : 4 joueurs, en temps réel, 3 manches fixes (Mêlée → Charge → Joute), une élimination à la fin de chacune des deux premières. */
+export const ONE_WINNER_PLAYERS = 4;
 
-export type EpreuveKind = "defi" | "buzzer" | "conquete";
+export type OneWinnerRoundId = "melee" | "charge" | "joute";
 
-/**
- * Une partie traverse plusieurs étapes (main → demi-finale → finale), chacune répétant le même
- * enchaînement de phases. `phase` et `stageId` sont deux axes indépendants de la machine à états :
- * la phase dit quoi faire maintenant, l'étape dit dans quel contexte (qui reste en lice, quelle
- * configuration d'épreuves). Ça évite d'avoir un enum combinatoire du type "finale-epreuve-buzzer".
- */
-export type OneWinnerStageId = "main" | "semifinal" | "final";
+export const ONE_WINNER_ROUND_ORDER: readonly OneWinnerRoundId[] = ["melee", "charge", "joute"];
 
 export type OneWinnerPhase =
     | "lobby"
     | "intro"
-    | "epreuve"
+    | "melee"
+    | "charge-theme"
+    | "charge"
+    | "joute"
     | "classement"
     | "elimination"
     | "termine";
 
 export type OneWinnerMatchStatus = "active" | "completed" | "abandoned";
 
-export interface OneWinnerStageConfig {
-    id: OneWinnerStageId;
-    epreuves: EpreuveKind[];
-    /** Joueurs éliminés à l'issue de cette étape (0 pour la finale : le dernier debout gagne). */
-    eliminationCount: number;
-}
-
 export interface OneWinnerPlayerState {
     player: Player;
     isEliminated: boolean;
-    eliminatedAtStage: OneWinnerStageId | null;
+    eliminatedAtRound: OneWinnerRoundId | null;
     finalRank: number | null;
     isConnected: boolean;
-    /** Horodatage serveur de la dernière déconnexion détectée, null si actuellement connecté. */
     disconnectedAt: number | null;
+    /** Thème choisi pour La Charge, posé une fois au début de la manche — null tant que non choisi. */
+    chargeTheme: string | null;
 }
 
 /**
- * Réception d'un buzz côté serveur. `serverReceivedAt` est la SEULE source de vérité pour l'ordre
- * des buzz : le client peut envoyer un timestamp local à titre indicatif, mais il n'est jamais utilisé
- * pour trancher qui a buzzé en premier, afin d'empêcher un client de mentir sur son horodatage.
+ * Une réponse porte soit un index QCM (Mêlée, filet de la Joute), soit un texte libre (Charge, Joute au
+ * clavier) — jamais les deux. Contrairement aux autres manches, la Joute autorise PLUSIEURS réponses du
+ * même joueur à la même question (tant qu'elle reste ouverte) : chaque tentative ratée est conservée
+ * (blocage de 3 s, pas de perte), donc pas de contrainte d'unicité (playerId, questionId) ici.
  */
-export interface BuzzEvent {
-    playerId: string;
-    questionId: string;
-    serverReceivedAt: number;
-    clientReportedAt: number | null;
-}
-
 export interface OneWinnerAnswer {
     questionId: string;
     playerId: string;
     selectedIndex: number | null;
+    submittedText: string | null;
     isCorrect: boolean;
     pointsAwarded: number;
-    /** Mise engagée par le joueur avant de répondre (épreuve "La Conquête" uniquement). */
-    wager: number | null;
+    /** Vrai uniquement pour une réponse donnée via le filet QCM de la Joute. */
+    usedFilet: boolean;
+    elapsedMs: number;
     answeredAtServerMs: number;
 }
 
-export interface EpreuveState {
-    kind: EpreuveKind;
-    stageId: OneWinnerStageId;
-    index: number;
+export interface OpenedRoundQuestion {
+    questionId: string;
+    /** Horodatage serveur d'ouverture — seule référence pour tout calcul dépendant du temps (avancée
+     * forcée de la Mêlée après 10 s, valeur qui décroît en Joute), jamais fourni par le client. */
+    openedAt: number;
+}
+
+export interface OneWinnerRoundState {
+    id: OneWinnerRoundId;
     questionIds: string[];
-    buzzes: BuzzEvent[];
+    /**
+     * Questions effectivement ouvertes dans cette manche, dans l'ordre — la dernière est la question
+     * courante (Mêlée, Joute : question partagée par tous). Journal en ajout seul plutôt qu'un simple
+     * index dérivé des réponses, pour pouvoir avancer de force au bout du temps imparti même si tout le
+     * monde n'a pas répondu. Vide pour la Charge, où chaque joueur avance seul dans sa propre séquence.
+     */
+    openedQuestions: OpenedRoundQuestion[];
     answers: OneWinnerAnswer[];
     startedAt: number;
     endedAt: number | null;
 }
 
+export interface OneWinnerStanding {
+    playerId: string;
+    score: number;
+    rank: number;
+}
+
 export interface EliminationResult {
-    stageId: OneWinnerStageId;
-    standings: {playerId: string; score: number; rank: number}[];
+    roundId: OneWinnerRoundId;
+    standings: OneWinnerStanding[];
     eliminatedPlayerIds: string[];
     decidedAt: number;
 }
@@ -86,10 +89,9 @@ export interface OneWinnerMatch {
     id: string;
     status: OneWinnerMatchStatus;
     phase: OneWinnerPhase;
-    stageId: OneWinnerStageId;
+    roundId: OneWinnerRoundId;
     players: OneWinnerPlayerState[];
-    epreuves: EpreuveState[];
-    currentEpreuveIndex: number;
+    rounds: OneWinnerRoundState[];
     eliminations: EliminationResult[];
     category: Category | null;
     winnerId: string | null;

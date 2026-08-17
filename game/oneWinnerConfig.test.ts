@@ -1,38 +1,48 @@
-import {defiPointsForElapsed, nextStageId, stageRulesFor} from "./oneWinnerConfig";
+import {chargeMultiplierForStreak, jouteValueForElapsed, meleeSpeedPoints} from "./oneWinnerConfig";
 
-describe("defiPointsForElapsed", () => {
+describe("jouteValueForElapsed", () => {
     it("attribue le palier le plus rapide en cas d'égalité sur la borne", () => {
-        expect(defiPointsForElapsed(3_000)).toBe(100);
+        expect(jouteValueForElapsed(4_000)).toBe(50);
     });
 
     it("attribue un palier intermédiaire", () => {
-        expect(defiPointsForElapsed(4_500)).toBe(70);
+        expect(jouteValueForElapsed(9_000)).toBe(30);
     });
 
-    it("attribue le palier le plus lent encore dans les temps", () => {
-        expect(defiPointsForElapsed(9_999)).toBe(40);
+    it("attribue le dernier palier encore dans les temps", () => {
+        expect(jouteValueForElapsed(20_000)).toBe(10);
     });
 
-    it("retourne 0 au-delà de tous les paliers", () => {
-        expect(defiPointsForElapsed(20_000)).toBe(0);
-    });
-});
-
-describe("stageRulesFor", () => {
-    it("retrouve la configuration d'une étape connue", () => {
-        expect(stageRulesFor("main").playersKeptAfter).toBe(3);
-    });
-
-    it("lève une erreur pour une étape inconnue", () => {
-        // @ts-expect-error volontaire : simule une valeur invalide venue du réseau/backend
-        expect(() => stageRulesFor("bonus")).toThrow();
+    it("retourne 0 au-delà de la fenêtre de 20 secondes", () => {
+        expect(jouteValueForElapsed(20_001)).toBe(0);
     });
 });
 
-describe("nextStageId", () => {
-    it("enchaîne main -> semifinal -> final -> null", () => {
-        expect(nextStageId("main")).toBe("semifinal");
-        expect(nextStageId("semifinal")).toBe("final");
-        expect(nextStageId("final")).toBeNull();
+describe("meleeSpeedPoints", () => {
+    it("attribue 100/70/40/20 du 1er au 4e à répondre correctement", () => {
+        expect(meleeSpeedPoints(0)).toBe(100);
+        expect(meleeSpeedPoints(1)).toBe(70);
+        expect(meleeSpeedPoints(2)).toBe(40);
+        expect(meleeSpeedPoints(3)).toBe(20);
+    });
+
+    it("retourne 0 au-delà de la 4e place (ne devrait pas arriver à 4 joueurs)", () => {
+        expect(meleeSpeedPoints(4)).toBe(0);
+    });
+});
+
+describe("chargeMultiplierForStreak", () => {
+    it("commence à ×1 sans série", () => {
+        expect(chargeMultiplierForStreak(0)).toBe(1);
+    });
+
+    it("monte avec la série", () => {
+        expect(chargeMultiplierForStreak(1)).toBe(1.2);
+        expect(chargeMultiplierForStreak(2)).toBe(1.4);
+    });
+
+    it("plafonne à ×2 au-delà de la dernière marche", () => {
+        expect(chargeMultiplierForStreak(5)).toBe(2);
+        expect(chargeMultiplierForStreak(50)).toBe(2);
     });
 });

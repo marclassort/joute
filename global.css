@@ -2690,4 +2690,194 @@
         @apply text-[12px] text-plateau-ink/[0.55];
     }
 
+    /* La Mêlée */
+
+    .one-winner-melee-tier {
+        @apply flex-1 items-center rounded-xl border border-plateau-paper/10 bg-plateau-paper/[0.07] py-2;
+    }
+
+    .one-winner-melee-tier-active {
+        @apply border-transparent bg-plateau-coral;
+    }
+
+    .one-winner-melee-tier-points {
+        @apply font-display text-[15px] text-plateau-paper;
+    }
+
+    .one-winner-melee-tier-points-active {
+        @apply text-plateau-ink;
+    }
+
+    .one-winner-melee-tier-rank {
+        @apply text-[9px] font-sans-bold tracking-[0.06em] text-plateau-paper/60;
+    }
+
+    .one-winner-melee-tier-rank-active {
+        @apply text-plateau-ink/60;
+    }
+
+    /* La Charge */
+
+    .one-winner-charge-multiplier {
+        @apply flex-row items-baseline gap-1 rounded-2xl bg-plateau-teal px-[13px] py-[9px];
+    }
+
+    .one-winner-charge-multiplier-value {
+        @apply font-display text-xl text-plateau-ink;
+    }
+
+    .one-winner-charge-multiplier-label {
+        @apply text-[10px] font-sans-bold text-plateau-ink/70;
+    }
+
+    .one-winner-charge-next-points {
+        @apply flex-1 flex-row items-center justify-between rounded-2xl border border-plateau-paper/[0.13] bg-plateau-paper/[0.07] px-[13px];
+    }
+
+    .one-winner-charge-next-points-label {
+        @apply text-[11.5px] font-sans-medium text-plateau-paper/60;
+    }
+
+    .one-winner-charge-next-points-value {
+        @apply font-display text-[17px] text-plateau-teal;
+    }
+
+    .one-winner-charge-streak-dot {
+        @apply h-[7px] flex-1 rounded-full bg-plateau-paper/[0.13];
+    }
+
+    .one-winner-charge-streak-dot-filled {
+        @apply bg-plateau-teal;
+    }
+
+    .one-winner-charge-rival-row {
+        @apply flex-row items-center gap-[9px];
+    }
+
+    .one-winner-charge-rival-avatar {
+        @apply size-6 items-center justify-center rounded-lg;
+    }
+
+    .one-winner-charge-rival-state {
+        @apply flex-1 text-xs font-sans-medium text-plateau-paper/60;
+    }
+
+    .one-winner-charge-rival-score {
+        @apply font-display text-sm text-plateau-paper/85;
+    }
+
+    .one-winner-charge-pass-button {
+        @apply w-[74px] items-center justify-center rounded-2xl border border-plateau-paper/[0.28];
+    }
+
+    .one-winner-charge-pass-text {
+        @apply text-[13.5px] font-sans-bold text-plateau-paper/75;
+    }
+
+    .one-winner-charge-theme-card {
+        @apply flex-1 flex-row items-center gap-[13px] rounded-[20px] border border-plateau-paper/[0.14] bg-plateau-paper/[0.07] px-4;
+    }
+
+    .one-winner-charge-theme-card-selected {
+        @apply border-transparent bg-plateau-coral;
+    }
+
+    .one-winner-charge-theme-icon {
+        @apply size-[38px] items-center justify-center rounded-2xl bg-plateau-ink/[0.16];
+    }
+
+    .one-winner-charge-theme-label {
+        @apply text-[16px] font-sans-bold text-plateau-paper;
+    }
+
+    .one-winner-charge-theme-label-selected {
+        @apply text-plateau-ink;
+    }
+
+    .one-winner-charge-theme-meta {
+        @apply text-[11.5px] text-plateau-paper/60;
+    }
+
+    .one-winner-charge-theme-meta-selected {
+        @apply text-plateau-ink/60;
+    }
+
+    /* La Joute */
+
+    .one-winner-joute-value-tier {
+        @apply flex-1 items-center rounded-xl border border-plateau-paper/[0.11] bg-plateau-paper/[0.06] py-[6px];
+    }
+
+    .one-winner-joute-value-tier-active {
+        @apply border-transparent bg-plateau-brass;
+    }
+
+    .one-winner-joute-value-tier-points {
+        @apply font-display text-sm text-plateau-paper;
+    }
+
+    .one-winner-joute-value-tier-points-active {
+        @apply text-plateau-ink;
+    }
+
+    .one-winner-joute-riddle-line {
+        @apply flex-row items-start gap-[9px];
+    }
+
+    .one-winner-joute-riddle-number {
+        @apply w-5 font-display text-xs text-plateau-brass;
+    }
+
+    .one-winner-joute-riddle-text {
+        @apply flex-1 font-display text-[16.5px] leading-[1.3] text-plateau-paper;
+    }
+
+    .one-winner-joute-blocked-banner {
+        @apply flex-row items-center gap-[9px] rounded-2xl border border-plateau-rose/50 bg-plateau-rose/[0.18] px-3 py-[9px];
+    }
+
+    .one-winner-joute-blocked-timer {
+        @apply font-display text-base text-plateau-rose;
+    }
+
+    .one-winner-joute-blocked-text {
+        @apply flex-1 text-[11.5px] font-sans-medium text-plateau-paper/70;
+    }
+
+    .one-winner-joute-filet-button {
+        @apply w-20 items-center justify-center rounded-2xl border border-plateau-teal;
+    }
+
+    .one-winner-joute-filet-button-open {
+        @apply border-transparent bg-plateau-teal;
+    }
+
+    .one-winner-joute-filet-label {
+        @apply text-[13px] font-sans-bold text-plateau-teal;
+    }
+
+    .one-winner-joute-filet-label-open {
+        @apply text-plateau-ink;
+    }
+
+    .one-winner-joute-filet-state {
+        @apply text-[9.5px] font-sans-bold text-plateau-teal/70;
+    }
+
+    .one-winner-joute-filet-state-open {
+        @apply text-plateau-ink/70;
+    }
+
+    .one-winner-joute-finalist-card {
+        @apply flex-1 gap-[6px] rounded-2xl border border-plateau-paper/10 bg-plateau-paper/[0.06] p-3;
+    }
+
+    .one-winner-joute-finalist-bar-track {
+        @apply h-[6px] rounded-full bg-plateau-paper/[0.14];
+    }
+
+    .one-winner-joute-finalist-bar-fill {
+        @apply h-full rounded-full bg-plateau-coral;
+    }
+
 }

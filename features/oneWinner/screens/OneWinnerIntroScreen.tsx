@@ -54,22 +54,22 @@ const OneWinnerIntroScreen = () => {
             <View className="mt-5">
                 <Text className="solo-hero-title text-plateau-paper">Un seul{"\n"}gagnant</Text>
                 <Text className="solo-hero-subtitle text-plateau-paper/60">
-                    4 à 6 joueurs, plusieurs manches, éliminations en direct — un seul survivant remporte la partie.
+                    4 candidats, 3 manches, une élimination à chaque fin de manche — un seul survivant remporte la partie.
                 </Text>
             </View>
 
             <View className="mt-6 gap-3">
                 <ShadowCard borderRadius={18} className="duel-category-card">
                     <Text className="duel-category-icon">⚡</Text>
-                    <Text className="duel-category-label">Le Défi · questions simultanées, la vitesse paie</Text>
+                    <Text className="duel-category-label">La Mêlée · QCM simultané, la vitesse paie</Text>
                 </ShadowCard>
                 <ShadowCard borderRadius={18} className="duel-category-card">
-                    <Text className="duel-category-icon">🔔</Text>
-                    <Text className="duel-category-label">Le Buzzer · premier arrivé, premier à répondre</Text>
+                    <Text className="duel-category-icon">✍️</Text>
+                    <Text className="duel-category-label">La Charge · ton thème, ta série, au clavier</Text>
                 </ShadowCard>
                 <ShadowCard borderRadius={18} className="duel-category-card">
-                    <Text className="duel-category-icon">🎲</Text>
-                    <Text className="duel-category-label">La Conquête · misez vos points, tout ou rien</Text>
+                    <Text className="duel-category-icon">🏆</Text>
+                    <Text className="duel-category-label">La Joute · énigme qui se dévoile, premier à 200</Text>
                 </ShadowCard>
             </View>
 
