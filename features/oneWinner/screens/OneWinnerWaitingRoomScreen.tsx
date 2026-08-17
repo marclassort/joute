@@ -46,14 +46,14 @@ const OneWinnerWaitingRoomScreen = ({gameId, game, isHost, canStart, isStarting,
     return (
         <>
             <View className="mt-5 flex-row items-center justify-between">
-                <Text className="solo-hero-title text-plateau-paper">En attente…</Text>
+                <Text className="one-winner-hero-title">En attente…</Text>
                 <View className="one-winner-count-pill">
                     <Text className="one-winner-count-pill-text">
                         {game.players.length}/{ONE_WINNER_PLAYERS}
                     </Text>
                 </View>
             </View>
-            <Text className="solo-hero-subtitle text-plateau-paper/60">{ONE_WINNER_PLAYERS} joueurs pour démarrer.</Text>
+            <Text className="one-winner-hero-subtitle">{ONE_WINNER_PLAYERS} joueurs pour démarrer.</Text>
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="mt-5 gap-3 pb-6">
                 {game.players.map((player, index) => (

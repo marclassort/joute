@@ -78,7 +78,7 @@ const OneWinnerChargeScreen = ({game, myId, onAnswer}: OneWinnerChargeScreenProp
     if (!question) {
         return (
             <View className="flex-1 items-center justify-center">
-                <Text className="solo-hero-subtitle text-center text-plateau-paper/60">Plus de questions disponibles dans ce thème — en attente de la fin de la manche…</Text>
+                <Text className="one-winner-hero-subtitle text-center">Plus de questions disponibles dans ce thème — en attente de la fin de la manche…</Text>
             </View>
         );
     }

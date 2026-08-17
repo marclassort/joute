@@ -34,8 +34,8 @@ const OneWinnerChargeThemeScreen = ({game, myId, onChooseTheme}: OneWinnerCharge
         <View className="flex-1 gap-4">
             <View className="gap-1 rounded-[22px] border border-plateau-iris/40 bg-plateau-iris/[0.14] p-4">
                 <Text className="text-eyebrow text-plateau-iris">Manche 2 · La Charge</Text>
-                <Text className="solo-hero-title text-plateau-paper">Choisis ton thème</Text>
-                <Text className="solo-hero-subtitle text-plateau-paper/60">
+                <Text className="one-winner-hero-title">Choisis ton thème</Text>
+                <Text className="one-winner-hero-subtitle">
                     60 secondes, vos séries tournent en parallèle. 50 points par bonne réponse, multipliés par ta série.
                 </Text>
             </View>
@@ -70,7 +70,7 @@ const OneWinnerChargeThemeScreen = ({game, myId, onChooseTheme}: OneWinnerCharge
                 })}
             </View>
 
-            <Text className="solo-hero-subtitle text-center text-plateau-paper/60">
+            <Text className="one-winner-hero-subtitle text-center">
                 {myTheme ? "En attente des autres joueurs…" : "Choisis un thème pour continuer"}
             </Text>
         </View>

@@ -2922,4 +2922,15 @@
         @apply text-[11px] font-sans-medium text-plateau-paper/70;
     }
 
+    /* Variantes "fond sombre" de solo-hero-title/solo-hero-subtitle (qui bakent text-plateau-ink) — une
+     * classe utilitaire postérieure ne réécrit pas fiablement une couleur définie dans une classe de
+     * composant avec cette version de NativeWind, d'où ces classes dédiées plutôt qu'un override. */
+    .one-winner-hero-title {
+        @apply font-display text-[28px] leading-[1.05] tracking-[-0.03em] text-plateau-paper;
+    }
+
+    .one-winner-hero-subtitle {
+        @apply text-[15px] leading-[1.5] font-sans-medium text-plateau-paper/62;
+    }
+
 }
