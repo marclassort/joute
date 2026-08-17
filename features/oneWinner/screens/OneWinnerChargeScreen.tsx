@@ -6,6 +6,7 @@ import {pickNextChargeQuestion} from "@/game/oneWinnerQuestionPicker";
 import {CHARGE_BASE_POINTS, CHARGE_MULTIPLIERS, CHARGE_TIME_LIMIT_MS, chargeMultiplierForStreak} from "@/game/oneWinnerConfig";
 import {OpenQuestion} from "@/game/types";
 import {plateauColors} from "@/constants/theme";
+import {playSound} from "@/lib/sounds";
 import {OneWinnerGameSummary, SubmitChargeAnswerInput} from "@/lib/oneWinnerApi";
 
 export interface OneWinnerChargeScreenProps {
@@ -64,7 +65,8 @@ const OneWinnerChargeScreen = ({game, myId, onAnswer}: OneWinnerChargeScreenProp
         if (!question || typed.trim().length === 0) return;
         const elapsedMs = Date.now() - startedAtRef.current;
         setTyped("");
-        await onAnswer({questionId: question.id, submittedText: typed.trim(), elapsedMs});
+        const result = await onAnswer({questionId: question.id, submittedText: typed.trim(), elapsedMs});
+        playSound(result.isCorrect ? "correct" : "incorrect");
     };
 
     const pass = async () => {

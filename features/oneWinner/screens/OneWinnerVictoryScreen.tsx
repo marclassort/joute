@@ -1,10 +1,11 @@
 import {Text, View} from "react-native";
-import React from "react";
+import React, {useEffect} from "react";
 // eslint-disable-next-line import/no-named-as-default
 import clsx from "clsx";
 import {useRouter} from "expo-router";
 import ShadowCard from "@/components/ShadowCard";
 import PressableScale from "@/components/PressableScale";
+import {playSound} from "@/lib/sounds";
 import {OneWinnerGameSummary} from "@/lib/oneWinnerApi";
 import {formatLeagueRank} from "../constants";
 
@@ -17,6 +18,11 @@ const OneWinnerVictoryScreen = ({game, myId}: OneWinnerVictoryScreenProps) => {
     const router = useRouter();
     const winner = game.players.find((player) => player.id === game.winnerId);
     const iWon = game.winnerId === myId;
+
+    useEffect(() => {
+        if (iWon) playSound("victory");
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const ranked = [...game.players].sort((a, b) => (a.finalRank ?? 99) - (b.finalRank ?? 99));
 

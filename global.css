@@ -2880,4 +2880,46 @@
         @apply h-full rounded-full bg-plateau-coral;
     }
 
+    /* Écran d'accueil : cartes de règles numérotées (une par manche) */
+
+    .one-winner-rule-card {
+        @apply gap-2 rounded-[20px] border border-plateau-paper/[0.12] bg-plateau-paper/[0.06] p-[15px];
+    }
+
+    .one-winner-rule-card-header {
+        @apply flex-row items-center gap-[11px];
+    }
+
+    .one-winner-rule-step {
+        @apply size-9 items-center justify-center rounded-xl;
+    }
+
+    .one-winner-rule-step-text {
+        @apply font-display text-sm text-plateau-ink;
+    }
+
+    .one-winner-rule-title {
+        @apply text-[15px] font-sans-bold text-plateau-paper;
+    }
+
+    .one-winner-rule-sub {
+        @apply text-[11.5px] text-plateau-paper/55;
+    }
+
+    .one-winner-rule-players-pill {
+        @apply rounded-lg bg-plateau-paper/10 px-[9px] py-1;
+    }
+
+    .one-winner-rule-players-text {
+        @apply text-[11px] font-sans-bold text-plateau-paper/75;
+    }
+
+    .one-winner-rule-chip {
+        @apply rounded-lg border border-plateau-paper/10 bg-plateau-paper/[0.07] px-[9px] py-1;
+    }
+
+    .one-winner-rule-chip-text {
+        @apply text-[11px] font-sans-medium text-plateau-paper/70;
+    }
+
 }
