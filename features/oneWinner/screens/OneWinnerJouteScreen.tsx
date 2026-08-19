@@ -60,16 +60,26 @@ const OneWinnerJouteScreen = ({game, myId, onAnswer, onFiletAnswer}: OneWinnerJo
         if (isBlocked || typed.trim().length === 0) return;
         const text = typed.trim();
         setTyped("");
-        const result = await onAnswer(text);
-        playSound(result.isCorrect ? "correct" : "incorrect");
-        if (!result.isCorrect) setBlockedUntil(Date.now() + 3_000);
+        try {
+            const result = await onAnswer(text);
+            playSound(result.isCorrect ? "correct" : "incorrect");
+            if (!result.isCorrect) setBlockedUntil(Date.now() + 3_000);
+        } catch {
+            // Rejet serveur transitoire (énigme déjà résolue par l'autre joueur pendant l'envoi, manche
+            // déjà terminée…) : le prochain rafraîchissement du jeu remet l'écran à jour, pas besoin de
+            // faire planter l'appli pour ça.
+        }
     };
 
     const submitFilet = async (index: number) => {
         if (filetUsedOnThisRiddle) return;
         setFiletOpen(false);
-        const result = await onFiletAnswer(index);
-        playSound(result.isCorrect ? "correct" : "incorrect");
+        try {
+            const result = await onFiletAnswer(index);
+            playSound(result.isCorrect ? "correct" : "incorrect");
+        } catch {
+            // Voir submit() ci-dessus.
+        }
     };
 
     return (

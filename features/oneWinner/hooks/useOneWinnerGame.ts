@@ -74,7 +74,13 @@ export function useOneWinnerGame(gameId: string): UseOneWinnerGame {
     const authRef = useRef<OneWinnerAuth | null>(null);
 
     const getFreshAuth = useCallback(async (): Promise<OneWinnerAuth> => {
-        if (player.isGuest) {
+        // L'identité utilisée pour REJOINDRE cette partie (invité ou Clerk) est verrouillée pour toute sa
+        // durée : si une session Clerk se résout PENDANT la partie (hydratation asynchrone du SDK, sans
+        // rechargement ni reconnexion), player.isGuest peut basculer à false en cours de route — mais
+        // match.players ne connaît que l'identité d'origine. Envoyer soudain l'id Clerk ferait échouer
+        // toute action suivante avec "un joueur éliminé ne peut pas répondre" (id introuvable, pas éliminé).
+        const isGuest = authRef.current ? authRef.current.kind === "guest" : player.isGuest;
+        if (isGuest) {
             if (!player.id) throw new Error("Identité invité non prête");
             const auth: OneWinnerAuth = {kind: "guest", guestId: player.id, displayName: player.displayName};
             authRef.current = auth;
