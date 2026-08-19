@@ -3,6 +3,10 @@ import {LeagueTier} from "@/game/oneWinnerRankingTypes";
 
 export const ROUND_ORDER: readonly OneWinnerRoundId[] = ["melee", "charge", "joute"];
 
+/** Temps d'affichage de la bonne réponse avant d'enchaîner sur la question suivante — purement visuel
+ * (l'hôte retarde son avancée d'autant côté OneWinnerGameScreen), jamais une règle du moteur pur. */
+export const ANSWER_REVEAL_MS = 3_500;
+
 /** `tint` référence une clé de constants/theme.ts plateauColors — appliquée en style inline (interpoler
  * une classe Tailwind dynamique ne s'applique pas de façon fiable avec cette version de NativeWind). */
 export const ROUND_LABELS: Record<OneWinnerRoundId, {step: string; title: string; sub: string; players: string; tint: "teal" | "iris" | "brass"; chips: string[]}> = {
@@ -12,7 +16,7 @@ export const ROUND_LABELS: Record<OneWinnerRoundId, {step: string; title: string
         sub: "6 QCM, tous ensemble",
         players: "4 joueurs",
         tint: "teal",
-        chips: ["10 s par question", "100 · 70 · 40 · 20 selon la vitesse", "Le dernier cumulé sort"],
+        chips: ["15 s par question", "100 · 70 · 40 · 20 selon la vitesse", "Le dernier cumulé sort"],
     },
     charge: {
         step: "02",
@@ -28,7 +32,7 @@ export const ROUND_LABELS: Record<OneWinnerRoundId, {step: string; title: string
         sub: "Énigme qui se dévoile, valeur qui fond",
         players: "2 joueurs",
         tint: "brass",
-        chips: ["50 → 10 pts en 20 s", "Filet QCM dès 30 pts", "Premier à 200 gagne"],
+        chips: ["50 → 10 pts en 30 s", "Filet QCM dès 30 pts", "Premier à 200 gagne"],
     },
 };
 

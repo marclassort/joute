@@ -2,19 +2,19 @@ import {chargeMultiplierForStreak, jouteValueForElapsed, meleeSpeedPoints} from 
 
 describe("jouteValueForElapsed", () => {
     it("attribue le palier le plus rapide en cas d'égalité sur la borne", () => {
-        expect(jouteValueForElapsed(4_000)).toBe(50);
+        expect(jouteValueForElapsed(6_000)).toBe(50);
     });
 
     it("attribue un palier intermédiaire", () => {
-        expect(jouteValueForElapsed(9_000)).toBe(30);
+        expect(jouteValueForElapsed(13_000)).toBe(30);
     });
 
     it("attribue le dernier palier encore dans les temps", () => {
-        expect(jouteValueForElapsed(20_000)).toBe(10);
+        expect(jouteValueForElapsed(30_000)).toBe(10);
     });
 
-    it("retourne 0 au-delà de la fenêtre de 20 secondes", () => {
-        expect(jouteValueForElapsed(20_001)).toBe(0);
+    it("retourne 0 au-delà de la fenêtre de 30 secondes", () => {
+        expect(jouteValueForElapsed(30_001)).toBe(0);
     });
 });
 

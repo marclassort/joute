@@ -20,6 +20,7 @@ export interface OneWinnerAnswerSummary {
     pointsAwarded: number;
     usedFilet: boolean;
     elapsedMs: number;
+    answeredAtServerMs: number;
 }
 
 export interface OneWinnerOpenedQuestion {

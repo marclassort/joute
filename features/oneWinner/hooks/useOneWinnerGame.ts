@@ -75,12 +75,16 @@ export function useOneWinnerGame(gameId: string): UseOneWinnerGame {
 
     const getFreshAuth = useCallback(async (): Promise<OneWinnerAuth> => {
         // L'identité utilisée pour REJOINDRE cette partie (invité ou Clerk) est verrouillée pour toute sa
-        // durée : si une session Clerk se résout PENDANT la partie (hydratation asynchrone du SDK, sans
-        // rechargement ni reconnexion), player.isGuest peut basculer à false en cours de route — mais
-        // match.players ne connaît que l'identité d'origine. Envoyer soudain l'id Clerk ferait échouer
-        // toute action suivante avec "un joueur éliminé ne peut pas répondre" (id introuvable, pas éliminé).
-        const isGuest = authRef.current ? authRef.current.kind === "guest" : player.isGuest;
-        if (isGuest) {
+        // durée, guestId/displayName INCLUS : si une session Clerk se résout PENDANT la partie
+        // (hydratation asynchrone du SDK, sans rechargement ni reconnexion), player.id/isGuest basculent
+        // vers l'identité Clerk en cours de route — mais match.players ne connaît que l'identité d'origine.
+        // Ne PAS se contenter de figer le type et continuer à relire player.id : une fois Clerk résolu,
+        // player.id devient l'id Clerk, qui serait alors envoyé dans l'en-tête X-Guest-Id (mauvais format,
+        // 401 "Non authentifié") — l'objet d'auth entier doit rester celui de la toute première résolution.
+        if (authRef.current?.kind === "guest") {
+            return authRef.current;
+        }
+        if (!authRef.current && player.isGuest) {
             if (!player.id) throw new Error("Identité invité non prête");
             const auth: OneWinnerAuth = {kind: "guest", guestId: player.id, displayName: player.displayName};
             authRef.current = auth;
@@ -176,11 +180,14 @@ export function useOneWinnerGame(gameId: string): UseOneWinnerGame {
     const canStart = isHost && game?.phase === "lobby" && game?.players.length === ONE_WINNER_PLAYERS;
 
     const start = useCallback(async () => {
-        const auth = await getFreshAuth();
         setIsStarting(true);
         try {
+            const auth = await getFreshAuth();
             await startOneWinnerGame(auth, gameId);
             await refresh();
+        } catch {
+            // Rejet transitoire (ex. la partie a atteint 4/4 pile au moment du tap d'un autre appareil) :
+            // le bouton "Démarrer" reste disponible, pas besoin de faire planter l'appli pour ça.
         } finally {
             setIsStarting(false);
         }

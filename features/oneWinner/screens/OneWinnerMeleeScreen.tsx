@@ -19,6 +19,7 @@ const RANK_LABELS = ["1ᵉʳ", "2ᵉ", "3ᵉ", "4ᵉ"];
 
 const OneWinnerMeleeScreen = ({game, myId, onAnswer}: OneWinnerMeleeScreenProps) => {
     const [feedback, setFeedback] = useState<{isCorrect: boolean; pointsAwarded: number} | null>(null);
+    const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
     const [remainingSec, setRemainingSec] = useState(0);
     const startedAtRef = useRef(Date.now());
 
@@ -29,6 +30,7 @@ const OneWinnerMeleeScreen = ({game, myId, onAnswer}: OneWinnerMeleeScreenProps)
 
     useEffect(() => {
         setFeedback(null);
+        setSelectedIndex(null);
         startedAtRef.current = Date.now();
     }, [current?.questionId]);
 
@@ -50,13 +52,21 @@ const OneWinnerMeleeScreen = ({game, myId, onAnswer}: OneWinnerMeleeScreenProps)
 
     const answered = !!myAnswer || !!feedback;
     const myRankIndex = feedback?.isCorrect ? MELEE_SPEED_POINTS.indexOf(feedback.pointsAwarded) : -1;
+    const timedOutWithoutAnswer = remainingSec === 0 && !answered;
+    const revealed = answered || timedOutWithoutAnswer;
 
     const handleAnswer = async (index: number) => {
         if (answered) return;
         const elapsedMs = Date.now() - startedAtRef.current;
-        const result = await onAnswer({questionId: question.id, selectedIndex: index, elapsedMs});
-        setFeedback(result);
-        playSound(result.isCorrect ? "correct" : "incorrect");
+        setSelectedIndex(index);
+        try {
+            const result = await onAnswer({questionId: question.id, selectedIndex: index, elapsedMs});
+            setFeedback(result);
+            playSound(result.isCorrect ? "correct" : "incorrect");
+        } catch {
+            // Rejet transitoire (question déjà avancée pendant l'envoi) : le prochain rafraîchissement
+            // remet l'écran à jour, pas besoin de faire planter l'appli pour ça.
+        }
     };
 
     return (
@@ -79,39 +89,45 @@ const OneWinnerMeleeScreen = ({game, myId, onAnswer}: OneWinnerMeleeScreenProps)
                 <Text className="duel-question-statement text-center">{question.statement}</Text>
             </View>
 
-            {feedback ? (
+            {feedback && (
                 <View className="one-winner-feedback-banner" style={{backgroundColor: feedback.isCorrect ? plateauColors.teal : plateauColors.rose}}>
                     <Text className="one-winner-feedback-banner-text">
                         {feedback.isCorrect ? `Bonne réponse ! +${feedback.pointsAwarded}` : "Mauvaise réponse"}
                     </Text>
                 </View>
-            ) : (
-                <View className="solo-choices">
-                    {question.choices.map((choice, index) => {
-                        const style = resolveChoiceStyle(index, false, null, question.correctIndex);
-                        return (
-                            <PressableScale
-                                key={choice}
-                                activeScale={0.98}
-                                className="solo-choice"
-                                style={{backgroundColor: style.backgroundColor, borderColor: style.borderColor}}
-                                onPress={() => handleAnswer(index)}
-                                accessibilityRole="button"
-                                accessibilityLabel={`Proposition ${LETTERS[index]} : ${choice}`}
-                            >
-                                <View className="solo-choice-badge" style={{backgroundColor: style.badgeBackgroundColor}}>
-                                    <Text className="solo-choice-badge-text" style={{color: style.badgeTextColor}}>
-                                        {LETTERS[index]}
-                                    </Text>
-                                </View>
-                                <Text className="solo-choice-text" style={{color: style.textColor}}>
-                                    {choice}
-                                </Text>
-                            </PressableScale>
-                        );
-                    })}
+            )}
+            {timedOutWithoutAnswer && (
+                <View className="one-winner-feedback-banner" style={{backgroundColor: plateauColors.rose}}>
+                    <Text className="one-winner-feedback-banner-text">Temps écoulé</Text>
                 </View>
             )}
+
+            <View className="solo-choices">
+                {question.choices.map((choice, index) => {
+                    const style = resolveChoiceStyle(index, revealed, selectedIndex, question.correctIndex);
+                    return (
+                        <PressableScale
+                            key={choice}
+                            activeScale={0.98}
+                            className="solo-choice"
+                            style={{backgroundColor: style.backgroundColor, borderColor: style.borderColor}}
+                            onPress={() => handleAnswer(index)}
+                            disabled={answered}
+                            accessibilityRole="button"
+                            accessibilityLabel={`Proposition ${LETTERS[index]} : ${choice}`}
+                        >
+                            <View className="solo-choice-badge" style={{backgroundColor: style.badgeBackgroundColor}}>
+                                <Text className="solo-choice-badge-text" style={{color: style.badgeTextColor}}>
+                                    {LETTERS[index]}
+                                </Text>
+                            </View>
+                            <Text className="solo-choice-text" style={{color: style.textColor}}>
+                                {choice}
+                            </Text>
+                        </PressableScale>
+                    );
+                })}
+            </View>
 
             {answered && <Text className="one-winner-hero-subtitle text-center">En attente des autres joueurs…</Text>}
         </View>

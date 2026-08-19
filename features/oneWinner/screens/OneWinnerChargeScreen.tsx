@@ -8,6 +8,13 @@ import {OpenQuestion} from "@/game/types";
 import {plateauColors} from "@/constants/theme";
 import {playSound} from "@/lib/sounds";
 import {OneWinnerGameSummary, SubmitChargeAnswerInput} from "@/lib/oneWinnerApi";
+import {ANSWER_REVEAL_MS} from "../constants";
+
+interface ChargeReveal {
+    isCorrect: boolean;
+    pointsAwarded: number;
+    correctAnswer: string;
+}
 
 export interface OneWinnerChargeScreenProps {
     game: OneWinnerGameSummary;
@@ -28,6 +35,7 @@ function currentStreak(answers: {playerId: string; isCorrect: boolean}[], player
 const OneWinnerChargeScreen = ({game, myId, onAnswer}: OneWinnerChargeScreenProps) => {
     const [typed, setTyped] = useState("");
     const [remainingSec, setRemainingSec] = useState(0);
+    const [reveal, setReveal] = useState<ChargeReveal | null>(null);
     const startedAtRef = useRef(Date.now());
     const questionRef = useRef<OpenQuestion | null>(null);
 
@@ -35,15 +43,25 @@ const OneWinnerChargeScreen = ({game, myId, onAnswer}: OneWinnerChargeScreenProp
     const answers = game.currentRound?.answers ?? [];
     const myAnsweredIds = useMemo(() => answers.filter((answer) => answer.playerId === myId).map((answer) => answer.questionId), [answers, myId]);
 
-    if (!questionRef.current || myAnsweredIds.includes(questionRef.current.id)) {
+    // Tant qu'une réponse vient d'être révélée, on garde la MÊME question affichée (avec le corrigé) au
+    // lieu d'enchaîner instantanément — voir handleReveal ci-dessous pour le passage à la suivante.
+    if (!reveal && (!questionRef.current || myAnsweredIds.includes(questionRef.current.id))) {
         questionRef.current = pickNextChargeQuestion(ALL_OPEN_QUESTIONS, myTheme, myAnsweredIds);
     }
     const question = questionRef.current;
 
     useEffect(() => {
+        if (reveal) return undefined;
         startedAtRef.current = Date.now();
         setTyped("");
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [question?.id]);
+
+    useEffect(() => {
+        if (!reveal) return undefined;
+        const timeout = setTimeout(() => setReveal(null), ANSWER_REVEAL_MS);
+        return () => clearTimeout(timeout);
+    }, [reveal]);
 
     useEffect(() => {
         const startedAt = game.currentRound?.startedAt;
@@ -62,17 +80,27 @@ const OneWinnerChargeScreen = ({game, myId, onAnswer}: OneWinnerChargeScreenProp
     const rivals = game.players.filter((player) => player.id !== myId && !player.isEliminated);
 
     const submit = async () => {
-        if (!question || typed.trim().length === 0) return;
+        if (!question || reveal || typed.trim().length === 0) return;
         const elapsedMs = Date.now() - startedAtRef.current;
         setTyped("");
-        const result = await onAnswer({questionId: question.id, submittedText: typed.trim(), elapsedMs});
-        playSound(result.isCorrect ? "correct" : "incorrect");
+        try {
+            const result = await onAnswer({questionId: question.id, submittedText: typed.trim(), elapsedMs});
+            playSound(result.isCorrect ? "correct" : "incorrect");
+            setReveal({...result, correctAnswer: question.answer});
+        } catch {
+            // Rejet transitoire : le prochain rafraîchissement remet l'écran à jour.
+        }
     };
 
     const pass = async () => {
-        if (!question) return;
+        if (!question || reveal) return;
         setTyped("");
-        await onAnswer({questionId: question.id, submittedText: null, elapsedMs: Date.now() - startedAtRef.current});
+        try {
+            await onAnswer({questionId: question.id, submittedText: null, elapsedMs: Date.now() - startedAtRef.current});
+            setReveal({isCorrect: false, pointsAwarded: 0, correctAnswer: question.answer});
+        } catch {
+            // Rejet transitoire : le prochain rafraîchissement remet l'écran à jour.
+        }
     };
 
     if (!question) {
@@ -109,6 +137,14 @@ const OneWinnerChargeScreen = ({game, myId, onAnswer}: OneWinnerChargeScreenProp
                 </View>
                 <Text className="duel-question-statement">{question.statement}</Text>
 
+                {reveal && (
+                    <View className="one-winner-feedback-banner" style={{backgroundColor: reveal.isCorrect ? plateauColors.teal : plateauColors.rose}}>
+                        <Text className="one-winner-feedback-banner-text">
+                            {reveal.isCorrect ? `Bonne réponse ! +${reveal.pointsAwarded}` : `Raté — la réponse était : ${reveal.correctAnswer}`}
+                        </Text>
+                    </View>
+                )}
+
                 <View className="mt-3 gap-[6px]">
                     {rivals.map((rival) => {
                         const score = game.liveStandings.find((standing) => standing.playerId === rival.id)?.score ?? 0;
@@ -131,8 +167,9 @@ const OneWinnerChargeScreen = ({game, myId, onAnswer}: OneWinnerChargeScreenProp
                 <TextInput
                     value={typed}
                     onChangeText={setTyped}
-                    placeholder="Ta réponse…"
+                    placeholder={reveal ? "…" : "Ta réponse…"}
                     placeholderTextColor="rgba(246,240,230,0.4)"
+                    editable={!reveal}
                     onSubmitEditing={submit}
                     returnKeyType="done"
                     autoCapitalize="none"
@@ -146,10 +183,10 @@ const OneWinnerChargeScreen = ({game, myId, onAnswer}: OneWinnerChargeScreenProp
                         borderColor: "rgba(246,240,230,0.2)",
                         paddingHorizontal: 15,
                         fontSize: 15.5,
-                        color: plateauColors.paper,
+                        color: reveal ? "rgba(246,240,230,0.35)" : plateauColors.paper,
                     }}
                 />
-                <PressableScale activeScale={0.96} className="one-winner-charge-pass-button" onPress={pass} accessibilityRole="button">
+                <PressableScale activeScale={0.96} className="one-winner-charge-pass-button" onPress={pass} disabled={!!reveal} accessibilityRole="button">
                     <Text className="one-winner-charge-pass-text">Passe</Text>
                 </PressableScale>
                 <PressableScale
@@ -157,7 +194,7 @@ const OneWinnerChargeScreen = ({game, myId, onAnswer}: OneWinnerChargeScreenProp
                     className="solo-cta-button"
                     style={{width: 74, height: 58, paddingVertical: 0, alignItems: "center", justifyContent: "center"}}
                     onPress={submit}
-                    disabled={typed.trim().length === 0}
+                    disabled={!!reveal || typed.trim().length === 0}
                     accessibilityRole="button"
                 >
                     <Text className="font-display text-xl text-plateau-ink">OK</Text>

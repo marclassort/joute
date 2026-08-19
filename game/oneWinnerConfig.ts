@@ -5,7 +5,7 @@
 
 // --- La Mêlée : 4 joueurs, QCM simultané, classement par vitesse d'arrivée parmi les bonnes réponses ---
 export const MELEE_QUESTION_COUNT = 6;
-export const MELEE_TIME_LIMIT_MS = 10_000;
+export const MELEE_TIME_LIMIT_MS = 15_000;
 /** Points du 1er au 4e à répondre correctement (ordre d'arrivée, jamais un palier de temps absolu) — une réponse fausse ou absente ne rapporte rien. */
 export const MELEE_SPEED_POINTS: readonly number[] = [100, 70, 40, 20];
 /** Joueurs conservés après la Mêlée (4 → 3) : le dernier au classement cumulé est éliminé. */
@@ -21,7 +21,7 @@ export const CHARGE_MULTIPLIERS: readonly number[] = [1, 1.2, 1.4, 1.6, 1.8, 2];
 export const CHARGE_PLAYERS_KEPT_AFTER = 2;
 
 // --- La Joute : finale à 2, énigme à révélation progressive, valeur qui décroît, filet QCM en secours ---
-export const JOUTE_QUESTION_TIME_MS = 20_000;
+export const JOUTE_QUESTION_TIME_MS = 30_000;
 export const JOUTE_WRONG_LOCKOUT_MS = 3_000;
 export const JOUTE_FILET_THRESHOLD = 30;
 export const JOUTE_WIN_SCORE = 200;
@@ -34,11 +34,11 @@ export interface JouteValueTier {
 
 /** Palier de points selon le temps écoulé depuis l'ouverture de la question, du plus rapide au plus lent. */
 export const JOUTE_VALUE_TIERS: readonly JouteValueTier[] = [
-    {maxElapsedMs: 4_000, points: 50},
-    {maxElapsedMs: 8_000, points: 40},
-    {maxElapsedMs: 12_000, points: 30},
-    {maxElapsedMs: 16_000, points: 20},
-    {maxElapsedMs: 20_000, points: 10},
+    {maxElapsedMs: 6_000, points: 50},
+    {maxElapsedMs: 12_000, points: 40},
+    {maxElapsedMs: 18_000, points: 30},
+    {maxElapsedMs: 24_000, points: 20},
+    {maxElapsedMs: 30_000, points: 10},
 ];
 
 /** Fenêtre pendant laquelle un joueur déconnecté peut revenir sans être traité comme éliminé/forfait. */

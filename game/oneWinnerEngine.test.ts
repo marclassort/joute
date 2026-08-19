@@ -267,8 +267,8 @@ describe("La Joute : valeur qui décroît, filet, victoire à 200", () => {
     it("marque la valeur en cours au moment de la réponse, pas un temps fourni par le client", () => {
         let match = setupJoute();
         match = startJoute({match, questionIds: ["r1"], now: 1_000});
-        // Répond 5s après l'ouverture -> palier 40 pts (4-8s), quel que soit ce que le client prétendrait.
-        match = submitJouteAnswer({match, playerId: "p1", riddle: makeRiddle("r1"), submittedText: "yangtse", now: 1_000 + 5_000});
+        // Répond 9s après l'ouverture -> palier 40 pts (6-12s), quel que soit ce que le client prétendrait.
+        match = submitJouteAnswer({match, playerId: "p1", riddle: makeRiddle("r1"), submittedText: "yangtse", now: 1_000 + 9_000});
         expect(computeOneWinnerStandings(match, "joute").find((s) => s.playerId === "p1")?.score).toBe(40);
     });
 
@@ -292,17 +292,17 @@ describe("La Joute : valeur qui décroît, filet, victoire à 200", () => {
         let match = setupJoute();
         match = startJoute({match, questionIds: ["r1"], now: 0});
         expect(() => submitJouteFiletAnswer({match, playerId: "p1", riddle: makeRiddle("r1"), selectedIndex: 2, now: 1_000})).toThrow();
-        match = submitJouteFiletAnswer({match, playerId: "p1", riddle: makeRiddle("r1"), selectedIndex: 2, now: 9_000});
-        expect(computeOneWinnerStandings(match, "joute").find((s) => s.playerId === "p1")?.score).toBe(15); // palier 30 à 9s (8-12s) -> moitié 15
+        match = submitJouteFiletAnswer({match, playerId: "p1", riddle: makeRiddle("r1"), selectedIndex: 2, now: 15_000});
+        expect(computeOneWinnerStandings(match, "joute").find((s) => s.playerId === "p1")?.score).toBe(15); // palier 30 à 15s (12-18s) -> moitié 15
     });
 
     it("une mauvaise réponse au filet ne fait rien perdre mais consomme le filet (une seule tentative)", () => {
         let match = setupJoute();
         match = startJoute({match, questionIds: ["r1"], now: 0});
-        match = submitJouteFiletAnswer({match, playerId: "p1", riddle: makeRiddle("r1"), selectedIndex: 0, now: 9_000});
-        expect(() => submitJouteFiletAnswer({match, playerId: "p1", riddle: makeRiddle("r1"), selectedIndex: 2, now: 9_500})).toThrow();
+        match = submitJouteFiletAnswer({match, playerId: "p1", riddle: makeRiddle("r1"), selectedIndex: 0, now: 15_000});
+        expect(() => submitJouteFiletAnswer({match, playerId: "p1", riddle: makeRiddle("r1"), selectedIndex: 2, now: 15_500})).toThrow();
         // Le clavier reste disponible sans blocage lié au filet.
-        expect(() => submitJouteAnswer({match, playerId: "p1", riddle: makeRiddle("r1"), submittedText: "yangtse", now: 9_600})).not.toThrow();
+        expect(() => submitJouteAnswer({match, playerId: "p1", riddle: makeRiddle("r1"), submittedText: "yangtse", now: 15_600})).not.toThrow();
     });
 
     it("termine la manche et la partie dès qu'un joueur dépasse 200 points", () => {
@@ -324,9 +324,9 @@ describe("La Joute : valeur qui décroît, filet, victoire à 200", () => {
         let match = setupJoute();
         match = startJoute({match, questionIds: ["r1", "r2"], now: 0});
         expect(() => advanceJouteQuestion(match, 10_000)).toThrow();
-        match = advanceJouteQuestion(match, 20_001);
+        match = advanceJouteQuestion(match, 30_001);
         expect(computeOneWinnerStandings(match, "joute").find((s) => s.playerId === "p1")?.score).toBe(0);
-        expect(() => submitJouteAnswer({match, playerId: "p1", riddle: makeRiddle("r2"), submittedText: "yangtse", now: 20_500})).not.toThrow();
+        expect(() => submitJouteAnswer({match, playerId: "p1", riddle: makeRiddle("r2"), submittedText: "yangtse", now: 30_500})).not.toThrow();
     });
 
     it("départage par le score au bout de 10 énigmes si personne n'a dépassé 200", () => {

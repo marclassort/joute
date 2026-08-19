@@ -1,11 +1,19 @@
 import {Text, TextInput, View} from "react-native";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import PressableScale from "@/components/PressableScale";
 import {ALL_RIDDLES} from "@/data/riddles";
 import {JOUTE_FILET_THRESHOLD, JOUTE_MAX_QUESTIONS, JOUTE_VALUE_TIERS, jouteValueForElapsed} from "@/game/oneWinnerConfig";
+import {RiddleQuestion} from "@/game/types";
 import {plateauColors} from "@/constants/theme";
 import {playSound} from "@/lib/sounds";
-import {OneWinnerGameSummary} from "@/lib/oneWinnerApi";
+import {OneWinnerAnswerSummary, OneWinnerGameSummary} from "@/lib/oneWinnerApi";
+import {ANSWER_REVEAL_MS} from "../constants";
+
+interface JoutePin {
+    riddle: RiddleQuestion;
+    resolverName: string | null;
+    pointsAwarded: number;
+}
 
 export interface OneWinnerJouteScreenProps {
     game: OneWinnerGameSummary;
@@ -22,6 +30,9 @@ const OneWinnerJouteScreen = ({game, myId, onAnswer, onFiletAnswer}: OneWinnerJo
     const [filetOpen, setFiletOpen] = useState(false);
     const [blockedUntil, setBlockedUntil] = useState<number | null>(null);
     const [now, setNow] = useState(Date.now());
+    const [pin, setPin] = useState<JoutePin | null>(null);
+    const prevQuestionIdRef = useRef<string | null>(null);
+    const prevAnswersRef = useRef<OneWinnerAnswerSummary[]>([]);
 
     const round = game.currentRound;
     const current = round?.openedQuestions[round.openedQuestions.length - 1] ?? null;
@@ -38,6 +49,48 @@ const OneWinnerJouteScreen = ({game, myId, onAnswer, onFiletAnswer}: OneWinnerJo
         return () => clearInterval(interval);
     }, []);
 
+    // Épingle brièvement l'énigme qui vient d'être résolue (bonne réponse ou temps écoulé côté hôte) le
+    // temps que le joueur lise le corrigé, avant de basculer sur la suivante — sinon l'énigme suivante
+    // apparaît instantanément dès que le serveur avance, sans jamais montrer la bonne réponse.
+    useEffect(() => {
+        const previousId = prevQuestionIdRef.current;
+        let revealTimeout: ReturnType<typeof setTimeout> | undefined;
+        if (previousId && current?.questionId !== previousId) {
+            const previousRiddle = ALL_RIDDLES.find((entry) => entry.id === previousId);
+            if (previousRiddle) {
+                const resolved = prevAnswersRef.current.find((answer) => answer.questionId === previousId && answer.isCorrect);
+                const resolverName = resolved ? (game.players.find((player) => player.id === resolved.playerId)?.displayName ?? null) : null;
+                setPin({riddle: previousRiddle, resolverName, pointsAwarded: resolved?.pointsAwarded ?? 0});
+                revealTimeout = setTimeout(() => setPin(null), ANSWER_REVEAL_MS);
+            }
+        }
+        prevQuestionIdRef.current = current?.questionId ?? null;
+        return () => {
+            if (revealTimeout) clearTimeout(revealTimeout);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [current?.questionId]);
+
+    useEffect(() => {
+        prevAnswersRef.current = round?.answers ?? [];
+    });
+
+    if (pin) {
+        return (
+            <View className="flex-1 items-center justify-center gap-3 px-2">
+                <Text className="text-eyebrow text-plateau-brass">Énigme précédente</Text>
+                <Text className="duel-question-statement text-center">{pin.riddle.clues[pin.riddle.clues.length - 1]}</Text>
+                <View className="one-winner-feedback-banner" style={{backgroundColor: pin.resolverName ? plateauColors.teal : plateauColors.rose}}>
+                    <Text className="one-winner-feedback-banner-text">
+                        {pin.resolverName
+                            ? `${pin.resolverName} a trouvé : ${pin.riddle.answer} (+${pin.pointsAwarded})`
+                            : `Personne n'a trouvé — la réponse était : ${pin.riddle.answer}`}
+                    </Text>
+                </View>
+            </View>
+        );
+    }
+
     if (!riddle || !current) {
         return (
             <View className="flex-1 items-center justify-center">
@@ -53,11 +106,15 @@ const OneWinnerJouteScreen = ({game, myId, onAnswer, onFiletAnswer}: OneWinnerJo
     const filetUsedOnThisRiddle = (round?.answers ?? []).some((answer) => answer.playerId === myId && answer.questionId === riddle.id && answer.usedFilet);
     const isBlocked = !!blockedUntil && now < blockedUntil;
     const blockedRemainingSec = isBlocked ? Math.ceil((blockedUntil! - now) / 1000) : 0;
+    // La valeur retombe à 0 dès que les 30 s sont écoulées, avant même que l'hôte ne fasse officiellement
+    // avancer la manche (il laisse volontairement ANSWER_REVEAL_MS pour que ce bandeau ait le temps de
+    // s'afficher côté client) : on bloque la saisie et on annonce la réponse dès ce moment-là.
+    const timedOut = value === 0;
 
     const finalists = game.players.filter((player) => !player.isEliminated);
 
     const submit = async () => {
-        if (isBlocked || typed.trim().length === 0) return;
+        if (isBlocked || timedOut || typed.trim().length === 0) return;
         const text = typed.trim();
         setTyped("");
         try {
@@ -72,7 +129,7 @@ const OneWinnerJouteScreen = ({game, myId, onAnswer, onFiletAnswer}: OneWinnerJo
     };
 
     const submitFilet = async (index: number) => {
-        if (filetUsedOnThisRiddle) return;
+        if (filetUsedOnThisRiddle || timedOut) return;
         setFiletOpen(false);
         try {
             const result = await onFiletAnswer(index);
@@ -140,6 +197,12 @@ const OneWinnerJouteScreen = ({game, myId, onAnswer, onFiletAnswer}: OneWinnerJo
                     </View>
                 )}
 
+                {timedOut && (
+                    <View className="one-winner-feedback-banner" style={{backgroundColor: plateauColors.rose}}>
+                        <Text className="one-winner-feedback-banner-text">Temps écoulé — la réponse était : {riddle.answer}</Text>
+                    </View>
+                )}
+
                 {filetOpen && !filetUsedOnThisRiddle && (
                     <View className="gap-[7px]">
                         <Text className="text-eyebrow text-plateau-teal">Filet · {Math.round(value / 2)} pts si juste</Text>
@@ -167,9 +230,9 @@ const OneWinnerJouteScreen = ({game, myId, onAnswer, onFiletAnswer}: OneWinnerJo
                 <TextInput
                     value={typed}
                     onChangeText={setTyped}
-                    placeholder={isBlocked ? "Bloqué…" : "Ta réponse…"}
+                    placeholder={isBlocked ? "Bloqué…" : timedOut ? "…" : "Ta réponse…"}
                     placeholderTextColor="rgba(246,240,230,0.4)"
-                    editable={!isBlocked}
+                    editable={!isBlocked && !timedOut}
                     onSubmitEditing={submit}
                     returnKeyType="done"
                     autoCapitalize="none"
@@ -183,15 +246,15 @@ const OneWinnerJouteScreen = ({game, myId, onAnswer, onFiletAnswer}: OneWinnerJo
                         borderColor: "rgba(246,240,230,0.2)",
                         paddingHorizontal: 15,
                         fontSize: 15.5,
-                        color: isBlocked ? "rgba(246,240,230,0.35)" : plateauColors.paper,
+                        color: isBlocked || timedOut ? "rgba(246,240,230,0.35)" : plateauColors.paper,
                     }}
                 />
                 <PressableScale
                     activeScale={0.96}
                     className={filetOpen ? "one-winner-joute-filet-button one-winner-joute-filet-button-open" : "one-winner-joute-filet-button"}
                     onPress={() => setFiletOpen((open) => !open)}
-                    disabled={!filetAvailable || filetUsedOnThisRiddle}
-                    style={!filetAvailable || filetUsedOnThisRiddle ? {opacity: 0.35} : undefined}
+                    disabled={!filetAvailable || filetUsedOnThisRiddle || timedOut}
+                    style={!filetAvailable || filetUsedOnThisRiddle || timedOut ? {opacity: 0.35} : undefined}
                     accessibilityRole="button"
                 >
                     <Text className={filetOpen ? "one-winner-joute-filet-label one-winner-joute-filet-label-open" : "one-winner-joute-filet-label"}>Filet</Text>
@@ -204,7 +267,7 @@ const OneWinnerJouteScreen = ({game, myId, onAnswer, onFiletAnswer}: OneWinnerJo
                     className="solo-cta-button"
                     style={{width: 74, height: 58, paddingVertical: 0, alignItems: "center", justifyContent: "center"}}
                     onPress={submit}
-                    disabled={isBlocked || typed.trim().length === 0}
+                    disabled={isBlocked || timedOut || typed.trim().length === 0}
                     accessibilityRole="button"
                 >
                     <Text className="font-display text-xl text-plateau-ink">OK</Text>

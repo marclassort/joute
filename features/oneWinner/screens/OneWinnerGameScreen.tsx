@@ -20,6 +20,7 @@ import {ALL_QUESTIONS} from "@/data/questions";
 import {ALL_RIDDLES} from "@/data/riddles";
 import {pickJouteQuestions, pickMeleeQuestions} from "@/game/oneWinnerQuestionPicker";
 import {CHARGE_TIME_LIMIT_MS, JOUTE_QUESTION_TIME_MS, MELEE_TIME_LIMIT_MS} from "@/game/oneWinnerConfig";
+import {ANSWER_REVEAL_MS} from "../constants";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -52,9 +53,15 @@ const OneWinnerGameScreen = ({gameId}: OneWinnerGameScreenProps) => {
 
         const runOnce = (action: () => Promise<void>) => {
             inFlightRef.current = true;
-            action().finally(() => {
-                inFlightRef.current = false;
-            });
+            action()
+                .catch(() => {
+                    // Rejet transitoire (conflit 409 le temps qu'un autre appareil avance déjà la partie,
+                    // accroc réseau…) : le prochain rendu réévalue l'échéance et retente, pas besoin de
+                    // faire planter l'appli pour un effet purement autonome côté hôte.
+                })
+                .finally(() => {
+                    inFlightRef.current = false;
+                });
         };
 
         if (game.phase === "intro") {
@@ -78,12 +85,15 @@ const OneWinnerGameScreen = ({gameId}: OneWinnerGameScreenProps) => {
             const current = game.currentRound.openedQuestions[game.currentRound.openedQuestions.length - 1];
             if (!current) return undefined;
             const activeIds = game.players.filter((player) => !player.isEliminated).map((player) => player.id);
-            const answeredIds = new Set(game.currentRound.answers.filter((answer) => answer.questionId === current.questionId).map((answer) => answer.playerId));
-            if (activeIds.every((id) => answeredIds.has(id))) {
-                runOnce(() => advance());
-                return undefined;
-            }
-            const timeout = setTimeout(() => runOnce(() => advance()), Math.max(0, current.openedAt + MELEE_TIME_LIMIT_MS - Date.now()) + ADVANCE_BUFFER_MS);
+            const currentAnswers = game.currentRound.answers.filter((answer) => answer.questionId === current.questionId);
+            const answeredIds = new Set(currentAnswers.map((answer) => answer.playerId));
+            const allAnswered = activeIds.every((id) => answeredIds.has(id));
+            // La question "se termine" soit dès que tout le monde a répondu (à l'horodatage de la dernière
+            // réponse, pas "maintenant" — sinon un effet qui se relance repousserait la pause de révélation
+            // à chaque fois), soit à l'échéance des 15 s si quelqu'un n'a pas répondu à temps. Dans les deux
+            // cas, on laisse la bonne réponse affichée ANSWER_REVEAL_MS avant d'enchaîner.
+            const resolvedAt = allAnswered ? Math.max(...currentAnswers.map((answer) => answer.answeredAtServerMs)) : current.openedAt + MELEE_TIME_LIMIT_MS;
+            const timeout = setTimeout(() => runOnce(() => advance()), Math.max(0, resolvedAt + ANSWER_REVEAL_MS - Date.now()));
             return () => clearTimeout(timeout);
         }
 
@@ -108,7 +118,7 @@ const OneWinnerGameScreen = ({gameId}: OneWinnerGameScreenProps) => {
             if (alreadyResolved) return undefined;
             const timeout = setTimeout(
                 () => runOnce(() => advance()),
-                Math.max(0, current.openedAt + JOUTE_QUESTION_TIME_MS - Date.now()) + ADVANCE_BUFFER_MS,
+                Math.max(0, current.openedAt + JOUTE_QUESTION_TIME_MS - Date.now()) + ANSWER_REVEAL_MS,
             );
             return () => clearTimeout(timeout);
         }
