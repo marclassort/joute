@@ -3,7 +3,6 @@ import {
     ActivityIndicator,
     KeyboardAvoidingView,
     Platform,
-    Pressable,
     ScrollView,
     Text,
     TextInput,
@@ -17,7 +16,7 @@ import clsx from "clsx";
 import { useAuth, useSignUp } from "@clerk/expo";
 import { plateauColors } from "@/constants/theme";
 import { isValidEmail } from "@/lib/utils";
-import ShadowCard from "@/components/ShadowCard";
+import PrimaryButton from "@/components/PrimaryButton";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -195,11 +194,12 @@ const SignUp = () => {
 
                             {formError && <Text className="session-error">{formError}</Text>}
 
-                            <ShadowCard borderRadius={16} className={clsx("solo-cta-button", isSubmitting && "opacity-50")}>
-                                <Pressable onPress={handleSignUp} disabled={isSubmitting} accessibilityRole="button">
-                                    <Text className="solo-cta-text">{isSubmitting ? "Création…" : "Créer mon compte"}</Text>
-                                </Pressable>
-                            </ShadowCard>
+                            <PrimaryButton
+                                title={isSubmitting ? "Création…" : "Créer mon compte"}
+                                onPress={handleSignUp}
+                                disabled={isSubmitting}
+                                borderRadius={16}
+                            />
                         </View>
                     </View>
 

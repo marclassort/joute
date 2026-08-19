@@ -1,10 +1,10 @@
-import {Pressable, Text, View} from "react-native";
+import {Text, View} from "react-native";
 import React, {useEffect} from "react";
 // eslint-disable-next-line import/no-named-as-default
 import clsx from "clsx";
 import {Question, Round} from "@/game/types";
 import {impactMedium, notifyError, notifySuccess} from "@/lib/haptics";
-import ShadowCard from "@/components/ShadowCard";
+import PrimaryButton from "@/components/PrimaryButton";
 import {CATEGORY_LABELS} from "../constants";
 
 export interface RoundSummaryStepProps {
@@ -77,11 +77,7 @@ const RoundSummaryStep = ({round, questions, viewerId, opponentId, onContinue}: 
                 })}
             </View>
 
-            <ShadowCard borderRadius={20} className="solo-cta-button">
-                <Pressable onPress={onContinue} accessibilityRole="button">
-                    <Text className="solo-cta-text">Continuer</Text>
-                </Pressable>
-            </ShadowCard>
+            <PrimaryButton title="Continuer" onPress={onContinue} />
         </View>
     );
 };

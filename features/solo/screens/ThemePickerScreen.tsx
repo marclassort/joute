@@ -9,7 +9,7 @@ import {Category} from "@/game/types";
 import {DRAWABLE_CATEGORIES} from "@/game/rules";
 import {CATEGORY_LABELS} from "@/features/joute/constants";
 import {masteryPercent, needsWork} from "@/services/localSoloStatsRepository";
-import ShadowCard from "@/components/ShadowCard";
+import PrimaryButton from "@/components/PrimaryButton";
 import {SOLO_QUESTIONS_PER_SESSION} from "../constants";
 import {useSoloStats} from "../hooks/useSoloStats";
 import ThemeFilterChip from "../components/ThemeFilterChip";
@@ -81,17 +81,13 @@ const ThemePickerScreen = () => {
                 </View>
             </ScrollView>
 
-            <View className={clsx("solo-footer px-[18px]", !selected && "solo-cta-button-disabled")}>
-                <ShadowCard borderRadius={20} className="solo-cta-button">
-                    <Pressable
-                        onPress={handleLaunch}
-                        disabled={!selected}
-                        accessibilityRole="button"
-                        accessibilityLabel={selected ? `Lancer la partie solo · ${CATEGORY_LABELS[selected]}` : "Choisis un thème"}
-                    >
-                        <Text className="solo-cta-text">{selected ? `Lancer · ${CATEGORY_LABELS[selected]}` : "Choisis un thème"}</Text>
-                    </Pressable>
-                </ShadowCard>
+            <View className="solo-footer px-[18px]">
+                <PrimaryButton
+                    title={selected ? `Lancer · ${CATEGORY_LABELS[selected]}` : "Choisis un thème"}
+                    onPress={handleLaunch}
+                    disabled={!selected}
+                    accessibilityLabel={selected ? `Lancer la partie solo · ${CATEGORY_LABELS[selected]}` : "Choisis un thème"}
+                />
             </View>
         </SafeAreaView>
     );

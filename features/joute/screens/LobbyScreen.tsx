@@ -15,6 +15,7 @@ import {localNotificationService} from "@/services/localNotificationService";
 import {useMatches} from "../hooks/useMatches";
 import {useCurrentPlayer} from "../hooks/useCurrentPlayer";
 import ShadowCard from "@/components/ShadowCard";
+import PrimaryButton from "@/components/PrimaryButton";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -109,11 +110,7 @@ const LobbyScreen = () => {
             </ScrollView>
 
             <View className="duel-lobby-actions">
-                <ShadowCard borderRadius={20} className="solo-cta-button">
-                    <Pressable onPress={handleRandomOpponent} accessibilityRole="button">
-                        <Text className="solo-cta-text">Adversaire aléatoire</Text>
-                    </Pressable>
-                </ShadowCard>
+                <PrimaryButton title="Adversaire aléatoire" onPress={handleRandomOpponent} />
                 <Pressable className="duel-lobby-secondary-button" onPress={handleInviteFriend} accessibilityRole="button">
                     <Text className="duel-lobby-secondary-text">Inviter un ami</Text>
                 </Pressable>

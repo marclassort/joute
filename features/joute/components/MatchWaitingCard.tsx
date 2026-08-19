@@ -1,9 +1,9 @@
-import {Pressable, Text, View} from "react-native";
+import {Text, View} from "react-native";
 import React, {ReactNode, useEffect} from "react";
 import Animated, {useAnimatedStyle, useSharedValue, withTiming} from "react-native-reanimated";
 import {Player, WINNING_SCORE} from "@/game/types";
 import {plateauColors} from "@/constants/theme";
-import ShadowCard from "@/components/ShadowCard";
+import PrimaryButton from "@/components/PrimaryButton";
 import PlayersScoreRow from "./PlayersScoreRow";
 
 export interface MatchWaitingCardProps {
@@ -54,11 +54,7 @@ const MatchWaitingCard = ({me, opponent, myScore, opponentScore, label, meta, on
 
             <View className="mt-auto gap-3 pt-6">
                 {children}
-                <ShadowCard borderRadius={20} className="solo-cta-button">
-                    <Pressable onPress={onBackHome} accessibilityRole="button">
-                        <Text className="solo-cta-text">Retour à l&#39;accueil</Text>
-                    </Pressable>
-                </ShadowCard>
+                <PrimaryButton title="Retour à l'accueil" onPress={onBackHome} />
             </View>
         </Animated.View>
     );

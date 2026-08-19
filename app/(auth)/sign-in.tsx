@@ -20,7 +20,7 @@ import { useAuth, useSignIn, useSSO } from "@clerk/expo";
 import { plateauColors } from "@/constants/theme";
 import { isValidEmail } from "@/lib/utils";
 import { markOnboardingSeen } from "@/services/guestIdentity";
-import ShadowCard from "@/components/ShadowCard";
+import PrimaryButton from "@/components/PrimaryButton";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -176,11 +176,12 @@ const SignIn = () => {
 
                             {formError && <Text className="session-error">{formError}</Text>}
 
-                            <ShadowCard borderRadius={16} className={clsx("solo-cta-button", isSubmitting && "opacity-50")}>
-                                <Pressable onPress={handleSignIn} disabled={isSubmitting} accessibilityRole="button">
-                                    <Text className="solo-cta-text">{isSubmitting ? "Connexion…" : "Se connecter"}</Text>
-                                </Pressable>
-                            </ShadowCard>
+                            <PrimaryButton
+                                title={isSubmitting ? "Connexion…" : "Se connecter"}
+                                onPress={handleSignIn}
+                                disabled={isSubmitting}
+                                borderRadius={16}
+                            />
                         </View>
                     </View>
 

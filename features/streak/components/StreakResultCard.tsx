@@ -1,6 +1,6 @@
 import {Pressable, Text, View} from "react-native";
 import React from "react";
-import ShadowCard from "@/components/ShadowCard";
+import PrimaryButton from "@/components/PrimaryButton";
 
 export interface StreakResultCardProps {
     finalStreak: number;
@@ -29,11 +29,7 @@ const StreakResultCard = ({finalStreak, bestStreak, xpEarned, onReplay, onBackTo
         </View>
 
         <View className="streak-result-actions">
-            <ShadowCard borderRadius={20} className="solo-cta-button">
-                <Pressable onPress={onReplay} accessibilityRole="button">
-                    <Text className="solo-cta-text">Rejouer</Text>
-                </Pressable>
-            </ShadowCard>
+            <PrimaryButton title="Rejouer" onPress={onReplay} />
             <Pressable className="streak-result-secondary-button" onPress={onBackToHub} accessibilityRole="button">
                 <Text className="streak-result-secondary-text">Retour aux modes</Text>
             </Pressable>

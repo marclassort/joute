@@ -8,8 +8,7 @@ import {createOneWinnerGame, OneWinnerAuth} from "@/lib/oneWinnerApi";
 import {useCurrentPlayer} from "@/features/joute/hooks/useCurrentPlayer";
 import {goBackOrHome} from "@/lib/navigation";
 import {plateauColors} from "@/constants/theme";
-import ShadowCard from "@/components/ShadowCard";
-import PressableScale from "@/components/PressableScale";
+import PrimaryButton from "@/components/PrimaryButton";
 import OneWinnerHatchBackground from "../components/OneWinnerHatchBackground";
 import {ROUND_LABELS, ROUND_ORDER} from "../constants";
 
@@ -115,11 +114,11 @@ const OneWinnerIntroScreen = () => {
 
             <View className="mt-auto gap-3 pt-3">
                 {error && <Text className="session-error text-center">{error}</Text>}
-                <ShadowCard borderRadius={20} className={isCreating || !player.isReady ? "solo-cta-button opacity-50" : "solo-cta-button"}>
-                    <PressableScale activeScale={0.98} onPress={handleCreate} disabled={isCreating || !player.isReady} accessibilityRole="button">
-                        <Text className="solo-cta-text">{isCreating ? "Création…" : "Créer une partie"}</Text>
-                    </PressableScale>
-                </ShadowCard>
+                <PrimaryButton
+                    title={isCreating ? "Création…" : "Créer une partie"}
+                    onPress={handleCreate}
+                    disabled={isCreating || !player.isReady}
+                />
             </View>
         </SafeAreaView>
     );

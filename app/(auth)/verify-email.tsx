@@ -17,7 +17,7 @@ import clsx from "clsx";
 import { useAuth, useSignUp } from "@clerk/expo";
 import { plateauColors } from "@/constants/theme";
 import { markNeedsProfileSetup } from "@/services/guestIdentity";
-import ShadowCard from "@/components/ShadowCard";
+import PrimaryButton from "@/components/PrimaryButton";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -173,11 +173,12 @@ const VerifyEmail = () => {
                                 {error && <Text className="session-error">{error}</Text>}
                             </View>
 
-                            <ShadowCard borderRadius={16} className={clsx("solo-cta-button", isSubmitting && "opacity-50")}>
-                                <Pressable onPress={handleVerify} disabled={isSubmitting} accessibilityRole="button">
-                                    <Text className="solo-cta-text">{isSubmitting ? "Vérification…" : "Confirmer"}</Text>
-                                </Pressable>
-                            </ShadowCard>
+                            <PrimaryButton
+                                title={isSubmitting ? "Vérification…" : "Confirmer"}
+                                onPress={handleVerify}
+                                disabled={isSubmitting}
+                                borderRadius={16}
+                            />
                         </View>
                     </View>
 

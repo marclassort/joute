@@ -1,4 +1,4 @@
-import {Pressable, ScrollView, Text, View} from "react-native";
+import {ScrollView, Text, View} from "react-native";
 import React, {useMemo} from "react";
 import {styled} from "nativewind";
 import {SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
@@ -7,7 +7,7 @@ import ListHeading from "@/components/ListHeading";
 import {useMatches} from "@/features/joute/hooks/useMatches";
 import {useCurrentPlayer} from "@/features/joute/hooks/useCurrentPlayer";
 import MatchCard from "@/features/joute/components/MatchCard";
-import ShadowCard from "@/components/ShadowCard";
+import PrimaryButton from "@/components/PrimaryButton";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -47,11 +47,7 @@ const Duels = () => {
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="gap-6 pb-10">
-                <ShadowCard borderRadius={20} className="solo-cta-button">
-                    <Pressable onPress={() => router.push("/duel/lobby")} accessibilityRole="button">
-                        <Text className="solo-cta-text">Nouveau duel</Text>
-                    </Pressable>
-                </ShadowCard>
+                <PrimaryButton title="Nouveau duel" onPress={() => router.push("/duel/lobby")} />
 
                 <View>
                     <ListHeading title="À toi de jouer" />

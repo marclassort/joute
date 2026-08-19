@@ -1,5 +1,6 @@
 import {Image, Pressable, Text, View} from "react-native";
 import PressableScale from "@/components/PressableScale";
+import PrimaryButton from "@/components/PrimaryButton";
 import React, {useEffect, useRef, useState} from "react";
 import Animated, {Easing, FadeInDown, useReducedMotion, useSharedValue, withTiming} from "react-native-reanimated";
 import {Question} from "@/game/types";
@@ -180,9 +181,7 @@ const SoloQuestionCard = ({
                     </View>
 
                     <View className="solo-footer">
-                        <PressableScale activeScale={0.98} className="solo-cta-button" onPress={onContinue} accessibilityRole="button">
-                            <Text className="solo-cta-text">{isLastQuestion ? "Voir les résultats" : "Question suivante"}</Text>
-                        </PressableScale>
+                        <PrimaryButton title={isLastQuestion ? "Voir les résultats" : "Question suivante"} onPress={onContinue} />
                     </View>
                 </Animated.View>
             )}

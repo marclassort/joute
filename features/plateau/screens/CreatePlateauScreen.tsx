@@ -10,8 +10,8 @@ import {PLATEAU_MAX_PLAYERS, PLATEAU_MIN_PLAYERS, PLATEAU_WINNING_SCORE, Player}
 import ghosts from "@/data/ghosts";
 import {generateId} from "@/lib/utils";
 import {useCurrentPlayer} from "@/features/joute/hooks/useCurrentPlayer";
-import ShadowCard from "@/components/ShadowCard";
 import PressableScale from "@/components/PressableScale";
+import PrimaryButton from "@/components/PrimaryButton";
 import {plateauColors} from "@/constants/theme";
 import {usePlateauMatches} from "../hooks/usePlateauMatches";
 
@@ -78,11 +78,7 @@ const CreatePlateauScreen = () => {
             </View>
 
             <View className="mt-auto">
-                <ShadowCard borderRadius={20} className="solo-cta-button">
-                    <PressableScale activeScale={0.98} onPress={handleCreate} accessibilityRole="button">
-                        <Text className="solo-cta-text">Créer la partie</Text>
-                    </PressableScale>
-                </ShadowCard>
+                <PrimaryButton title="Créer la partie" onPress={handleCreate} />
             </View>
         </SafeAreaView>
     );

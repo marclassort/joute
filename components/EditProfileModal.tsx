@@ -10,12 +10,10 @@ import {
     View,
 } from "react-native";
 import React, {useEffect, useState} from "react";
-// eslint-disable-next-line import/no-named-as-default
-import clsx from "clsx";
 import * as ImagePicker from "expo-image-picker";
 import {useUser} from "@clerk/expo";
 import {plateauColors} from "@/constants/theme";
-import ShadowCard from "@/components/ShadowCard";
+import PrimaryButton from "@/components/PrimaryButton";
 
 const EditProfileModal = ({visible, onClose}: EditProfileModalProps) => {
     const {user} = useUser();
@@ -131,11 +129,7 @@ const EditProfileModal = ({visible, onClose}: EditProfileModalProps) => {
 
                             {error && <Text className="session-error">{error}</Text>}
 
-                            <ShadowCard borderRadius={16} className={clsx("solo-cta-button", isSaving && "opacity-50")}>
-                                <Pressable onPress={handleSave} disabled={isSaving} accessibilityRole="button">
-                                    <Text className="solo-cta-text">{isSaving ? "Enregistrement…" : "Enregistrer"}</Text>
-                                </Pressable>
-                            </ShadowCard>
+                            <PrimaryButton title={isSaving ? "Enregistrement…" : "Enregistrer"} onPress={handleSave} disabled={isSaving} borderRadius={16} />
                         </ScrollView>
                     </View>
                 </KeyboardAvoidingView>

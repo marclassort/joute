@@ -3,8 +3,7 @@ import React, {useEffect} from "react";
 // eslint-disable-next-line import/no-named-as-default
 import clsx from "clsx";
 import {useRouter} from "expo-router";
-import ShadowCard from "@/components/ShadowCard";
-import PressableScale from "@/components/PressableScale";
+import PrimaryButton from "@/components/PrimaryButton";
 import {playSound} from "@/lib/sounds";
 import {OneWinnerGameSummary} from "@/lib/oneWinnerApi";
 import {formatLeagueRank} from "../constants";
@@ -64,11 +63,7 @@ const OneWinnerVictoryScreen = ({game, myId}: OneWinnerVictoryScreenProps) => {
             </View>
 
             <View className="mt-auto">
-                <ShadowCard borderRadius={20} className="solo-cta-button">
-                    <PressableScale activeScale={0.98} onPress={() => router.replace("/(tabs)")} accessibilityRole="button">
-                        <Text className="solo-cta-text">Retour à l&#39;accueil</Text>
-                    </PressableScale>
-                </ShadowCard>
+                <PrimaryButton title="Retour à l'accueil" onPress={() => router.replace("/(tabs)")} />
             </View>
         </View>
     );

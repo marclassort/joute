@@ -2,8 +2,7 @@ import {Image, Pressable, ScrollView, Share, Text, View} from "react-native";
 import React, {useState} from "react";
 // eslint-disable-next-line import/no-named-as-default
 import clsx from "clsx";
-import ShadowCard from "@/components/ShadowCard";
-import PressableScale from "@/components/PressableScale";
+import PrimaryButton from "@/components/PrimaryButton";
 import {buildOneWinnerLink, OneWinnerGameSummary} from "@/lib/oneWinnerApi";
 import {ONE_WINNER_PLAYERS} from "../hooks/useOneWinnerGame";
 
@@ -101,11 +100,7 @@ const OneWinnerWaitingRoomScreen = ({gameId, game, isHost, canStart, isStarting,
                     </Pressable>
                 )}
                 {isHost && (
-                    <ShadowCard borderRadius={20} className={!canStart || isStarting ? "solo-cta-button opacity-50" : "solo-cta-button"}>
-                        <PressableScale activeScale={0.98} onPress={onStart} disabled={!canStart || isStarting} accessibilityRole="button">
-                            <Text className="solo-cta-text">{isStarting ? "Démarrage…" : "Démarrer la partie"}</Text>
-                        </PressableScale>
-                    </ShadowCard>
+                    <PrimaryButton title={isStarting ? "Démarrage…" : "Démarrer la partie"} onPress={onStart} disabled={!canStart || isStarting} />
                 )}
             </View>
         </>

@@ -3,6 +3,7 @@ import React from "react";
 import {Category} from "@/game/types";
 import {CATEGORY_LABELS} from "@/features/joute/constants";
 import InkPattern from "@/components/InkPattern";
+import PrimaryButton from "@/components/PrimaryButton";
 import {SOLO_QUESTIONS_PER_SESSION} from "../constants";
 
 export interface SoloResultCardProps {
@@ -48,9 +49,7 @@ const SoloResultCard = ({category, score, xpEarned, averageResponseMs, longestCo
         </View>
 
         <View className="solo-result-actions">
-            <Pressable className="solo-cta-button" onPress={onReplay} accessibilityRole="button">
-                <Text className="solo-cta-text">Rejouer · {CATEGORY_LABELS[category]}</Text>
-            </Pressable>
+            <PrimaryButton title={`Rejouer · ${CATEGORY_LABELS[category]}`} onPress={onReplay} />
             <Pressable className="solo-result-secondary-button" onPress={onBackToThemes} accessibilityRole="button">
                 <Text className="solo-result-secondary-text">Retour aux thèmes</Text>
             </Pressable>
