@@ -90,8 +90,11 @@ export function useOneWinnerGame(gameId: string): UseOneWinnerGame {
             authRef.current = auth;
             return auth;
         }
-        const cached = authRef.current?.kind === "clerk" ? authRef.current.token : null;
-        const token = cached ?? (await getToken());
+        // Toujours redemander un jeton frais à Clerk (son SDK gère déjà son propre cache/rafraîchissement
+        // en interne) plutôt que de réutiliser celui mis en cache dans authRef : les jetons Clerk expirent
+        // après ~60 s, et une partie dure maintenant plusieurs minutes — un jeton figé finirait par être
+        // rejeté par le serveur en plein milieu (401 "Non authentifié"), sans rapport avec la partie elle-même.
+        const token = await getToken();
         if (!token) throw new Error("Non connecté");
         const auth: OneWinnerAuth = {kind: "clerk", token};
         authRef.current = auth;
